@@ -1,20 +1,20 @@
-# Jormundgandr: End-to-End Video Object Detection with Spatial-Temporal Mamba
+# Jormungandr: End-to-End Video Object Detection with Spatial-Temporal Mamba
 
 <div align="center">
 
-![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/Knolaisen/jormundgandr/ci.yml)
-![GitHub top language](https://img.shields.io/github/languages/top/Knolaisen/jormundgandr)
-![GitHub language count](https://img.shields.io/github/languages/count/Knolaisen/jormundgandr)
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/Knolaisen/jormungandr/ci.yml)
+![GitHub top language](https://img.shields.io/github/languages/top/Knolaisen/jormungandr)
+![GitHub language count](https://img.shields.io/github/languages/count/Knolaisen/jormungandr)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Project Version](https://img.shields.io/badge/version-0.0.1-blue)](https://img.shields.io/badge/version-0.0.1-blue)
 
-<img src="docs/images/project-logo.png" width="50%" alt="Jormundgandr VOD Logo" style="display: block; margin-left: auto; margin-right: auto;">
+<img src="docs/images/project-logo.png" width="50%" alt="jormungandr VOD Logo" style="display: block; margin-left: auto; margin-right: auto;">
 </div>
 
 <details> 
 <summary><b>📋 Table of contents </b></summary>
 
-- [Jormundgandr: End-to-End Video Object Detection with Spatial-Temporal Mamba](#jormundgandr-end-to-end-video-object-detection-with-spatial-temporal-mamba)
+- [Jormungandr: End-to-End Video Object Detection with Spatial-Temporal Mamba](#jormungandr-end-to-end-video-object-detection-with-spatial-temporal-mamba)
   - [Description](#description)
   - [Prerequisites](#prerequisites)
   - [Getting started](#getting-started)
@@ -28,7 +28,7 @@
 
 ## Description
 
-Jormundgandr is an novel end-to-end video object detection system that leverages the Spatial-Temporal Mamba architecture to accurately detect and track objects across video frames. By combining spatial and temporal information, Jormundgandr enhances detection accuracy and robustness, making it suitable for various applications such as surveillance, autonomous driving, and video analytics.
+Jormungandr is an novel end-to-end video object detection system that leverages the Spatial-Temporal Mamba architecture to accurately detect and track objects across video frames. By combining spatial and temporal information, Jormungandr enhances detection accuracy and robustness, making it suitable for various applications such as surveillance, autonomous driving, and video analytics.
 
 ## Prerequisites
 
@@ -45,8 +45,8 @@ Jormundgandr is an novel end-to-end video object detection system that leverages
 1. **Clone the repository**:
 
    ```sh
-   git clone https://github.com/Knolaisen/jormundgandr.git
-   cd jormundgandr
+   git clone https://github.com/Knolaisen/jormungandr.git
+   cd jormungandr
    ```
 
 1. **Install dependencies**:
@@ -88,7 +88,7 @@ uv run mkdocs build
 uv run mkdocs serve
 ```
 
-This will build the documentation and start a local server at [http://127.0.0.1:8000/](http://127.0.0.1:8000/) where you can browse the docs and API reference. Get the documentation according to the latest commit on main by viewing the `gh-pages` branch on GitHub: [https://Knolaisen.github.io/jormundgandr/](https://Knolaisen.github.io/jormundgandr/).
+This will build the documentation and start a local server at [http://127.0.0.1:8000/](http://127.0.0.1:8000/) where you can browse the docs and API reference. Get the documentation according to the latest commit on main by viewing the `gh-pages` branch on GitHub: [https://Knolaisen.github.io/jormungandr/](https://Knolaisen.github.io/jormungandr/).
 
 ## Testing
 

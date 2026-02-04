@@ -565,7 +565,7 @@ wheels = [
 ]
 
 [[package]]
-name = "jormundgandr"
+name = "jormungandr"
 version = "0.0.1"
 source = { virtual = "." }
 
