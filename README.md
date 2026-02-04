@@ -1,4 +1,4 @@
-# Jormundgandr
+# Jormundgandr: End-to-End Video Object Detection with Spatial-Temporal Mamba
 
 <div align="center">
 
@@ -8,13 +8,13 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Project Version](https://img.shields.io/badge/version-0.0.1-blue)](https://img.shields.io/badge/version-0.0.1-blue)
 
-<img src="docs/images/project-logo.webp" width="50%" alt="Jormundgandr VOD Logo" style="display: block; margin-left: auto; margin-right: auto;">
+<img src="docs/images/project-logo.png" width="50%" alt="Jormundgandr VOD Logo" style="display: block; margin-left: auto; margin-right: auto;">
 </div>
 
 <details> 
 <summary><b>📋 Table of contents </b></summary>
 
-- [Jormundgandr](#jormundgandr)
+- [Jormundgandr: End-to-End Video Object Detection with Spatial-Temporal Mamba](#jormundgandr-end-to-end-video-object-detection-with-spatial-temporal-mamba)
   - [Description](#description)
   - [Prerequisites](#prerequisites)
   - [Getting started](#getting-started)
@@ -28,9 +28,10 @@
 
 ## Description
 
-<!-- TODO: Provide a brief overview of what this project does and its key features. Please add pictures or videos of the application -->
+Jormundgandr is an novel end-to-end video object detection system that leverages the Spatial-Temporal Mamba architecture to accurately detect and track objects across video frames. By combining spatial and temporal information, Jormundgandr enhances detection accuracy and robustness, making it suitable for various applications such as surveillance, autonomous driving, and video analytics.
 
 ## Prerequisites
+
 - **Git**: Ensure that git is installed on your machine. [Download Git](https://git-scm.com/downloads)
 - **Python 3.12**: Required for the project. [Download Python](https://www.python.org/downloads/)
 - **UV**: Used for managing Python environments. [Install UV](https://docs.astral.sh/uv/getting-started/installation/)
@@ -115,7 +116,6 @@ uv run pytest --doctest-modules --cov=src --cov-report=html
       </td>
     </tr>
 </table>
-
 
 ### License
 
