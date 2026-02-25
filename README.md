@@ -16,16 +16,12 @@
 
 - [Jormungandr: End-to-End Video Object Detection with Spatial-Temporal Mamba](#jormungandr-end-to-end-video-object-detection-with-spatial-temporal-mamba)
   - [Description](#description)
-  - [Prerequisites](#prerequisites)
   - [Getting started](#getting-started)
     - [Installation](#installation)
-    - [Development Installation](#development-installation)
   - [Usage](#usage)
     - [Still Image Detection (Fafnir)](#still-image-detection-fafnir)
     - [Video Object Detection (Jormungandr)](#video-object-detection-jormungandr)
     - [Pretrained Models](#pretrained-models)
-    - [📖 Generate Documentation Site](#-generate-documentation-site)
-  - [Testing](#testing)
   - [Authors](#authors)
     - [License](#license)
 
@@ -34,13 +30,6 @@
 ## Description
 
 Jormungandr is an novel end-to-end video object detection system that leverages the Spatial-Temporal Mamba architecture to accurately detect and track objects across video frames. By combining spatial and temporal information, Jormungandr enhances detection accuracy and robustness, making it suitable for various applications such as surveillance, autonomous driving, and video analytics.
-
-## Prerequisites
-
-- **Git**: Ensure that git is installed on your machine. [Download Git](https://git-scm.com/downloads)
-- **Python 3.12**: Required for the project. [Download Python](https://www.python.org/downloads/)
-- **UV**: Used for managing Python environments. [Install UV](https://docs.astral.sh/uv/getting-started/installation/)
-- **Docker** (optional): For DevContainer development. [Download Docker](https://www.docker.com/products/docker-desktop)
 
 ## Getting started
 
@@ -57,35 +46,6 @@ Alternatively, from source:
 ```bash
 pip install git+https://github.com/Knolaisen/jormungandr
 ```
-
-### Development Installation
-
-1. **Clone the repository**:
-
-   ```sh
-   git clone https://github.com/Knolaisen/jormungandr.git
-   cd jormungandr
-   ```
-
-2. **Install dependencies**:
-
-   ```sh
-   uv sync
-   ```
-
-<!--
-1. **Configure environment variables**:
-    This project uses environment variables for configuration. Copy the example environment file to create your own:
-    ```sh
-    cp .env.example .env
-    ```
-    Then edit the `.env` file to include your specific configuration settings.
--->
-
-1. **Set up pre commit** (only for development):
-   ```sh
-   uv run pre-commit install
-   ```
 
 ## Usage
 We expose several levels of interface with the **Fafnir** still image detector and **Jormungandr** Video Object Detection (VOD) model. Both models follow a simple PyTorch-style API. Due to the Mamba architecture, the models are optimized for GPU execution and require CUDA for inference and training.
@@ -140,25 +100,6 @@ We provide pretrained models hosted on [Hugging Face](https://huggingface.co/Sve
 
 These models will be automatically downloaded when initialized in your code.
 
-
-### 📖 Generate Documentation Site
-
-To build and preview the documentation site locally:
-
-```bash
-uv run mkdocs build
-uv run mkdocs serve
-```
-
-This will build the documentation and start a local server at [http://127.0.0.1:8000/](http://127.0.0.1:8000/) where you can browse the docs and API reference. Get the documentation according to the latest commit on main by viewing the `gh-pages` branch on GitHub: [https://Knolaisen.github.io/jormungandr/](https://Knolaisen.github.io/jormungandr/).
-
-## Testing
-
-To run the test suite, run the following command from the root directory of the project:
-
-```bash
-uv run pytest --doctest-modules --cov=src --cov-report=html
-```
 
 ## Authors
 
