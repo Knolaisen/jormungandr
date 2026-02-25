@@ -21,6 +21,8 @@
     - [Installation](#installation)
     - [Development Installation](#development-installation)
   - [Usage](#usage)
+    - [Still Image Detection (Fafnir)](#still-image-detection-fafnir)
+    - [Video Object Detection (Jormungandr)](#video-object-detection-jormungandr)
     - [Pretrained Models](#pretrained-models)
     - [📖 Generate Documentation Site](#-generate-documentation-site)
   - [Testing](#testing)
@@ -86,34 +88,47 @@ pip install git+https://github.com/Knolaisen/jormungandr
    ```
 
 ## Usage
-We expose several levels of interface with the **Fafnir** still image detector and **Jormungandr** Video Object Detection (VOD) model.
+We expose several levels of interface with the **Fafnir** still image detector and **Jormungandr** Video Object Detection (VOD) model. Both models follow a simple PyTorch-style API. Due to the Mamba architecture, the models are optimized for GPU execution and require CUDA for inference and training.
 
-
-
-To run the project, run the following command from the root directory of the project:
+### Still Image Detection (Fafnir)
+Use `Fafnir` when performing object detection on single images.
 
 ```python
 import torch
 from jormungandr import Fafnir
 
+device = torch.device("cuda")
+
 batch, channels, height, width = 2, 3, 224, 224
-x = torch.randn(batch, channels, height, width).to("cuda")
+x = torch.randn(batch, channels, height, width).to(device)
 
-model = Fafnir().to("cuda")
+# Initialize model
+model = Fafnir(variant="fafnir-b", pretrained=True).to(device)
+model.eval()
 
-detections = model(x)
+# Inference
+with torch.no_grad():
+    detections = model(x)
 ```
 
+### Video Object Detection (Jormungandr)
+Use `Jormungandr` for end-to-end video object detection using spatial-temporal modeling.
 ```python
 import torch
 from jormungandr import Jormungandr
 
+device = torch.device("cuda")
+
 batch, frames, channels, height, width = 32, 8, 3, 224, 224
-x = torch.randn(batch, frames, channels, height, width).to("cuda")
+x = torch.randn(batch, frames, channels, height, width).to(device)
 
-model = Jormungandr().to("cuda")w
+# Initialize model
+model = Jormungandr(variant="jormungandr-b", pretrained=True).to(device)
+model.eval()
 
-detections = model(x)
+# Inference
+with torch.no_grad():
+    detections = model(x)
 ```
 
 ### Pretrained Models
