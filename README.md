@@ -39,8 +39,21 @@ Jormungandr is an novel end-to-end video object detection system that leverages 
 
 ## Getting started
 
-<!-- TODO: In this Section you describe how to install this project in its intended environment.(i.e. how to get it to run)  
--->
+### Installation
+
+PyPI package:
+
+```bash
+pip install jormungandr-ssm
+```
+
+Alternatively, from source:
+
+```bash
+pip install git+https://github.com/Knolaisen/jormungandr
+```
+
+### Development Installation
 
 1. **Clone the repository**:
 
