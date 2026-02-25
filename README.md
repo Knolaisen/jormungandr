@@ -21,6 +21,7 @@
     - [Installation](#installation)
     - [Development Installation](#development-installation)
   - [Usage](#usage)
+    - [Pretrained Models](#pretrained-models)
     - [📖 Generate Documentation Site](#-generate-documentation-site)
   - [Testing](#testing)
   - [Authors](#authors)
@@ -114,6 +115,16 @@ model = Jormungandr().to("cuda")w
 
 detections = model(x)
 ```
+
+### Pretrained Models
+
+We provide pretrained models hosted on [Hugging Face](https://huggingface.co/SverreNystad).
+
+* The **Fafnir** models (`fafnir-t`, `fafnir-s`, `fafnir-b`) are pretrained on the [COCO](https://cocodataset.org/#home) dataset.  
+* The **Jormungandr** models (`jormungandr-t`, `jormungandr-s`, `jormungandr-b`) are pretrained on the [MOT17](https://motchallenge.net/data/MOT17/) dataset.
+
+These models will be automatically downloaded when initialized in your code.
+
 
 ### 📖 Generate Documentation Site
 
