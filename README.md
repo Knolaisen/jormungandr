@@ -18,6 +18,8 @@
   - [Description](#description)
   - [Prerequisites](#prerequisites)
   - [Getting started](#getting-started)
+    - [Installation](#installation)
+    - [Development Installation](#development-installation)
   - [Usage](#usage)
     - [📖 Generate Documentation Site](#-generate-documentation-site)
   - [Testing](#testing)
@@ -62,7 +64,7 @@ pip install git+https://github.com/Knolaisen/jormungandr
    cd jormungandr
    ```
 
-1. **Install dependencies**:
+2. **Install dependencies**:
 
    ```sh
    uv sync
@@ -83,14 +85,35 @@ pip install git+https://github.com/Knolaisen/jormungandr
    ```
 
 ## Usage
+We expose several levels of interface with the **Fafnir** still image detector and **Jormungandr** Video Object Detection (VOD) model.
+
+
 
 To run the project, run the following command from the root directory of the project:
 
-```bash
+```python
+import torch
+from jormungandr import Fafnir
 
+batch, channels, height, width = 2, 3, 224, 224
+x = torch.randn(batch, channels, height, width).to("cuda")
+
+model = Fafnir().to("cuda")
+
+detections = model(x)
 ```
 
-<!-- TODO: Instructions on how to run the project and use its features. -->
+```python
+import torch
+from jormungandr import Jormungandr
+
+batch, frames, channels, height, width = 32, 8, 3, 224, 224
+x = torch.randn(batch, frames, channels, height, width).to("cuda")
+
+model = Jormungandr().to("cuda")w
+
+detections = model(x)
+```
 
 ### 📖 Generate Documentation Site
 
