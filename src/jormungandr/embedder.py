@@ -1,12 +1,22 @@
+from typing import 
+
 import torch
-from torch import nn, Tensor
+from torch import nn
 import math
 
 # @compile_compatible_method_lru_cache(maxsize=1) https://github.com/huggingface/transformers/blob/main/src/transformers/pytorch_utils.py#L242
 
-# TODO: Make protocoll of embedding
+class Embedder(Protocol):
+    def forward(
+        self,
+        shape: torch.Size,
+        device: torch.device | str,
+        dtype: torch.dtype,
+        mask: torch.Tensor | None = None,
+    ) -> torch.Tensor:
+        ...
 
-class DetrSinePositionEmbedding(nn.Module):
+class DetrSinePositionEmbedding(nn.Module, Embedder):
     """
     This is a more standard version of the position embedding, very similar to the one used by the Attention is all you
     need paper, generalized to work on images.
@@ -58,7 +68,7 @@ class DetrSinePositionEmbedding(nn.Module):
         return pos
 
 
-class DetrLearnedPositionEmbedding(nn.Module):
+class DetrLearnedPositionEmbedding(nn.Module, Embedder):
     """
     This module learns positional embeddings up to a fixed maximum size.
     """
