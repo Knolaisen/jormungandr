@@ -24,9 +24,9 @@ class DetrSinePositionEmbedding(nn.Module, Embedder):
 
     def __init__(
         self,
-        num_position_features: int = 64,
+        num_position_features: int = 128,
         temperature: int = 10000,
-        normalize: bool = False,
+        normalize: bool = True,
         scale: float | None = None,
     ):
         super().__init__()

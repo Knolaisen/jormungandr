@@ -1,4 +1,4 @@
-import torch.nn as nn, Tensor
+from torch import nn, Tensor
 
 class MLPPredictionHead(nn.Module):
     """
