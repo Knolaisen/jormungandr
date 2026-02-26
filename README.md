@@ -34,6 +34,17 @@ Jormungandr is an novel end-to-end video object detection system that leverages 
 
 ## Getting started
 
+### Prerequisites
+
+Before installing this package, ensure that your system meets the following requirements:
+
+- **Operating System:** Linux  
+- **Python:** Version 3.12 or higher  
+- **Hardware:** CUDA-enabled GPU  
+- **Software Dependencies:**  
+  - NVIDIA drivers compatible with your GPU  
+  - CUDA Toolkit properly installed and configured, can be checked with `nvidia-smi`
+
 ### Installation
 
 PyPI package:
@@ -47,6 +58,7 @@ Alternatively, from source:
 ```bash
 pip install git+https://github.com/Knolaisen/jormungandr
 ```
+
 
 ## Usage
 We expose several levels of interface with the **Fafnir** still image detector and **Jormungandr** Video Object Detection (VOD) model. Both models follow a simple PyTorch-style API. Due to the Mamba architecture, the models are optimized for GPU execution and require CUDA for inference and training.
