@@ -5,6 +5,7 @@ from mamba_ssm import Mamba
 class MambaEncoder(nn.Module):
     def __init__(
         self,
+        position_embedder,
         model_dimension: int = 16,
         state_expansion_factor: int = 16,
         num_layers: int = 6,
@@ -27,6 +28,7 @@ class MambaEncoder(nn.Module):
                 for _ in range(self.num_layers)
             ]
         )
+        self.position_embedder = position_embedder
 
     def forward(self, x: Tensor) -> Tensor:
         """
@@ -37,5 +39,6 @@ class MambaEncoder(nn.Module):
         """
 
         for layer in self.layers:
+            x = x + self.position_embedder(x)
             x = layer(x)
         return x
