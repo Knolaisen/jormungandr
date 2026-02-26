@@ -39,8 +39,6 @@ class Backbone(nn.Module):
         vision_features = self.backbone(pixel_values, pixel_mask)
         feature_maps, mask = vision_features[-1]
 
-        
-
         return feature_maps, mask
     
     def project_feature_maps(self, feature_maps: Tensor) -> Tensor:
