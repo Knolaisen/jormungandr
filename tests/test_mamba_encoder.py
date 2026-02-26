@@ -12,6 +12,7 @@ def test_mamba_encoder_inference():
     assert y.shape == x.shape, f"Expected output shape {x.shape}, got {y.shape}"
     assert not y.equal(x), "Output should be different from input after encoding"
 
+
 @pytest.mark.parametrize("model_dimension", [0, -16])
 def test_mamba_encoder_with_invalid_dimension(model_dimension):
     with pytest.raises(ValueError):
