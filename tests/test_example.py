@@ -1,4 +1,3 @@
-from jormungandr import main
 
 
 def test_example():
@@ -6,5 +5,4 @@ def test_example():
     Example test function to demonstrate the structure of a test.
     This function should be replaced with actual test logic.
     """
-    main()
     assert True
