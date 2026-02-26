@@ -1,7 +1,10 @@
+import torch
 from torch import nn, Tensor
+import math
 
 # @compile_compatible_method_lru_cache(maxsize=1) https://github.com/huggingface/transformers/blob/main/src/transformers/pytorch_utils.py#L242
 
+# TODO: Make protocoll of embedding
 
 class DetrSinePositionEmbedding(nn.Module):
     """
