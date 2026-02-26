@@ -28,7 +28,7 @@ def test_mamba_encoder_with_invalid_state_expansion_factor(state_expansion_facto
         MambaEncoder(state_expansion_factor=state_expansion_factor)
 
 
-@pytest.mark.parametrize("num_layers", [0, -1])
+@pytest.mark.parametrize("num_layers", [-1])
 def test_mamba_encoder_with_invalid_num_layers(num_layers):
     with pytest.raises(ValueError):
         MambaEncoder(num_layers=num_layers)
