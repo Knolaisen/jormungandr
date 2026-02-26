@@ -1,11 +1,19 @@
 # Developer Setup
 
 ## Prerequisites
+Before installing this package, ensure that your system meets the following requirements:
 
-- **Git**: Ensure that git is installed on your machine. [Download Git](https://git-scm.com/downloads)
-- **Python 3.12**: Required for the project. [Download Python](https://www.python.org/downloads/)
-- **UV**: Used for managing Python environments. [Install UV](https://docs.astral.sh/uv/getting-started/installation/)
-- **Docker** (optional): For DevContainer development. [Download Docker](https://www.docker.com/products/docker-desktop)
+- **Operating System:** Linux  
+- **Hardware:** CUDA-enabled GPU  
+- **Software Dependencies:**  
+  - NVIDIA drivers compatible with your GPU  
+  - CUDA Toolkit properly installed and configured, can be checked with `nvidia-smi`
+  - **Git**: Ensure that git is installed on your machine. [Download Git](https://git-scm.com/downloads)
+  - **Python 3.12**: Required for the project. [Download Python](https://www.python.org/downloads/)
+   - **UV**: Used for managing Python environments. [Install UV](https://docs.astral.sh/uv/getting-started/installation/)
+  - **Docker** (optional): For DevContainer development. [Download Docker](https://www.docker.com/products/docker-desktop)
+
+
 
 ### Development Installation
 
