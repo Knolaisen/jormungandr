@@ -1,4 +1,4 @@
-from torch import nn
+from torch import nn, Tensor
 from mamba_ssm import Mamba
 
 
@@ -10,6 +10,13 @@ class MambaEncoder(nn.Module):
         num_layers: int = 6,
     ):
         super(MambaEncoder, self).__init__()
+        if num_layers < 1:
+            raise ValueError("num_layers must be at least 1")
+        if model_dimension < 1:
+            raise ValueError("model_dimension must be at least 1")
+        if state_expansion_factor < 1:
+            raise ValueError("state_expansion_factor must be at least 1")
+        
         self.num_layers = num_layers
         self.layers = nn.ModuleList(
             [
@@ -21,7 +28,7 @@ class MambaEncoder(nn.Module):
             ]
         )
 
-    def forward(self, x):
+    def forward(self, x: Tensor) -> Tensor:
         """
         Args:
             x: Tensor of shape (batch_size, model_dimension)
