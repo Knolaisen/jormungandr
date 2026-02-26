@@ -1,4 +1,4 @@
-from typing import 
+from typing import Protocol
 
 import torch
 from torch import nn
