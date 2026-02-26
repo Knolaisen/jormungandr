@@ -1,13 +1,7 @@
 
 from jormungandr.mamba_encoder import MambaEncoder
-from torch import nn
+from torch import nn, Tensor
 
-class DETRDecoder(nn.Module):
-    def __init__(self, num_queries: int = 16, hidden_dim: int = 16):
-        super(DETRDecoder, self).__init__()
-        self.num_queries = num_queries
-        self.query_embed = nn.Embedding(num_queries, hidden_dim)
-        # Additional layers can be added here
 
 
 class Fafnir(nn.Module):
@@ -28,8 +22,9 @@ class Fafnir(nn.Module):
         self.variant = variant
         # Backbone
         self.backbone = backbone
+        self.embedder = nn.Linear(2048, 16)  # Example embedding layer, adjust input/output dimensions as needed 
         # Encoder
-        self.mamba_encoder = MambaEncoder(config.encoder)
+        self.mamba_encoder = MambaEncoder(config.encoder, position_embedder=self.embedder)
         self.aux_loss = aux_loss
 
         # Decoder
@@ -42,8 +37,9 @@ class Fafnir(nn.Module):
         # Backbone
         features = self.backbone(x)
         # Encoder
-        for encoder in self.mamba_encoders:
-            features = encoder(features)
+        features = features.flatten()
+        position_embedding = self.embedder(features)
+        features = self.mamba_encoder(features, position_embedding)
         # Decoder
         
         # Additional decoder processing can be added here
