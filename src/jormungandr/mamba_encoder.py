@@ -5,14 +5,14 @@ from mamba_ssm import Mamba
 class MambaEncoder(nn.Module):
     def __init__(
         self,
-        position_embedder,
+        position_embedding: Tensor | None = None,
         model_dimension: int = 16,
         state_expansion_factor: int = 16,
         num_layers: int = 6,
     ):
         super(MambaEncoder, self).__init__()
-        if num_layers < 1:
-            raise ValueError("num_layers must be at least 1")
+        if num_layers < 0:
+            raise ValueError("num_layers cant be negative")
         if model_dimension < 1:
             raise ValueError("model_dimension must be at least 1")
         if state_expansion_factor < 1:
@@ -28,7 +28,7 @@ class MambaEncoder(nn.Module):
                 for _ in range(self.num_layers)
             ]
         )
-        self.position_embedder = position_embedder
+        self.position_embedding = position_embedding
 
     def forward(self, x: Tensor) -> Tensor:
         """
@@ -39,6 +39,6 @@ class MambaEncoder(nn.Module):
         """
 
         for layer in self.layers:
-            x = x + self.position_embedder(x)
+            x = x + self.position_embedding if self.position_embedding is not None else x
             x = layer(x)
         return x
