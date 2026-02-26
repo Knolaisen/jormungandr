@@ -22,6 +22,7 @@
     - [Still Image Detection (Fafnir)](#still-image-detection-fafnir)
     - [Video Object Detection (Jormungandr)](#video-object-detection-jormungandr)
     - [Pretrained Models](#pretrained-models)
+  - [Documentation](#documentation)
   - [Authors](#authors)
     - [License](#license)
 
@@ -99,6 +100,14 @@ We provide pretrained models hosted on [Hugging Face](https://huggingface.co/Sve
 * The **Jormungandr** models (`jormungandr-t`, `jormungandr-s`, `jormungandr-b`) are pretrained on the [MOT17](https://motchallenge.net/data/MOT17/) dataset.
 
 These models will be automatically downloaded when initialized in your code.
+
+## Documentation
+
+* [**Architecture Design**](docs/architectural_design.md)
+* [**Developer Setup Guide**](docs/developer_setup.md)
+* [**API Reference**](https://knolaisen.github.io/jormungandr/)
+
+
 
 
 ## Authors
