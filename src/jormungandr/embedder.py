@@ -6,6 +6,7 @@ import math
 
 # @compile_compatible_method_lru_cache(maxsize=1) https://github.com/huggingface/transformers/blob/main/src/transformers/pytorch_utils.py#L242
 
+
 class Embedder(Protocol):
     def forward(
         self,
@@ -13,8 +14,8 @@ class Embedder(Protocol):
         device: torch.device | str,
         dtype: torch.dtype,
         mask: torch.Tensor | None = None,
-    ) -> torch.Tensor:
-        ...
+    ) -> torch.Tensor: ...
+
 
 class DetrSinePositionEmbedding(nn.Module, Embedder):
     """
@@ -37,7 +38,7 @@ class DetrSinePositionEmbedding(nn.Module, Embedder):
         self.normalize = normalize
         self.scale = 2 * math.pi if scale is None else scale
 
-    #@compile_compatible_method_lru_cache(maxsize=1)
+    # @compile_compatible_method_lru_cache(maxsize=1)
     def forward(
         self,
         shape: torch.Size,
@@ -46,7 +47,9 @@ class DetrSinePositionEmbedding(nn.Module, Embedder):
         mask: torch.Tensor | None = None,
     ) -> torch.Tensor:
         if mask is None:
-            mask = torch.zeros((shape[0], shape[2], shape[3]), device=device, dtype=torch.bool)
+            mask = torch.zeros(
+                (shape[0], shape[2], shape[3]), device=device, dtype=torch.bool
+            )
         y_embed = mask.cumsum(1, dtype=dtype)
         x_embed = mask.cumsum(2, dtype=dtype)
         if self.normalize:
@@ -54,13 +57,21 @@ class DetrSinePositionEmbedding(nn.Module, Embedder):
             y_embed = y_embed / (y_embed[:, -1:, :] + eps) * self.scale
             x_embed = x_embed / (x_embed[:, :, -1:] + eps) * self.scale
 
-        dim_t = torch.arange(self.num_position_features, dtype=torch.int64, device=device).to(dtype)
-        dim_t = self.temperature ** (2 * torch.div(dim_t, 2, rounding_mode="floor") / self.num_position_features)
+        dim_t = torch.arange(
+            self.num_position_features, dtype=torch.int64, device=device
+        ).to(dtype)
+        dim_t = self.temperature ** (
+            2 * torch.div(dim_t, 2, rounding_mode="floor") / self.num_position_features
+        )
 
         pos_x = x_embed[:, :, :, None] / dim_t
         pos_y = y_embed[:, :, :, None] / dim_t
-        pos_x = torch.stack((pos_x[:, :, :, 0::2].sin(), pos_x[:, :, :, 1::2].cos()), dim=4).flatten(3)
-        pos_y = torch.stack((pos_y[:, :, :, 0::2].sin(), pos_y[:, :, :, 1::2].cos()), dim=4).flatten(3)
+        pos_x = torch.stack(
+            (pos_x[:, :, :, 0::2].sin(), pos_x[:, :, :, 1::2].cos()), dim=4
+        ).flatten(3)
+        pos_y = torch.stack(
+            (pos_y[:, :, :, 0::2].sin(), pos_y[:, :, :, 1::2].cos()), dim=4
+        ).flatten(3)
         pos = torch.cat((pos_y, pos_x), dim=3).permute(0, 3, 1, 2)
         # Flatten spatial dimensions and permute to (batch_size, sequence_length, hidden_size) format
         # expected by the encoder
@@ -78,7 +89,7 @@ class DetrLearnedPositionEmbedding(nn.Module, Embedder):
         self.row_embeddings = nn.Embedding(50, embedding_dim)
         self.column_embeddings = nn.Embedding(50, embedding_dim)
 
-    #@compile_compatible_method_lru_cache(maxsize=1)
+    # @compile_compatible_method_lru_cache(maxsize=1)
     def forward(
         self,
         shape: torch.Size,
@@ -91,7 +102,13 @@ class DetrLearnedPositionEmbedding(nn.Module, Embedder):
         height_values = torch.arange(height, device=device)
         x_emb = self.column_embeddings(width_values)
         y_emb = self.row_embeddings(height_values)
-        pos = torch.cat([x_emb.unsqueeze(0).repeat(height, 1, 1), y_emb.unsqueeze(1).repeat(1, width, 1)], dim=-1)
+        pos = torch.cat(
+            [
+                x_emb.unsqueeze(0).repeat(height, 1, 1),
+                y_emb.unsqueeze(1).repeat(1, width, 1),
+            ],
+            dim=-1,
+        )
         pos = pos.permute(2, 0, 1)
         pos = pos.unsqueeze(0)
         pos = pos.repeat(shape[0], 1, 1, 1)

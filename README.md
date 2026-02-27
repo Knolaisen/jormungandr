@@ -38,11 +38,11 @@ Jormungandr is an novel end-to-end video object detection system that leverages 
 
 Before installing this package, ensure that your system meets the following requirements:
 
-- **Operating System:** Linux  
-- **Python:** Version 3.12 or higher  
-- **Hardware:** CUDA-enabled GPU  
-- **Software Dependencies:**  
-  - NVIDIA drivers compatible with your GPU  
+- **Operating System:** Linux
+- **Python:** Version 3.12 or higher
+- **Hardware:** CUDA-enabled GPU
+- **Software Dependencies:**
+  - NVIDIA drivers compatible with your GPU
   - CUDA Toolkit properly installed and configured, can be checked with `nvidia-smi`
 
 ### Installation
@@ -59,11 +59,12 @@ Alternatively, from source:
 pip install git+https://github.com/Knolaisen/jormungandr
 ```
 
-
 ## Usage
+
 We expose several levels of interface with the **Fafnir** still image detector and **Jormungandr** Video Object Detection (VOD) model. Both models follow a simple PyTorch-style API. Due to the Mamba architecture, the models are optimized for GPU execution and require CUDA for inference and training.
 
 ### Still Image Detection (Fafnir)
+
 Use `Fafnir` when performing object detection on single images.
 
 ```python
@@ -85,7 +86,9 @@ with torch.no_grad():
 ```
 
 ### Video Object Detection (Jormungandr)
+
 Use `Jormungandr` for end-to-end video object detection using spatial-temporal modeling.
+
 ```python
 import torch
 from jormungandr import Jormungandr
@@ -108,19 +111,16 @@ with torch.no_grad():
 
 We provide pretrained models hosted on [Hugging Face](https://huggingface.co/SverreNystad).
 
-* The **Fafnir** models (`fafnir-t`, `fafnir-s`, `fafnir-b`) are pretrained on the [COCO](https://cocodataset.org/#home) dataset.  
-* The **Jormungandr** models (`jormungandr-t`, `jormungandr-s`, `jormungandr-b`) are pretrained on the [MOT17](https://motchallenge.net/data/MOT17/) dataset.
+- The **Fafnir** models (`fafnir-t`, `fafnir-s`, `fafnir-b`) are pretrained on the [COCO](https://cocodataset.org/#home) dataset.
+- The **Jormungandr** models (`jormungandr-t`, `jormungandr-s`, `jormungandr-b`) are pretrained on the [MOT17](https://motchallenge.net/data/MOT17/) dataset.
 
 These models will be automatically downloaded when initialized in your code.
 
 ## Documentation
 
-* [**Architecture Design**](docs/architectural_design.md)
-* [**Developer Setup Guide**](docs/developer_setup.md)
-* [**API Reference**](https://knolaisen.github.io/jormungandr/)
-
-
-
+- [**Architecture Design**](docs/architectural_design.md)
+- [**Developer Setup Guide**](docs/developer_setup.md)
+- [**API Reference**](https://knolaisen.github.io/jormungandr/)
 
 ## Authors
 

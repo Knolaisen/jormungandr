@@ -1,4 +1,4 @@
-from torch import nn, Tensor
+from torch import nn
 
 
 class DETRDecoder(nn.Module):

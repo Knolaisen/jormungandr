@@ -48,4 +48,3 @@ def test_layer_dimensions_match_spec():
     # last: hidden_dim -> out_dim
     assert head.layers[-1].in_features == hidden_dim
     assert head.layers[-1].out_features == out_dim
-

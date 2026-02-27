@@ -16,7 +16,7 @@ class MambaEncoder(nn.Module):
             raise ValueError("model_dimension must be at least 1")
         if state_expansion_factor < 1:
             raise ValueError("state_expansion_factor must be at least 1")
-        
+
         self.num_layers = num_layers
         self.layers = nn.ModuleList(
             [
