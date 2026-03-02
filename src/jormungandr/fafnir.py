@@ -1,7 +1,7 @@
 from torch import nn, Tensor
 import torch
 
-from jormungandr.mamba_encoder import MambaEncoder
+from jormungandr.encoder import MambaEncoder
 from jormungandr.backbone import Backbone
 from jormungandr.embedder import Embedder, DetrSinePositionEmbedding
 

@@ -1,5 +1,5 @@
 import torch
-from jormungandr.mamba_encoder import MambaEncoder
+from jormungandr.encoder import MambaEncoder
 import pytest
 
 
