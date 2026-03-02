@@ -80,24 +80,18 @@ class Fafnir(nn.Module):
         # Flatten H and W into sequence length, and permute to (batch_size, sequence_length, model_dimension)
         flattened_feature_maps = projected_feature_maps.flatten(2).permute(0, 2, 1)
         flattened_mask = mask.flatten(1)
-        print(f"Flattened feature maps shape: {flattened_feature_maps.shape}")
-        print(f"Flattened mask shape: {flattened_mask.shape}")
 
         encoder_outputs = self.encoder.forward(
             flattened_feature_maps, position_embedding=position_embedding
         )
 
-        print(f"Encoder outputs shape: {encoder_outputs.shape}")
         # Decoder
         decoder_output = self.decoder.forward(
             encoder_output=encoder_outputs,
             position_embedding=position_embedding,
             encoder_mask_flattened=flattened_mask,
         )
-        print(f"Decoder output shape: {decoder_output.shape}")
 
         # Detection Head
         class_labels, bbox_coordinates = self.output_head.forward(decoder_output)
-        print(f"Class labels shape: {class_labels.shape}")
-        print(f"BBox coordinates shape: {bbox_coordinates.shape}")
         return class_labels, bbox_coordinates
