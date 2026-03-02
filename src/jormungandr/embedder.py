@@ -46,6 +46,15 @@ class DetrSinePositionEmbedding(nn.Module, Embedder):
         dtype: torch.dtype,
         mask: torch.Tensor | None = None,
     ) -> torch.Tensor:
+        """
+        Args:
+            shape: The shape of the feature maps for which to compute the position embedding, expected to be (batch_size, channels, height, width)
+            device: The device on which to create the position embedding
+            dtype: The dtype of the position embedding
+            mask: An optional mask tensor of shape (batch_size, height, width) where True values indicate masked positions. If None, no positions are masked.
+        Returns:
+            A position embedding tensor of shape (batch_size, sequence_length, hidden_size) where sequence_length is height * width and hidden_size is num_position_features * 2 (for sine and cosine components)
+        """
         if mask is None:
             mask = torch.zeros(
                 (shape[0], shape[2], shape[3]), device=device, dtype=torch.bool
