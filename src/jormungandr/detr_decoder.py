@@ -12,7 +12,9 @@ class DETRDecoder(nn.Module):
     ):
         super(DETRDecoder, self).__init__()
         self.num_queries = num_queries
-        self.query_position_embeddings = nn.Embedding(num_queries, hidden_dim)
+        self.query_position_embeddings = DetrForObjectDetection.from_pretrained(
+            model_name
+        ).model.query_position_embeddings
 
         # Additional layers can be added here
 
@@ -45,7 +47,7 @@ class DETRDecoder(nn.Module):
         else:
             queries = torch.zeros_like(object_queries_position_embeddings)
 
-        decoder_output = self.decoder(
+        decoder_output = self.decoder.forward(
             inputs_embeds=queries,
             encoder_hidden_states=encoder_output,
             spatial_position_embeddings=position_embedding,
