@@ -6,15 +6,19 @@ from transformers import DetrForObjectDetection
 class DETRDecoder(nn.Module):
     def __init__(
         self,
-        num_queries: int = 100,
+        num_queries: int | None = None,
         hidden_dim: int = 16,
         model_name: str = "facebook/detr-resnet-50",
     ):
         super(DETRDecoder, self).__init__()
         self.num_queries = num_queries
-        self.query_position_embeddings = DetrForObjectDetection.from_pretrained(
-            model_name
-        ).model.query_position_embeddings
+
+        if num_queries is not None:
+            self.query_position_embeddings = nn.Embedding(num_queries, hidden_dim)
+        else:
+            self.query_position_embeddings = DetrForObjectDetection.from_pretrained(
+                model_name
+            ).model.query_position_embeddings
 
         # Additional layers can be added here
 

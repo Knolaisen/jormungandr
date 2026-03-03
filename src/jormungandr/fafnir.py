@@ -18,7 +18,7 @@ class Fafnir(nn.Module):
         num_encoder_layers: int = 6,
         num_decoder_layers: int = 6,
         num_classes: int = 10,
-        num_queries: int = 100,
+        num_queries: int | None = None,
         variant="fafnir-b",
         device: torch.device | str = "cuda",
     ):
