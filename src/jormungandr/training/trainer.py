@@ -8,6 +8,15 @@ It shall use:
 * Torch
 * Torchvision for data loading and augmentation
 * Wandb for logging and visualization
+    - Log epoch-wise training and validation loss
+    - Log validation metrics
+        - mAP, precision, recall, etc.
+        - CIoU, GIoU, etc.
+    - Log validation images with predicted bounding boxes and labels
+    - Log model checkpoints and hyperparameters
+        - Learning rate, gradient norms, etc.
+    - Watch model gradients and parameters
+
 *
 """
 
