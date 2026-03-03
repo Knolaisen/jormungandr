@@ -1,17 +1,24 @@
 # Create target dir
-mkdir -p ../data
+mkdir -p ./data
 
-# 2017 Train images [118K/18GB]
-curl -L --fail --retry 10 --retry-delay 3 \
-  -o ../data/train2017.zip \
-  http://images.cocodataset.org/zips/train2017.zip
 
-# 2017 Val images [5K/1GB]
-curl -L --fail --retry 10 --retry-delay 3 \
-  -o ../data/val2017.zip \
-  http://images.cocodataset.org/zips/val2017.zip
+download () {
+  local url="$1"
+  local out="$2"
 
-# 2017 Test images [41K/6GB]
-curl -L --fail --retry 10 --retry-delay 3 \
-  -o ../data/test2017.zip \
-  http://images.cocodataset.org/zips/test2017.zip
+  # -C - : resume partial download
+  # --retry-all-errors : retry on more than just “connection refused”
+  # --fail : treat HTTP errors as failures
+  curl -L -C - --fail \
+    --retry 50 --retry-delay 5 --retry-all-errors \
+    --speed-time 30 --speed-limit 10240 \
+    -o "$out" "$url"
+}
+download "http://images.cocodataset.org/zips/train2017.zip" "./data/train2017.zip"
+download "http://images.cocodataset.org/zips/val2017.zip"   "./data/val2017.zip"
+download "http://images.cocodataset.org/zips/test2017.zip"  "./data/test2017.zip"
+
+
+unzip -q ./data/train2017.zip -d ./data
+unzip -q ./data/val2017.zip -d ./data
+unzip -q ./data/test2017.zip -d ./data

@@ -18,10 +18,9 @@ echo "Name of job: $SLURM_JOB_NAME"
 echo "ID of job: $SLURM_JOB_ID"
 echo "The job was run on these nodes: $SLURM_JOB_NODELIST"
 
-
 module purge
 module load Anaconda3/2024.02-1
 
-./scripts/download.bash
+source ./scripts/download.bash
 
 echo "Job finished"
