@@ -11,6 +11,8 @@ It shall use:
 *
 """
 
+from typing import Callable
+
 import torch
 from torch.utils.data import DataLoader
 from torch import nn, optim
@@ -31,7 +33,7 @@ def train(
     model: nn.Module,
     training_loader: DataLoader,
     validation_loader: DataLoader,
-    criterion: nn.Module,
+    criterion: nn.Module | Callable,
     optimizer: optim.Optimizer,
 ):
     for epoch in range(EPOCHS):
@@ -51,26 +53,26 @@ def train(
         # Disable gradient computation and reduce memory consumption.
         with torch.no_grad():
             for i, vdata in enumerate(validation_loader):
-                vinputs, vlabels = vdata
-                voutputs = model(vinputs)
-                vloss = criterion(voutputs, vlabels)
-                running_vloss += vloss
+                validation_image, validation_labels = vdata
+                voutputs = model(validation_image)
+                val_loss = criterion(voutputs, validation_labels)
+                running_vloss += val_loss
 
-        avg_vloss = running_vloss / (i + 1)
-        print(f"LOSS train {avg_loss:.3f} valid {avg_vloss:.3f}")
+        average_validation_loss = running_vloss / (i + 1)
+        print(f"LOSS train {avg_loss:.3f} valid {average_validation_loss:.3f}")
 
         # Log the running loss averaged per batch
         # for both training and validation
         writer.add_scalars(
             "Training vs. Validation Loss",
-            {"Training": avg_loss, "Validation": avg_vloss},
+            {"Training": avg_loss, "Validation": average_validation_loss},
             epoch + 1,
         )
         writer.flush()
 
         # Track best performance, and save the model's state
-        if avg_vloss < best_vloss:
-            best_vloss = avg_vloss
+        if average_validation_loss < best_val_loss:
+            best_val_loss = average_validation_loss
             model_path = "model_{}_{}".format(timestamp, epoch)
             torch.save(model.state_dict(), model_path)
 
