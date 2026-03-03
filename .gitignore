@@ -256,4 +256,5 @@ Thumbs.db
 .vscode/
 
 
-slurm_outouts/
+slurm_outputs/
+data/
