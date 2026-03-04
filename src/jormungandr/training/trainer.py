@@ -19,7 +19,9 @@ It shall use:
 
 *
 """
-
+from jormungandr.config.configuration import Config, load_config
+from jormungandr.training.criterion import build_criterion
+from jormungandr.training.optimizer import build_optimizer
 from typing import Callable
 
 import torch
@@ -28,15 +30,18 @@ from torch import nn, optim
 from torch.utils.tensorboard import SummaryWriter
 from datetime import datetime
 
+CONFIG = load_config("config.yaml")
+
 # Initializing in a separate cell so we can easily add more epochs to the same run
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 writer = SummaryWriter(f"runs/trainer_{timestamp}")
 epoch_number = 0
 
-EPOCHS = 5
+EPOCHS = CONFIG.trainer.epochs
 
 best_vloss = 1_000_000.0
-
+criterion = build_criterion(CONFIG.loss.name)
+optimizer = build_optimizer(CONFIG.trainer.optimizer)
 
 def train(
     model: nn.Module,

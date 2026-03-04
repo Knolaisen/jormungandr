@@ -4,8 +4,16 @@ trainer:
   batch_size: 16
   learning_rate: 1e-4
   optimizer: "AdamW"
+  log_interval: 10
   loss:
     name: "ForObjectDetectionLoss"
     class_cost: 1.0
     bbox_cost: 5.0
     giou_cost: 2.0  
+
+fafnir:
+  input_size: 224
+  num_classes: 92
+  encoder:
+    type: "Mamba"
+    num_layers: 6

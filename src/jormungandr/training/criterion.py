@@ -5,10 +5,12 @@ from torchvision.ops import complete_box_iou
 from scipy.optimize import linear_sum_assignment
 from transformers.image_transforms import center_to_corners_format
 from transformers.loss.loss_for_object_detection import (
-    generalized_box_iou,
     ImageLoss,
     _set_aux_loss,
 )
+from jormungandr.config.configuration import Config
+from typing import Callable
+from transformers.loss.loss_for_object_detection import ForObjectDetectionLoss as GIoULoss
 
 
 def CIoULoss(
@@ -152,3 +154,12 @@ class HungarianMatcherWithCIoU(nn.Module):
             )
             for i, j in indices
         ]
+
+
+def build_criterion(name: str) -> Callable:
+    if name == "GIoULoss":
+        return GIoULoss
+    elif name == "CIoULoss":
+        return CIoULoss
+    else:
+        raise ValueError(f"Unsupported loss function: {name}")
