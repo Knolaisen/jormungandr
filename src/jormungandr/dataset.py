@@ -79,10 +79,10 @@ def create_dataloaders(
     torch_train_ds = ds["train"].with_format("torch")
     torch_val_ds = ds["val"].with_format("torch")
 
-    train_loader = torch.utils.data.DataLoader(
+    train_loader = DataLoader(
         torch_train_ds, batch_size=batch_size, shuffle=shuffle, collate_fn=collate_fn
     )
-    val_loader = torch.utils.data.DataLoader(
+    val_loader = DataLoader(
         torch_val_ds, batch_size=batch_size, shuffle=False, collate_fn=collate_fn
     )
     return train_loader, val_loader

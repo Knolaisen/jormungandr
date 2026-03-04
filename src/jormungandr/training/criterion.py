@@ -8,9 +8,10 @@ from transformers.loss.loss_for_object_detection import (
     ImageLoss,
     _set_aux_loss,
 )
-from jormungandr.config.configuration import Config
 from typing import Callable
-from transformers.loss.loss_for_object_detection import ForObjectDetectionLoss as GIoULoss
+from transformers.loss.loss_for_object_detection import (
+    ForObjectDetectionLoss as GIoULoss,
+)
 
 
 def CIoULoss(
@@ -157,9 +158,10 @@ class HungarianMatcherWithCIoU(nn.Module):
 
 
 def build_criterion(name: str) -> Callable:
-    if name == "GIoULoss":
-        return GIoULoss
-    elif name == "CIoULoss":
-        return CIoULoss
-    else:
-        raise ValueError(f"Unsupported loss function: {name}")
+    match name.lower():
+        case "giouloss":
+            return GIoULoss
+        case "ciouloss":
+            return CIoULoss
+        case _:
+            raise ValueError(f"Unsupported loss function: {name}")

@@ -27,5 +27,6 @@ pip install uv --user
 uv sync
 
 # Run the Python script
+uv run python train.py
 
 echo "Job finished"

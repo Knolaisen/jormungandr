@@ -19,47 +19,49 @@ It shall use:
 
 *
 """
-from jormungandr.config.configuration import Config, load_config
-from jormungandr.training.criterion import build_criterion
-from jormungandr.training.optimizer import build_optimizer
-from typing import Callable
 
+from tqdm import trange
+from typing import Callable
+import wandb
 import torch
 from torch.utils.data import DataLoader
 from torch import nn, optim
-from torch.utils.tensorboard import SummaryWriter
 from datetime import datetime
+from jormungandr.config.configuration import load_config
+from jormungandr.dataset import create_dataloaders
+from jormungandr.fafnir import Fafnir
+from jormungandr.training.criterion import build_criterion
+from jormungandr.training.optimizer import build_optimizer
 
 CONFIG = load_config("config.yaml")
 
 # Initializing in a separate cell so we can easily add more epochs to the same run
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-writer = SummaryWriter(f"runs/trainer_{timestamp}")
-epoch_number = 0
 
-EPOCHS = CONFIG.trainer.epochs
-
-best_vloss = 1_000_000.0
-criterion = build_criterion(CONFIG.loss.name)
-optimizer = build_optimizer(CONFIG.trainer.optimizer)
 
 def train(
-    model: nn.Module,
-    training_loader: DataLoader,
-    validation_loader: DataLoader,
-    criterion: nn.Module | Callable,
-    optimizer: optim.Optimizer,
+    config=CONFIG,
 ):
-    for epoch in range(EPOCHS):
-        print(f"EPOCH {epoch + 1} starting...")
 
-        # Make sure gradient tracking is on, and do a pass over the data
+    model: nn.Module = Fafnir(encoder_type=config.fafnir.encoder.type).to("cuda")
+
+    wandb.watch(model, log="all", log_freq=100)
+    training_loader, validation_loader = create_dataloaders(
+        batch_size=config.trainer.batch_size
+    )
+
+    EPOCHS = config.trainer.epochs
+    criterion = build_criterion(config.trainer.loss.name)
+    optimizer = build_optimizer(config.trainer.optimizer)
+
+    best_val_loss = float("inf")
+    for epoch in trange(EPOCHS, desc="Epochs", unit="epoch"):
         model.train(True)
         avg_loss = train_one_epoch(
             model, training_loader, optimizer, criterion, device="cuda"
         )
 
-        running_vloss = 0.0
+        running_val_loss = 0.0
         # Set the model to evaluation mode, disabling dropout and using population
         # statistics for batch normalization.
         model.eval()
@@ -70,25 +72,24 @@ def train(
                 validation_image, validation_labels = vdata
                 voutputs = model(validation_image)
                 val_loss = criterion(voutputs, validation_labels)
-                running_vloss += val_loss
+                running_val_loss += val_loss
 
-        average_validation_loss = running_vloss / (i + 1)
+        average_validation_loss = running_val_loss / (i + 1)
         print(f"LOSS train {avg_loss:.3f} valid {average_validation_loss:.3f}")
-
-        # Log the running loss averaged per batch
-        # for both training and validation
-        writer.add_scalars(
-            "Training vs. Validation Loss",
-            {"Training": avg_loss, "Validation": average_validation_loss},
-            epoch + 1,
-        )
-        writer.flush()
+        wandb.log({"train_loss": avg_loss, "val_loss": average_validation_loss})
 
         # Track best performance, and save the model's state
         if average_validation_loss < best_val_loss:
             best_val_loss = average_validation_loss
-            model_path = "model_{}_{}".format(timestamp, epoch)
+            model_path = f"model_{best_val_loss:.3f}_{epoch}"
             torch.save(model.state_dict(), model_path)
+
+            model_artifact = wandb.Artifact(
+                model_path,
+                type="model",
+            )
+            model_artifact.add_file(model_path)
+            wandb.log_artifact(model_artifact)
 
     return model
 

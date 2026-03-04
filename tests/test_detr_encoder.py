@@ -1,5 +1,5 @@
 import torch
-from jormungandr.encoder import DETREncoder 
+from jormungandr.encoder import DETREncoder
 from jormungandr.embedder import DetrSinePositionEmbedding
 import pytest
 
@@ -17,7 +17,7 @@ import pytest
 )
 def test_detr_encoder_inference(batch_size, sequence_length, model_dimension):
     x = torch.randn(batch_size, sequence_length, model_dimension).to("cuda")
-    
+
     encoder = DETREncoder(model_name="facebook/detr-resnet-50").to("cuda")
 
     y = encoder(x)
@@ -35,10 +35,12 @@ def test_detr_encoder_inference_with_position_embedding():
     batch_size, model_dimension = 2, 256
     embedder_shape = (batch_size, 0, weidth, height)
     x = torch.randn(batch_size, sequence_length, model_dimension).to("cuda")
-    
-    embedder = DetrSinePositionEmbedding(num_position_features=model_dimension // 2).to("cuda")
+
+    embedder = DetrSinePositionEmbedding(num_position_features=model_dimension // 2).to(
+        "cuda"
+    )
     embedding = embedder(embedder_shape, device="cuda", dtype=x.dtype)
-    
+
     encoder = DETREncoder(model_name="facebook/detr-resnet-50").to("cuda")
 
     y_with_em = encoder(x, position_embedding=embedding)

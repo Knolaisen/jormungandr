@@ -11,7 +11,7 @@ from jormungandr.embedder import Embedder, DetrSinePositionEmbedding
 class Fafnir(nn.Module):
     def __init__(
         self,
-        backbone: Backbone,
+        backbone: Backbone = Backbone(),
         embedder: Embedder | None = None,
         encoder_type: str = "mamba",
         model_dimension: int = 256,
