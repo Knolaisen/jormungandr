@@ -1,0 +1,11 @@
+
+trainer:
+  epochs: 10
+  batch_size: 16
+  learning_rate: 1e-4
+  optimizer: "AdamW"
+  loss:
+    name: "ForObjectDetectionLoss"
+    class_cost: 1.0
+    bbox_cost: 5.0
+    giou_cost: 2.0  

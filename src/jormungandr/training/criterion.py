@@ -1,6 +1,7 @@
 # taken from https://github.com/huggingface/transformers/blob/main/src/transformers/loss/loss_for_object_detection.py
 import torch
 from torch import nn
+from torchvision.ops import complete_box_iou
 from scipy.optimize import linear_sum_assignment
 from transformers.image_transforms import center_to_corners_format
 from transformers.loss.loss_for_object_detection import (
@@ -10,7 +11,7 @@ from transformers.loss.loss_for_object_detection import (
 )
 
 
-def ForObjectDetectionLoss(
+def CIoULoss(
     logits,
     labels,
     device,
@@ -21,7 +22,7 @@ def ForObjectDetectionLoss(
     **kwargs,
 ):
     # First: create the matcher
-    matcher = HungarianMatcher(
+    matcher = HungarianMatcherWithCIoU(
         class_cost=config.class_cost,
         bbox_cost=config.bbox_cost,
         giou_cost=config.giou_cost,
@@ -57,7 +58,7 @@ def ForObjectDetectionLoss(
     return loss, loss_dict, auxiliary_outputs
 
 
-class HungarianMatcher(nn.Module):
+class HungarianMatcherWithCIoU(nn.Module):
     """
     This class computes an assignment between the targets and the predictions of the network.
 
@@ -127,7 +128,7 @@ class HungarianMatcher(nn.Module):
         bbox_cost = torch.cdist(out_bbox, target_bbox, p=1)
 
         # Compute the giou cost between boxes
-        giou_cost = -generalized_box_iou(
+        giou_cost = -complete_box_iou(
             center_to_corners_format(out_bbox), center_to_corners_format(target_bbox)
         )
 
