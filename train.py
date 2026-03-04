@@ -2,7 +2,6 @@ import wandb
 
 from jormungandr.config.configuration import (
     load_config,
-    Config,
     WANDB_API_KEY,
     WANDB_PROJECT,
     WANDB_ENTITY,

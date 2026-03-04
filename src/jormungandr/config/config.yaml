@@ -1,7 +1,7 @@
 
 trainer:
-  epochs: 10
-  batch_size: 16
+  epochs: 1
+  batch_size: 32
   learning_rate: 1e-4
   optimizer: "AdamW"
   log_interval: 10
