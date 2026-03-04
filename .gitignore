@@ -258,3 +258,4 @@ Thumbs.db
 
 slurm_outputs/
 data/
+wandb/
