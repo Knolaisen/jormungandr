@@ -107,7 +107,7 @@ def train_one_epoch(
     criterion: nn.Module | Callable,
     device: torch.device | str,
     config: Config = CONFIG,
-):
+) -> float:
     model.train(True)
 
     running_loss = 0.0
@@ -197,4 +197,4 @@ def run_validation(
             }
         )
     average_val_loss = running_val_loss / (i + 1)
-    return average_val_loss
+    return average_val_loss.item()
