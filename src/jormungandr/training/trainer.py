@@ -27,6 +27,7 @@ import torch
 from torch.utils.data import DataLoader
 from torch import nn, optim
 from torch.optim import AdamW, Optimizer
+from torch.nn.utils import clip_grad_norm_
 from datetime import datetime
 
 from jormungandr.config.configuration import Config, load_config
@@ -133,13 +134,14 @@ def train_one_epoch(
         )
         # Backward pass and optimize
         loss.backward()
+        clip_grad_norm_(model.parameters(), max_norm=1.0)
         optimizer.step()
 
         wandb.log(
             {
                 "batch/batch_loss": loss.item(),
                 **{f"batch/loss/{k}": v for k, v in loss_dict.items()},
-                **{f"batch/aux/{k}": v for k, v in auxiliary_outputs.items()},
+                # **{f"batch/aux/{k}": v for k, v in auxiliary_outputs.items()},
             }
         )
 
