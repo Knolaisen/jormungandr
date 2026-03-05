@@ -20,7 +20,7 @@ It shall use:
 *
 """
 
-from tqdm import trange
+from tqdm import tqdm, trange
 from typing import Callable
 import wandb
 import torch
@@ -107,7 +107,9 @@ def train_one_epoch(
     running_loss = 0.0
     last_loss = 0.0
 
-    for i, data in enumerate(dataloader):
+    for i, data in tqdm(
+        enumerate(dataloader), desc="Batches", unit="batch", leave=False
+    ):
         pixel_values, pixel_mask, labels = (
             data["pixel_values"],
             data["pixel_mask"],
