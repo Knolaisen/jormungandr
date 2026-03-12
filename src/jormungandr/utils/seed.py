@@ -1,3 +1,7 @@
+"""
+Read about reproducibility in PyTorch: https://docs.pytorch.org/docs/stable/notes/randomness.html
+"""
+
 import os
 import random
 
