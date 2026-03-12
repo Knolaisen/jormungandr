@@ -4,6 +4,8 @@ from torch.utils.data import DataLoader
 from datasets import load_dataset
 import torch
 
+from jormungandr.utils.seed import build_torch_generator, seed_worker
+
 model_name = "facebook/detr-resnet-50"
 image_processor = DetrImageProcessor.from_pretrained(model_name)
 
@@ -69,6 +71,7 @@ def create_dataloaders(
     dataset_name: str = "detection-datasets/coco",
     cache_dir: str = "../data/",
     batch_size: int = 32,
+    seed: int = 42,
     shuffle: bool = True,
     collate_fn: Callable = _collate_fn,
 ) -> tuple[DataLoader, DataLoader]:
@@ -76,12 +79,16 @@ def create_dataloaders(
 
     torch_train_ds = ds["train"].with_format("torch")
     torch_val_ds = ds["val"].with_format("torch")
+    train_generator = build_torch_generator(seed)
+    val_generator = build_torch_generator(seed + 1)
 
     train_loader = DataLoader(
         torch_train_ds,
         batch_size=batch_size,
         shuffle=shuffle,
         collate_fn=collate_fn,
+        worker_init_fn=seed_worker,
+        generator=train_generator,
         num_workers=4,  # try 4, 8, maybe 12 depending on CPU
         pin_memory=True,
         persistent_workers=True,  # keeps workers alive between epochs
@@ -93,6 +100,8 @@ def create_dataloaders(
         batch_size=batch_size,
         shuffle=False,
         collate_fn=collate_fn,
+        worker_init_fn=seed_worker,
+        generator=val_generator,
         num_workers=4,
         pin_memory=True,
         persistent_workers=True,

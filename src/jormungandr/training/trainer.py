@@ -53,7 +53,8 @@ def train(
     model = Fafnir(encoder_type=config.fafnir.encoder.type).to(device)
     wandb.watch(model, log="all", log_freq=100)
     training_loader, validation_loader = create_dataloaders(
-        batch_size=config.trainer.batch_size
+        batch_size=config.trainer.batch_size,
+        seed=config.trainer.seed,
     )
 
     EPOCHS = config.trainer.epochs
