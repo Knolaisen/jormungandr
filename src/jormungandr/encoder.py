@@ -39,6 +39,7 @@ class MambaEncoder(nn.Module, Encoder):
                 for _ in range(self.num_layers)
             ]
         )
+        self.norm = nn.RMSNorm(model_dimension)
 
     def forward(self, x: Tensor, position_embedding: Tensor | None = None) -> Tensor:
         """
@@ -50,7 +51,7 @@ class MambaEncoder(nn.Module, Encoder):
 
         for layer in self.layers:
             x = x + position_embedding if position_embedding is not None else x
-            x = layer(x)
+            x = layer(self.norm(x))
         return x
 
 
