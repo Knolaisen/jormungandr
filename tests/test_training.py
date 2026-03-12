@@ -2,7 +2,7 @@ from torch.utils.data import DataLoader
 from datasets.load import load_dataset
 import pytest
 import torch
-from torch.optim import AdamW, Optimizer
+from torch.optim import AdamW
 
 
 from jormungandr.config.configuration import load_config

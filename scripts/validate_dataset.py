@@ -1,6 +1,6 @@
 from jormungandr.dataset import create_dataloaders
 import torch
-from tqdm import tqdm, trange
+from tqdm import tqdm
 
 train_loader, val_loader = create_dataloaders()
 
