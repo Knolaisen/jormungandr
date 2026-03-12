@@ -59,15 +59,18 @@ def train(
 
     EPOCHS = config.trainer.epochs
     criterion = build_criterion(config.trainer.loss.name)
-    # optimizer = build_optimizer(config.trainer.optimizer)
-    optimizer = AdamW(model.parameters(), lr=config.trainer.learning_rate)
+    optimizer = AdamW([
+        {"params": model.encoder.parameters(), "lr": config.trainer.encoder_learning_rate},
+        {"params": model.decoder.parameters(), "lr": config.trainer.decoder_learning_rate},
+        {"params": model.output_head.parameters(), "lr": config.trainer.output_head_learning_rate},
+    ])
 
     best_val_loss = float("inf")
     for epoch in trange(EPOCHS, desc="Epochs", unit="epoch"):
         average_training_loss = train_one_epoch(
             model,
             training_loader,
-            optimizer,
+            optimizer, 
             criterion,
             device=device,
         )

@@ -3,7 +3,9 @@ trainer:
   epochs: 1
   batch_size: 40
   seed: 42
-  learning_rate: 1e-4
+  encoder_learning_rate: 1e-4
+  decoder_learning_rate: 1e-5
+  output_head_learning_rate: 1e-5
   optimizer: "AdamW"
   log_interval: 10
   loss:

@@ -63,8 +63,14 @@ class TrainerConfig(BaseModel):
         default=16, description="Batch size for training and validation"
     )
     seed: int = Field(default=42, description="Random seed for reproducible runs")
-    learning_rate: float = Field(
-        default=0.001, description="Learning rate for the optimizer"
+    encoder_learning_rate: float = Field(
+        default=0.001, description="Learning rate for the encoder optimizer"
+    )
+    decoder_learning_rate: float = Field(
+        default=0.001, description="Learning rate for the decoder optimizer"
+    )
+    output_head_learning_rate: float = Field(
+        default=0.001, description="Learning rate for the output head optimizer"
     )
     optimizer: str = Field(
         default="Adam", description="Optimizer to use (e.g., 'Adam', 'SGD')"
