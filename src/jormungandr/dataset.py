@@ -16,16 +16,12 @@ def _collate_fn(batch):
     # build COCO-style annotations per image
     targets = []
     for item in batch:
-        boxes = item["objects"]["bbox"]  # (N, 4) xyxy
+        # (N, 4) COCO xywh = [x_min, y_min, width, height]
+        # Boxes: x, y, width, height
+        boxes = item["objects"]["bbox"]
         class_ids = item["objects"]["category"]  # (N,)
         areas = item["objects"].get("area", None)
         iscrowd = item["objects"].get("iscrowd", None)
-
-        # xyxy -> xywh
-        # x1, y1, x2, y2 = boxes_xyxy.unbind(dim=1)
-        # boxes_xywh = torch.stack([x1, y1, x2, y2], dim=1)
-        # boxes_xywh = torch.stack([x1, y1, x2 - x1, y2 - y1], dim=1)
-        # boxes_xywh = center_to_corners_format(boxes_xywh, input_format="xywh")
 
         annotations = []
         for i in range(boxes.shape[0]):
