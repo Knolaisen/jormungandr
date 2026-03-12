@@ -30,7 +30,7 @@ import wandb
 import torch
 from torch.utils.data import DataLoader
 from torch import nn, optim
-from torch.optim import AdamW, Optimizer
+from torch.optim import AdamW
 from torch.nn.utils import clip_grad_norm_
 from datetime import datetime
 
@@ -38,7 +38,6 @@ from jormungandr.config.configuration import Config, load_config
 from jormungandr.dataset import create_dataloaders
 from jormungandr.fafnir import Fafnir
 from jormungandr.training.criterion import build_criterion
-from jormungandr.training.optimizer import build_optimizer
 
 CONFIG = load_config("config.yaml")
 

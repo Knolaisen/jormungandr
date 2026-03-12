@@ -10,7 +10,9 @@ from torch import nn, Tensor
 
 
 class Backbone(nn.Module):
-    def __init__(self, model_name: str = "facebook/detr-resnet-50", freeze_backbone: bool = True):
+    def __init__(
+        self, model_name: str = "facebook/detr-resnet-50", freeze_backbone: bool = True
+    ):
         super(Backbone, self).__init__()
         self.backbone = DetrForObjectDetection.from_pretrained(
             model_name

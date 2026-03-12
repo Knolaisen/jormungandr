@@ -1,10 +1,7 @@
 import pytest
 from transformers.image_transforms import center_to_corners_format
 import torch
-from jormungandr.training.criterion import CIoULoss, GIoULoss
 from transformers.loss.loss_for_object_detection import (
-    HungarianMatcher,
-    ForObjectDetectionLoss as GIoULoss,
     generalized_box_iou,
 )
 
@@ -33,6 +30,7 @@ def test_bounding_box_out_of_image(pred_boxes):
         [[0.5, 0.5, 0.2, 0.2]]
     )  # (x_center, y_center, width, height)
 
-    giou_cost = -generalized_box_iou(
+    # Act
+    generalized_box_iou(
         center_to_corners_format(pred_boxes), center_to_corners_format(target_boxes)
     )
