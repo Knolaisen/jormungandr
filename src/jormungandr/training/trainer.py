@@ -132,6 +132,23 @@ def train_one_epoch(
             pred_boxes=bbox_coordinates,
             config=CONFIG.trainer.loss,
         )
+
+        if (bbox_coordinates < 0).any():
+            print("Warning: Predicted boxes have negative coordinates. This may indicate an issue with the predicted boxes.")
+            print("Predicted boxes:", bbox_coordinates)
+
+        if (bbox_coordinates > 1).any():
+            print("Warning: Predicted boxes have coordinates greater than 1. This may indicate an issue with the predicted boxes.")
+            print("Predicted boxes:", bbox_coordinates)
+
+        if (bbox_coordinates.isnan()).any():
+            print("Warning: Predicted boxes contain NaN values. This may indicate an issue with the predicted boxes.")
+            print("Predicted boxes:", bbox_coordinates)
+
+        if (bbox_coordinates.isinf()).any():
+            print("Warning: Predicted boxes contain Inf values. This may indicate an issue with the predicted boxes.")
+            print("Predicted boxes:", bbox_coordinates)
+        
         # Backward pass and optimize
         loss.backward()
         clip_grad_norm_(model.parameters(), max_norm=1.0)
