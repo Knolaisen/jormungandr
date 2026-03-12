@@ -78,9 +78,24 @@ def create_dataloaders(
     torch_val_ds = ds["val"].with_format("torch")
 
     train_loader = DataLoader(
-        torch_train_ds, batch_size=batch_size, shuffle=shuffle, collate_fn=collate_fn
+        torch_train_ds,
+        batch_size=batch_size,
+        shuffle=shuffle,
+        collate_fn=collate_fn,
+        num_workers=4,  # try 4, 8, maybe 12 depending on CPU
+        pin_memory=True,
+        persistent_workers=True,  # keeps workers alive between epochs
+        prefetch_factor=2,  # tune upward if needed
     )
+
     val_loader = DataLoader(
-        torch_val_ds, batch_size=batch_size, shuffle=False, collate_fn=collate_fn
+        torch_val_ds,
+        batch_size=batch_size,
+        shuffle=False,
+        collate_fn=collate_fn,
+        num_workers=4,
+        pin_memory=True,
+        persistent_workers=True,
+        prefetch_factor=2,
     )
     return train_loader, val_loader

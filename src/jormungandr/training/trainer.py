@@ -138,21 +138,29 @@ def train_one_epoch(
         )
 
         if (bbox_coordinates < 0).any():
-            print("Warning: Predicted boxes have negative coordinates. This may indicate an issue with the predicted boxes.")
+            print(
+                "Warning: Predicted boxes have negative coordinates. This may indicate an issue with the predicted boxes."
+            )
             print("Predicted boxes:", bbox_coordinates)
 
         if (bbox_coordinates > 1).any():
-            print("Warning: Predicted boxes have coordinates greater than 1. This may indicate an issue with the predicted boxes.")
+            print(
+                "Warning: Predicted boxes have coordinates greater than 1. This may indicate an issue with the predicted boxes."
+            )
             print("Predicted boxes:", bbox_coordinates)
 
         if (bbox_coordinates.isnan()).any():
-            print("Warning: Predicted boxes contain NaN values. This may indicate an issue with the predicted boxes.")
+            print(
+                "Warning: Predicted boxes contain NaN values. This may indicate an issue with the predicted boxes."
+            )
             print("Predicted boxes:", bbox_coordinates)
 
         if (bbox_coordinates.isinf()).any():
-            print("Warning: Predicted boxes contain Inf values. This may indicate an issue with the predicted boxes.")
+            print(
+                "Warning: Predicted boxes contain Inf values. This may indicate an issue with the predicted boxes."
+            )
             print("Predicted boxes:", bbox_coordinates)
-        
+
         # Backward pass and optimize
         loss.backward()
         clip_grad_norm_(model.parameters(), max_norm=1.0)
@@ -191,9 +199,12 @@ def run_validation(
             batch["pixel_mask"],
             batch["labels"],
         )
-        pixel_values = pixel_values.to(device)
-        pixel_mask = pixel_mask.to(device)
-        labels = [{k: v.to(device) for k, v in label.items()} for label in labels]
+        pixel_values = pixel_values.to(device, non_blocking=True)
+        pixel_mask = pixel_mask.to(device, non_blocking=True)
+        labels = [
+            {k: v.to(device, non_blocking=True) for k, v in label.items()}
+            for label in labels
+        ]
 
         class_labels, bbox_coordinates = model.forward(pixel_values)
 
