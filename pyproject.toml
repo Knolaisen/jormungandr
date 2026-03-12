@@ -24,6 +24,7 @@ dependencies = [
     "timm>=1.0.25",
     "datasets>=4.6.1",
     "scipy>=1.17.1",
+    "accelerate>=1.13.0",
 ]
 
 [tool.uv]
@@ -52,6 +53,11 @@ explicit = true
 name = "pytorch-cpu"
 url = "https://download.pytorch.org/whl/cpu"
 explicit = true
+
+[tool.pytest.ini_options]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+]
 
 [project.scripts]
 jormungandr = "jormungandr:main"
