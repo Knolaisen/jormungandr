@@ -9,28 +9,28 @@
       
       
       
-        <link rel="prev" href="../../../developer_setup/">
+        <link rel="prev" href="../dataset/">
       
       
-        <link rel="next" href="backbone/">
+        <link rel="next" href="../embedder/">
       
       
         
       
       
-      <link rel="icon" href="../../../assets/images/favicon.png">
+      <link rel="icon" href="../../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
     
     
       
-        <title>jormungandr - jormungandr</title>
+        <title>detr_decoder - jormungandr</title>
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -49,9 +49,9 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../../../assets/_mkdocstrings.css">
     
-    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#src.jormungandr" class="md-skip">
+        <a href="#src.jormungandr.detr_decoder" class="md-skip">
           Skip to content
         </a>
       
@@ -92,7 +92,7 @@
 
 <header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../.." title="jormungandr" class="md-header__button md-logo" aria-label="jormungandr" data-md-component="logo">
+    <a href="../../../.." title="jormungandr" class="md-header__button md-logo" aria-label="jormungandr" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.19 14.19 6 18l3.81-8.19L18 6m-6-4A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2m0 8.9a1.1 1.1 0 0 0-1.1 1.1 1.1 1.1 0 0 0 1.1 1.1 1.1 1.1 0 0 0 1.1-1.1 1.1 1.1 0 0 0-1.1-1.1"/></svg>
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              jormungandr
+              detr_decoder
             
           </span>
         </div>
@@ -222,7 +222,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../.." class="md-tabs__link">
+      <a href="../../../.." class="md-tabs__link">
         
   
   
@@ -241,7 +241,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../architectural_design/" class="md-tabs__link">
+      <a href="../../../../architectural_design/" class="md-tabs__link">
         
   
   
@@ -260,7 +260,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../developer_setup/" class="md-tabs__link">
+      <a href="../../../../developer_setup/" class="md-tabs__link">
         
   
   
@@ -301,7 +301,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="./" class="md-tabs__link">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -349,7 +349,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../.." title="jormungandr" class="md-nav__button md-logo" aria-label="jormungandr" data-md-component="logo">
+    <a href="../../../.." title="jormungandr" class="md-nav__button md-logo" aria-label="jormungandr" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.19 14.19 6 18l3.81-8.19L18 6m-6-4A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2m0 8.9a1.1 1.1 0 0 0-1.1 1.1 1.1 1.1 0 0 0 1.1 1.1 1.1 1.1 0 0 0 1.1-1.1 1.1 1.1 0 0 0-1.1-1.1"/></svg>
@@ -367,7 +367,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../.." class="md-nav__link">
+      <a href="../../../.." class="md-nav__link">
         
   
   
@@ -394,7 +394,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../architectural_design/" class="md-nav__link">
+      <a href="../../../../architectural_design/" class="md-nav__link">
         
   
   
@@ -421,7 +421,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../developer_setup/" class="md-nav__link">
+      <a href="../../../../developer_setup/" class="md-nav__link">
         
   
   
@@ -604,7 +604,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="./" class="md-nav__link md-nav__link--active">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -622,7 +622,7 @@
             </a>
             
               
-              <label class="md-nav__link md-nav__link--active" for="__nav_4_1_1" id="__nav_4_1_1_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_4_1_1" id="__nav_4_1_1_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
@@ -648,7 +648,7 @@
   
   
     <li class="md-nav__item">
-      <a href="backbone/" class="md-nav__link">
+      <a href="../backbone/" class="md-nav__link">
         
   
   
@@ -676,7 +676,7 @@
   
   
     <li class="md-nav__item">
-      <a href="dataset/" class="md-nav__link">
+      <a href="../dataset/" class="md-nav__link">
         
   
   
@@ -701,10 +701,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="detr_decoder/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    detr_decoder
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -720,6 +747,93 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#src.jormungandr.detr_decoder.DETRDecoder" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;DETRDecoder
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" DETRDecoder">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#src.jormungandr.detr_decoder.DETRDecoder.forward" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;forward
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" forward">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#src.jormungandr.detr_decoder.DETRDecoder.forward(encoder_output)" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;encoder_output
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#src.jormungandr.detr_decoder.DETRDecoder.forward(position_embedding)" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;position_embedding
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#src.jormungandr.detr_decoder.DETRDecoder.forward(decoder_inputs_embeds)" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;decoder_inputs_embeds
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -732,7 +846,7 @@
   
   
     <li class="md-nav__item">
-      <a href="embedder/" class="md-nav__link">
+      <a href="../embedder/" class="md-nav__link">
         
   
   
@@ -760,7 +874,7 @@
   
   
     <li class="md-nav__item">
-      <a href="encoder/" class="md-nav__link">
+      <a href="../encoder/" class="md-nav__link">
         
   
   
@@ -788,7 +902,7 @@
   
   
     <li class="md-nav__item">
-      <a href="fafnir/" class="md-nav__link">
+      <a href="../fafnir/" class="md-nav__link">
         
   
   
@@ -816,7 +930,7 @@
   
   
     <li class="md-nav__item">
-      <a href="output_head/" class="md-nav__link">
+      <a href="../output_head/" class="md-nav__link">
         
   
   
@@ -871,7 +985,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="training/" class="md-nav__link ">
+            <a href="../training/" class="md-nav__link ">
               
   
   
@@ -915,7 +1029,7 @@
   
   
     <li class="md-nav__item">
-      <a href="training/criterion/" class="md-nav__link">
+      <a href="../training/criterion/" class="md-nav__link">
         
   
   
@@ -943,7 +1057,7 @@
   
   
     <li class="md-nav__item">
-      <a href="training/optimizer/" class="md-nav__link">
+      <a href="../training/optimizer/" class="md-nav__link">
         
   
   
@@ -971,7 +1085,7 @@
   
   
     <li class="md-nav__item">
-      <a href="training/trainer/" class="md-nav__link">
+      <a href="../training/trainer/" class="md-nav__link">
         
   
   
@@ -1032,7 +1146,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="utils/" class="md-nav__link ">
+            <a href="../utils/" class="md-nav__link ">
               
   
   
@@ -1076,7 +1190,7 @@
   
   
     <li class="md-nav__item">
-      <a href="utils/debug_utils/" class="md-nav__link">
+      <a href="../utils/debug_utils/" class="md-nav__link">
         
   
   
@@ -1104,7 +1218,7 @@
   
   
     <li class="md-nav__item">
-      <a href="utils/seed/" class="md-nav__link">
+      <a href="../utils/seed/" class="md-nav__link">
         
   
   
@@ -1176,6 +1290,81 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#src.jormungandr.detr_decoder.DETRDecoder" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;DETRDecoder
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" DETRDecoder">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#src.jormungandr.detr_decoder.DETRDecoder.forward" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;forward
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" forward">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#src.jormungandr.detr_decoder.DETRDecoder.forward(encoder_output)" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;encoder_output
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#src.jormungandr.detr_decoder.DETRDecoder.forward(position_embedding)" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;position_embedding
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#src.jormungandr.detr_decoder.DETRDecoder.forward(decoder_inputs_embeds)" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;decoder_inputs_embeds
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1199,7 +1388,7 @@
   
   
     <li class="md-path__item">
-      <a href="../../.." class="md-path__link">
+      <a href="../../../.." class="md-path__link">
         
   <span class="md-ellipsis">
     Jormungandr: End-to-End Video Object Detection with Spatial-Temporal Mamba
@@ -1227,7 +1416,7 @@
     
     
       <li class="md-path__item">
-        <a href="./" class="md-path__link">
+        <a href="../" class="md-path__link">
           
   <span class="md-ellipsis">
     Reference
@@ -1256,7 +1445,7 @@
     
     
       <li class="md-path__item">
-        <a href="./" class="md-path__link">
+        <a href="../" class="md-path__link">
           
   <span class="md-ellipsis">
     Src
@@ -1277,7 +1466,7 @@
     
     
       <li class="md-path__item">
-        <a href="./" class="md-path__link">
+        <a href="../" class="md-path__link">
           
   <span class="md-ellipsis">
     jormungandr
@@ -1303,8 +1492,8 @@
 
 
 
-<h1 id="src.jormungandr" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-module"></code>            <span class="doc doc-object-name doc-module-name">src.jormungandr</span>
+<h1 id="src.jormungandr.detr_decoder" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-module"></code>            <span class="doc doc-object-name doc-module-name">src.jormungandr.detr_decoder</span>
 
 
 </h1>
@@ -1316,55 +1505,20 @@
 
 
 
-<p><span class="doc-section-title">Modules:</span></p>
+
+
+
+
+<p><span class="doc-section-title">Classes:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-module&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-module-name&quot;&gt;src.jormungandr.backbone&lt;/span&gt;" href="backbone/#src.jormungandr.backbone">backbone</a></code></b>
-          –
-          <div class="doc-md-description">
-            <p>Wrapper around backbone models.</p>
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-module&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-module-name&quot;&gt;src.jormungandr.detr_decoder&lt;/span&gt;" href="detr_decoder/#src.jormungandr.detr_decoder">detr_decoder</a></code></b>
-          –
-          <div class="doc-md-description">
-            
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-module&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-module-name&quot;&gt;src.jormungandr.embedder&lt;/span&gt;" href="embedder/#src.jormungandr.embedder">embedder</a></code></b>
-          –
-          <div class="doc-md-description">
-            
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-module&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-module-name&quot;&gt;src.jormungandr.encoder&lt;/span&gt;" href="encoder/#src.jormungandr.encoder">encoder</a></code></b>
-          –
-          <div class="doc-md-description">
-            
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-module&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-module-name&quot;&gt;src.jormungandr.output_head&lt;/span&gt;" href="output_head/#src.jormungandr.output_head">output_head</a></code></b>
-          –
-          <div class="doc-md-description">
-            
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-module&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-module-name&quot;&gt;src.jormungandr.training&lt;/span&gt;" href="training/#src.jormungandr.training">training</a></code></b>
+          <b><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;DETRDecoder&lt;/span&gt; (&lt;code&gt;src.jormungandr.detr_decoder.DETRDecoder&lt;/code&gt;)" href="#src.jormungandr.detr_decoder.DETRDecoder">DETRDecoder</a></code></b>
           –
           <div class="doc-md-description">
             
           </div>
         </li>
     </ul>
-
-
-
-
 
 
 
@@ -1381,6 +1535,238 @@
 
 
 
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="src.jormungandr.detr_decoder.DETRDecoder" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">DETRDecoder</span>
+
+
+</h2>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">DETRDecoder</span><span class="p">(</span><span class="n">num_queries</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;facebook/detr-resnet-50&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="torch.nn.Module">Module</span></code></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p><span class="doc-section-title">Methods:</span></p>
+    <ul>
+          <li class="doc-section-item field-body">
+            <b><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;forward&lt;/span&gt; (&lt;code&gt;src.jormungandr.detr_decoder.DETRDecoder.forward&lt;/code&gt;)" href="#src.jormungandr.detr_decoder.DETRDecoder.forward">forward</a></code></b>
+            –
+            <div class="doc-md-description">
+              <p>Args:</p>
+            </div>
+          </li>
+    </ul>
+
+
+
+                  <details class="mkdocstrings-source">
+                    <summary>Source code in <code>src/jormungandr/detr_decoder.py</code></summary>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">num_queries</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">hidden_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span>
+    <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;facebook/detr-resnet-50&quot;</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">DETRDecoder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">num_queries</span> <span class="o">=</span> <span class="n">num_queries</span>
+
+    <span class="k">if</span> <span class="n">num_queries</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">query_position_embeddings</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="n">num_queries</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">query_position_embeddings</span> <span class="o">=</span> <span class="n">DetrForObjectDetection</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
+            <span class="n">model_name</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">query_position_embeddings</span>
+
+    <span class="c1"># Additional layers can be added here</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span> <span class="o">=</span> <span class="n">DetrForObjectDetection</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">decoder</span>
+</code></pre></div></td></tr></table></div>
+                  </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="src.jormungandr.detr_decoder.DETRDecoder.forward" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">forward</span>
+
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">forward</span><span class="p">(</span><span class="n">encoder_output</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">position_embedding</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">encoder_mask_flattened</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">decoder_inputs_embeds</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">decoder_attention_mask</span><span class="p">:</span> <span class="n">FloatTensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+<h4 id="src.jormungandr.detr_decoder.DETRDecoder.forward(encoder_output)" class="doc doc-heading doc-heading-parameter">              <b><code>encoder_output</code></b>
+</h4>              (<code><span title="torch.Tensor">Tensor</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>Tensor of shape (batch_size, sequence_length, hidden_dim)</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="src.jormungandr.detr_decoder.DETRDecoder.forward(position_embedding)" class="doc doc-heading doc-heading-parameter">              <b><code>position_embedding</code></b>
+</h4>              (<code><span title="torch.Tensor">Tensor</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>Tensor of shape (batch_size, sequence_length, hidden_dim)</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="src.jormungandr.detr_decoder.DETRDecoder.forward(decoder_inputs_embeds)" class="doc doc-heading doc-heading-parameter">              <b><code>decoder_inputs_embeds</code></b>
+</h4>              (<code><span title="torch.Tensor">Tensor</span> | None</code>, default:
+                  <code>None</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Optional tensor of shape (batch_size, num_queries, hidden_dim)</p>
+          </div>
+        </li>
+    </ul>
+        <p>Returns:
+    Tensor of shape (batch_size, num_queries, hidden_dim)</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/jormungandr/detr_decoder.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">encoder_output</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">position_embedding</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">encoder_mask_flattened</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">decoder_inputs_embeds</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">decoder_attention_mask</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        encoder_output: Tensor of shape (batch_size, sequence_length, hidden_dim)</span>
+<span class="sd">        position_embedding: Tensor of shape (batch_size, sequence_length, hidden_dim)</span>
+<span class="sd">        decoder_inputs_embeds: Optional tensor of shape (batch_size, num_queries, hidden_dim)</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Tensor of shape (batch_size, num_queries, hidden_dim)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">batch_size</span> <span class="o">=</span> <span class="n">encoder_output</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">object_queries_position_embeddings</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">query_position_embeddings</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="c1"># Use decoder_inputs_embeds as queries if provided, otherwise initialize with zeros</span>
+    <span class="k">if</span> <span class="n">decoder_inputs_embeds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">queries</span> <span class="o">=</span> <span class="n">decoder_inputs_embeds</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">queries</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">object_queries_position_embeddings</span><span class="p">)</span>
+
+    <span class="n">decoder_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span>
+        <span class="n">inputs_embeds</span><span class="o">=</span><span class="n">queries</span><span class="p">,</span>
+        <span class="n">encoder_hidden_states</span><span class="o">=</span><span class="n">encoder_output</span><span class="p">,</span>
+        <span class="n">spatial_position_embeddings</span><span class="o">=</span><span class="n">position_embedding</span><span class="p">,</span>
+        <span class="n">object_queries_position_embeddings</span><span class="o">=</span><span class="n">object_queries_position_embeddings</span><span class="p">,</span>
+        <span class="n">attention_mask</span><span class="o">=</span><span class="n">decoder_attention_mask</span><span class="p">,</span>
+        <span class="n">encoder_attention_mask</span><span class="o">=</span><span class="n">encoder_mask_flattened</span><span class="p">,</span>
+    <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">decoder_output</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
 
 
 
@@ -1430,7 +1816,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../../../developer_setup/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Developer Setup">
+          <a href="../dataset/" class="md-footer__link md-footer__link--prev" aria-label="Previous: dataset">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1440,20 +1826,20 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                Developer Setup
+                dataset
               </div>
             </div>
           </a>
         
         
           
-          <a href="backbone/" class="md-footer__link md-footer__link--next" aria-label="Next: backbone">
+          <a href="../embedder/" class="md-footer__link md-footer__link--next" aria-label="Next: embedder">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                backbone
+                embedder
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -1492,10 +1878,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.progress", "navigation.path", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../../..", "features": ["content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.progress", "navigation.path", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>
