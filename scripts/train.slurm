@@ -5,7 +5,8 @@
 #SBATCH --partition=GPUQ
 #SBATCH --mem=40GB
 #SBATCH --cpus-per-task=4
-#SBATCH --gres=gpu:1
+# Increase this when you want more than one GPU for distributed training.
+#SBATCH --gres=gpu:2
 #SBATCH --nodes=1
 #SBATCH --constraint="(a100)&(gpu80g)"
 #SBATCH --output=slurm_outputs/output_master.txt
@@ -27,7 +28,26 @@ pip install uv --user
 
 uv sync
 
-# Run the Python script
-uv run python train.py
+if [ -n "${CUDA_VISIBLE_DEVICES:-}" ]; then
+    OLD_IFS=$IFS
+    IFS=','
+    set -- $CUDA_VISIBLE_DEVICES
+    IFS=$OLD_IFS
+    NUM_PROCESSES=$#
+else
+    NUM_PROCESSES=${SLURM_GPUS_ON_NODE:-1}
+fi
+
+echo "Launching training with ${NUM_PROCESSES} process(es)"
+
+if [ "${NUM_PROCESSES}" -gt 1 ]; then
+    uv run accelerate launch \
+        --multi_gpu \
+        --num_processes "${NUM_PROCESSES}" \
+        --num_machines 1 \
+        train.py
+else
+    uv run accelerate launch --num_processes 1 train.py
+fi
 
 echo "Job finished"
