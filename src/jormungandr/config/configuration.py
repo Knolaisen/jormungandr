@@ -1,7 +1,9 @@
+import os
+from typing import Literal
+
+import yaml
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
-import os
-import yaml
 
 CONFIG_PATH = os.path.dirname(__file__)
 
@@ -57,6 +59,12 @@ class LossConfig(BaseModel):
     )
 
 
+class AccelerateConfig(BaseModel):
+    mixed_precision: Literal["no", "fp16", "bf16"] = Field(
+        default="no", description="Mixed precision mode for distributed training"
+    )
+
+
 class TrainerConfig(BaseModel):
     epochs: int = Field(default=5, description="Number of training epochs")
     batch_size: int = Field(
@@ -72,8 +80,29 @@ class TrainerConfig(BaseModel):
     log_interval: int = Field(
         default=10, description="Interval (in batches) for logging training progress"
     )
+    num_workers: int = Field(
+        default=4, ge=0, description="Number of workers per dataloader process"
+    )
+    pin_memory: bool = Field(
+        default=True, description="Whether dataloaders should pin host memory"
+    )
+    persistent_workers: bool = Field(
+        default=True, description="Keep dataloader workers alive between epochs"
+    )
+    prefetch_factor: int = Field(
+        default=2,
+        ge=1,
+        description="How many batches each worker should prefetch ahead of time",
+    )
+    gradient_clip_norm: float = Field(
+        default=1.0, gt=0, description="Gradient clipping threshold"
+    )
     loss: LossConfig = Field(
         default_factory=LossConfig, description="Configuration for the loss function"
+    )
+    accelerate: AccelerateConfig = Field(
+        default_factory=AccelerateConfig,
+        description="Configuration for Hugging Face Accelerate",
     )
 
 

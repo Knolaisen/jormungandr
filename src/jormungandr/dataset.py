@@ -73,6 +73,10 @@ def create_dataloaders(
     batch_size: int = 32,
     seed: int = 42,
     shuffle: bool = True,
+    num_workers: int = 4,
+    pin_memory: bool = True,
+    persistent_workers: bool = True,
+    prefetch_factor: int = 2,
     collate_fn: Callable = _collate_fn,
 ) -> tuple[DataLoader, DataLoader]:
     ds = load_dataset(dataset_name, cache_dir=cache_dir)
@@ -81,30 +85,30 @@ def create_dataloaders(
     torch_val_ds = ds["val"].with_format("torch")
     train_generator = build_torch_generator(seed)
     val_generator = build_torch_generator(seed + 1)
+    loader_kwargs = {
+        "collate_fn": collate_fn,
+        "worker_init_fn": seed_worker,
+        "num_workers": num_workers,
+        "pin_memory": pin_memory,
+        "persistent_workers": persistent_workers and num_workers > 0,
+    }
+
+    if num_workers > 0:
+        loader_kwargs["prefetch_factor"] = prefetch_factor
 
     train_loader = DataLoader(
         torch_train_ds,
         batch_size=batch_size,
         shuffle=shuffle,
-        collate_fn=collate_fn,
-        worker_init_fn=seed_worker,
         generator=train_generator,
-        num_workers=4,  # try 4, 8, maybe 12 depending on CPU
-        pin_memory=True,
-        persistent_workers=True,  # keeps workers alive between epochs
-        prefetch_factor=2,  # tune upward if needed
+        **loader_kwargs,
     )
 
     val_loader = DataLoader(
         torch_val_ds,
         batch_size=batch_size,
         shuffle=False,
-        collate_fn=collate_fn,
-        worker_init_fn=seed_worker,
         generator=val_generator,
-        num_workers=4,
-        pin_memory=True,
-        persistent_workers=True,
-        prefetch_factor=2,
+        **loader_kwargs,
     )
     return train_loader, val_loader
