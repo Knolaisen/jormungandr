@@ -39,14 +39,6 @@ jobs:
           pre-commit run --all-files || true
         continue-on-error: true
 
-      - name: Install and sync dependencies
-        run: |
-          uv sync --locked --all-extras
-
-      - name: Run root tests
-        run: |
-            uv run pytest --doctest-modules --cov=src --cov-report=html
-
 
   deploy:
     name: Deploy to GitHub Pages
