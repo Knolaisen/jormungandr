@@ -3,20 +3,20 @@ from torch import nn, Tensor
 from transformers import DetrForObjectDetection
 
 from jormungandr.utils.model_fetcher import fetch_detr_model
+from jormungandr.config.configuration import DecoderConfig
 
 
 class DETRDecoder(nn.Module):
     def __init__(
         self,
-        num_queries: int | None = None,
-        hidden_dim: int = 16,
         model_name: str = "facebook/detr-resnet-50",
+        decoder_config: DecoderConfig = DecoderConfig(),
     ):
         super(DETRDecoder, self).__init__()
-        self.num_queries = num_queries
+        self.decoder_config = decoder_config
 
-        if num_queries is not None:
-            self.query_position_embeddings = nn.Embedding(num_queries, hidden_dim)
+        if self.decoder_config.num_queries is not None:
+            self.query_position_embeddings = nn.Embedding(self.decoder_config.num_queries, self.decoder_config.hidden_dim)
         else:
             self.query_position_embeddings = fetch_detr_model(
                 model_name
@@ -25,6 +25,10 @@ class DETRDecoder(nn.Module):
         # Additional layers can be added here
 
         self.decoder = fetch_detr_model(model_name).model.decoder
+
+        if self.decoder_config.freeze_decoder:
+            for param in self.decoder.parameters():
+                param.requires_grad = False
 
     def forward(
         self,

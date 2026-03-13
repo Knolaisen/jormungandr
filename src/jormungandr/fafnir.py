@@ -6,6 +6,8 @@ from jormungandr.detr_decoder import DETRDecoder
 from jormungandr.output_head import FCNNPredictionHead
 from jormungandr.backbone import Backbone
 from jormungandr.embedder import Embedder, DetrSinePositionEmbedding
+from jormungandr.config.configuration import FafnirConfig, DecoderConfig, EncoderConfig
+
 
 
 class Fafnir(nn.Module):
@@ -13,14 +15,13 @@ class Fafnir(nn.Module):
         self,
         backbone: Backbone = Backbone(),
         embedder: Embedder | None = None,
-        encoder_type: str = "mamba",
         model_dimension: int = 256,
         num_encoder_layers: int = 6,
         num_decoder_layers: int = 6,
         num_classes: int = 10,
-        num_queries: int | None = None,
         variant="fafnir-b",
         device: torch.device | str = "cuda",
+        config: FafnirConfig = FafnirConfig(),
     ):
         super(Fafnir, self).__init__()
         self.device = device
@@ -40,7 +41,7 @@ class Fafnir(nn.Module):
 
         # Encoder
         self.encoder = None
-        match encoder_type.lower():
+        match config.encoder.type.lower():
             case "mamba":
                 self.encoder = MambaEncoder(
                     model_dimension=model_dimension, num_layers=num_encoder_layers
@@ -48,14 +49,14 @@ class Fafnir(nn.Module):
             case "detr":
                 self.encoder = DETREncoder().to(device)
             case _:
-                raise ValueError(f"Unsupported encoder type: {encoder_type}")
+                raise ValueError(f"Unsupported encoder type: {config.encoder.type}")
 
         # TODO: Find if hidden dim is model dimension or something else
         self.decoder = DETRDecoder(
-            num_queries=num_queries, hidden_dim=model_dimension
+            decoder_config=config.decoder,
         ).to(device)
 
-        self.output_head = FCNNPredictionHead(model_name="facebook/detr-resnet-50").to(
+        self.output_head = FCNNPredictionHead().to(
             device
         )
 

@@ -82,6 +82,20 @@ class TrainerConfig(BaseModel):
         default_factory=LossConfig, description="Configuration for the loss function"
     )
 
+class DecoderConfig(BaseModel):
+    freeze_decoder: bool = Field(
+        default=False, description="Whether to freeze the decoder during training"
+    )
+    epoch_to_unfreeze_decoder: int = Field(
+        default=0,
+        description="Epoch number at which to unfreeze the decoder if it is initially frozen",
+    )
+    num_queries: int = Field(
+        default=None, description="Number of object queries for the decoder"
+    )
+    hidden_dim: int = Field(
+        default=256, description="Hidden dimension size for the decoder's query position embeddings"
+    )
 
 class EncoderConfig(BaseModel):
     type: str = Field(
@@ -99,6 +113,10 @@ class FafnirConfig(BaseModel):
     encoder: EncoderConfig = Field(
         default_factory=EncoderConfig,
         description="Configuration for the encoder used in Fafnir",
+    )
+    decoder: DecoderConfig = Field(
+        default_factory=DecoderConfig,
+        description="Configuration for the decoder used in Fafnir",
     )
 
 
