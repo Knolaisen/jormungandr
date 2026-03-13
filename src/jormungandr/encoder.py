@@ -17,8 +17,8 @@ class Encoder(Protocol):
 class MambaEncoder(nn.Module, Encoder):
     def __init__(
         self,
-        model_dimension: int = 16,
-        state_expansion_factor: int = 16,
+        model_dimension: int = 256,
+        hidden_state_dim: int = 16,
         num_layers: int = 6,
     ):
         super(MambaEncoder, self).__init__()
@@ -26,15 +26,15 @@ class MambaEncoder(nn.Module, Encoder):
             raise ValueError("num_layers cant be negative")
         if model_dimension < 1:
             raise ValueError("model_dimension must be at least 1")
-        if state_expansion_factor < 1:
-            raise ValueError("state_expansion_factor must be at least 1")
+        if hidden_state_dim < 1:
+            raise ValueError("hidden_state_dim must be at least 1")
 
         self.num_layers = num_layers
         self.layers = nn.ModuleList(
             [
                 Mamba(
                     d_model=model_dimension,
-                    d_state=state_expansion_factor,
+                    d_state=hidden_state_dim,
                 )
                 for _ in range(self.num_layers)
             ]

@@ -63,7 +63,7 @@ def test_mamba_encoder_with_invalid_dimension(model_dimension):
 @pytest.mark.parametrize("state_expansion_factor", [0, -16])
 def test_mamba_encoder_with_invalid_state_expansion_factor(state_expansion_factor):
     with pytest.raises(ValueError):
-        MambaEncoder(state_expansion_factor=state_expansion_factor)
+        MambaEncoder(hidden_state_dim=state_expansion_factor)
 
 
 @pytest.mark.parametrize("num_layers", [-1])
