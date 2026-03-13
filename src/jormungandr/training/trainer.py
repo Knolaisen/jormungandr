@@ -24,6 +24,8 @@ It shall use:
 *
 """
 
+from time import time
+
 from tqdm import tqdm, trange
 from typing import Callable
 import wandb
@@ -40,7 +42,7 @@ from jormungandr.fafnir import Fafnir
 from jormungandr.training.criterion import build_criterion
 
 CONFIG = load_config("config.yaml")
-
+MODELS_PATH = "models/"
 # Initializing in a separate cell so we can easily add more epochs to the same run
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
@@ -56,24 +58,34 @@ def train(
         seed=config.trainer.seed,
     )
 
-    EPOCHS = config.trainer.epochs
     criterion = build_criterion(config.trainer.loss.name)
-    optimizer = AdamW([
-        {"params": model.encoder.parameters(), "lr": config.trainer.encoder_learning_rate},
-        {"params": model.decoder.parameters(), "lr": config.trainer.decoder_learning_rate},
-        {"params": model.output_head.parameters(), "lr": config.trainer.output_head_learning_rate},
-    ])
+    optimizer = AdamW(
+        [
+            {
+                "params": model.encoder.parameters(),
+                "lr": config.trainer.encoder_learning_rate,
+            },
+            {
+                "params": model.decoder.parameters(),
+                "lr": config.trainer.decoder_learning_rate,
+            },
+            {
+                "params": model.output_head.parameters(),
+                "lr": config.trainer.output_head_learning_rate,
+            },
+        ]
+    )
 
     best_val_loss = float("inf")
-    for epoch in trange(EPOCHS, desc="Epochs", unit="epoch"):
+    for epoch in trange(config.trainer.epochs, desc="Epochs", unit="epoch"):
         average_training_loss = train_one_epoch(
             model,
             training_loader,
-            optimizer, 
+            optimizer,
             criterion,
             device=device,
         )
-        average_validation_loss = run_validation(
+        average_validation_loss, average_validation_time = run_validation(
             model,
             validation_loader,
             criterion,
@@ -84,13 +96,18 @@ def train(
             f"LOSS train {average_training_loss:.3f} valid {average_validation_loss:.3f}"
         )
         wandb.log(
-            {"train_loss": average_training_loss, "val_loss": average_validation_loss}
+            {
+                "train_loss": average_training_loss,
+                "val_loss": average_validation_loss,
+                "epoch": epoch,
+                "val_time": average_validation_time,
+            }
         )
 
         # Track best performance, and save the model's state
         if average_validation_loss < best_val_loss:
             best_val_loss = average_validation_loss
-            model_path = f"model_{best_val_loss:.3f}_{epoch}"
+            model_path = f"{MODELS_PATH}model_{best_val_loss:.3f}_{epoch}"
             torch.save(model.state_dict(), model_path)
 
             model_artifact = wandb.Artifact(
@@ -190,11 +207,12 @@ def run_validation(
     criterion: nn.Module | Callable,
     device: torch.device | str,
     config: Config = CONFIG,
-) -> float:
+) -> tuple[float, float]:
     running_val_loss = 0.0
     # Set the model to evaluation mode, disabling dropout and using population
     # statistics for batch normalization.
     model.eval()
+    times = []
 
     for i, batch in enumerate(validation_loader):
         pixel_values, pixel_mask, labels = (
@@ -209,7 +227,10 @@ def run_validation(
             for label in labels
         ]
 
+        start_time = time()
         class_labels, bbox_coordinates = model.forward(pixel_values)
+        end_time = time()
+        times.append(end_time - start_time)
 
         val_loss, loss_dict, auxiliary_outputs = criterion(
             logits=class_labels,
@@ -227,5 +248,7 @@ def run_validation(
                 # **{f"batch/aux/{k}": v for k, v in auxiliary_outputs.items()},
             }
         )
+
+    average_time = sum(times) / len(times)
     average_val_loss = running_val_loss / (i + 1)
-    return average_val_loss.item()
+    return average_val_loss.item(), average_time

@@ -2,6 +2,8 @@ import torch
 from torch import nn, Tensor
 from transformers import DetrForObjectDetection
 
+from jormungandr.utils.model_fetcher import fetch_detr_model
+
 
 class DETRDecoder(nn.Module):
     def __init__(
@@ -16,13 +18,13 @@ class DETRDecoder(nn.Module):
         if num_queries is not None:
             self.query_position_embeddings = nn.Embedding(num_queries, hidden_dim)
         else:
-            self.query_position_embeddings = DetrForObjectDetection.from_pretrained(
+            self.query_position_embeddings = fetch_detr_model(
                 model_name
             ).model.query_position_embeddings
 
         # Additional layers can be added here
 
-        self.decoder = DetrForObjectDetection.from_pretrained(model_name).model.decoder
+        self.decoder = fetch_detr_model(model_name).model.decoder
 
     def forward(
         self,

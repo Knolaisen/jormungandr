@@ -5,8 +5,9 @@ One should be able to swap out backbone to different models, e.g. ResNet, Swin, 
 """
 
 import torch
-from transformers import DetrForObjectDetection
 from torch import nn, Tensor
+
+from jormungandr.utils.model_fetcher import fetch_detr_model
 
 
 class Backbone(nn.Module):
@@ -14,12 +15,8 @@ class Backbone(nn.Module):
         self, model_name: str = "facebook/detr-resnet-50", freeze_backbone: bool = True
     ):
         super(Backbone, self).__init__()
-        self.backbone = DetrForObjectDetection.from_pretrained(
-            model_name
-        ).model.backbone
-        self.input_projection = DetrForObjectDetection.from_pretrained(
-            model_name
-        ).model.input_projection
+        self.backbone = fetch_detr_model(model_name).model.backbone
+        self.input_projection = fetch_detr_model(model_name).model.input_projection
         self.freeze_backbone = freeze_backbone
         if self.freeze_backbone:
             for param in self.backbone.parameters():
