@@ -85,7 +85,7 @@ def train(
             criterion,
             device=device,
         )
-        average_validation_loss = run_validation(
+        average_validation_loss, average_validation_time = run_validation(
             model,
             validation_loader,
             criterion,
@@ -100,6 +100,7 @@ def train(
                 "train_loss": average_training_loss,
                 "val_loss": average_validation_loss,
                 "epoch": epoch,
+                "val_time": average_validation_time,
             }
         )
 
