@@ -968,8 +968,6 @@
       
         
       
-        
-      
     
     
     
@@ -1057,34 +1055,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../training/optimizer/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    optimizer
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../training/trainer/" class="md-nav__link">
         
   
@@ -1125,6 +1095,8 @@
       
         
           
+        
+      
         
       
         
@@ -1198,6 +1170,34 @@
     
   
     debug_utils
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../utils/model_fetcher/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    model_fetcher
   
 
     
@@ -1545,7 +1545,7 @@
 
 
 </h2>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">DETRDecoder</span><span class="p">(</span><span class="n">num_queries</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;facebook/detr-resnet-50&#39;</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">DETRDecoder</span><span class="p">(</span><span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;facebook/detr-resnet-50&#39;</span><span class="p">,</span> <span class="n">decoder_config</span><span class="p">:</span> <span class="n">DecoderConfig</span> <span class="o">=</span> <span class="n">DecoderConfig</span><span class="p">())</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -1580,10 +1580,7 @@
 
                   <details class="mkdocstrings-source">
                     <summary>Source code in <code>src/jormungandr/detr_decoder.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">10</span>
 <span class="normal">11</span>
 <span class="normal">12</span>
 <span class="normal">13</span>
@@ -1598,25 +1595,34 @@
 <span class="normal">22</span>
 <span class="normal">23</span>
 <span class="normal">24</span>
-<span class="normal">25</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-    <span class="n">num_queries</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">hidden_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span>
     <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;facebook/detr-resnet-50&quot;</span><span class="p">,</span>
+    <span class="n">decoder_config</span><span class="p">:</span> <span class="n">DecoderConfig</span> <span class="o">=</span> <span class="n">DecoderConfig</span><span class="p">(),</span>
 <span class="p">):</span>
     <span class="nb">super</span><span class="p">(</span><span class="n">DETRDecoder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">num_queries</span> <span class="o">=</span> <span class="n">num_queries</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">decoder_config</span> <span class="o">=</span> <span class="n">decoder_config</span>
 
-    <span class="k">if</span> <span class="n">num_queries</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">query_position_embeddings</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="n">num_queries</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder_config</span><span class="o">.</span><span class="n">num_queries</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">query_position_embeddings</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decoder_config</span><span class="o">.</span><span class="n">num_queries</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder_config</span><span class="o">.</span><span class="n">hidden_dim</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">query_position_embeddings</span> <span class="o">=</span> <span class="n">DetrForObjectDetection</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">query_position_embeddings</span> <span class="o">=</span> <span class="n">fetch_detr_model</span><span class="p">(</span>
             <span class="n">model_name</span>
         <span class="p">)</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">query_position_embeddings</span>
 
     <span class="c1"># Additional layers can be added here</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span> <span class="o">=</span> <span class="n">DetrForObjectDetection</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">decoder</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span> <span class="o">=</span> <span class="n">fetch_detr_model</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">decoder</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder_config</span><span class="o">.</span><span class="n">freeze_decoder</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+            <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
 </code></pre></div></td></tr></table></div>
                   </details>
 
@@ -1683,13 +1689,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/jormungandr/detr_decoder.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">33</span>
 <span class="normal">34</span>
 <span class="normal">35</span>
 <span class="normal">36</span>
@@ -1718,7 +1718,13 @@
 <span class="normal">59</span>
 <span class="normal">60</span>
 <span class="normal">61</span>
-<span class="normal">62</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">encoder_output</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
     <span class="n">position_embedding</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
