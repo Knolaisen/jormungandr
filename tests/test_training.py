@@ -44,7 +44,7 @@ def test_run_validation(model):
     criterion = build_criterion(config.trainer.loss.name)
 
     # only use a few batches for testing
-    average_val_loss = run_validation(
+    average_val_loss, average_time = run_validation(
         model,
         val_loader,
         criterion,
