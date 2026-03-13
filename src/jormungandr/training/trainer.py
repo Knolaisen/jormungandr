@@ -82,12 +82,14 @@ def train(
             optimizer,
             criterion,
             device=device,
+            config=config,
         )
         average_validation_loss, average_validation_time = run_validation(
             model,
             validation_loader,
             criterion,
             device=device,
+            config=config,
         )
 
         wandb.log(
