@@ -4,6 +4,8 @@ from transformers import DetrForObjectDetection
 from torch import nn, Tensor
 import torch
 
+from jormungandr.utils.model_fetcher import fetch_detr_model
+
 
 class Encoder(Protocol):
     def forward(
@@ -58,7 +60,7 @@ class MambaEncoder(nn.Module, Encoder):
 class DETREncoder(nn.Module, Encoder):
     def __init__(self, model_name: str = "facebook/detr-resnet-50"):
         super(DETREncoder, self).__init__()
-        self.encoder = DetrForObjectDetection.from_pretrained(model_name).model.encoder
+        self.encoder = fetch_detr_model(model_name).model.encoder
 
         for layer in self.encoder.layers:
             layer.training = True
