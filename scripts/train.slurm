@@ -3,8 +3,8 @@
 #SBATCH --job-name="master-fafnir"
 #SBATCH --time=10:00:00
 #SBATCH --partition=GPUQ
-#SBATCH --mem=40GB
-#SBATCH --cpus-per-task=4
+#SBATCH --mem=80GB
+#SBATCH --cpus-per-task=6
 #SBATCH --gres=gpu:1
 #SBATCH --nodes=1
 #SBATCH --constraint="(a100)&(gpu80g)"

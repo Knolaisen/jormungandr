@@ -95,7 +95,7 @@ def create_dataloaders(
         persistent_workers=True,  # keeps workers alive between epochs
         prefetch_factor=2,  # tune upward if needed
     )
-
+    print(f"Num workers: {len(os.sched_getaffinity(0))}")
     val_loader = DataLoader(
         torch_val_ds,
         batch_size=batch_size,
