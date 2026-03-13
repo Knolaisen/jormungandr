@@ -56,7 +56,7 @@ def CIoULoss(
     loss_dict = criterion(outputs_loss, labels)
     # Fourth: compute total loss, as a weighted sum of the various losses
     weight_dict = {"loss_ce": 1, "loss_bbox": detr_config.bbox_loss_coefficient}
-    weight_dict["loss_giou"] = detr_config.giou_loss_coefficient
+    weight_dict["loss_ciou"] = detr_config.giou_loss_coefficient
     if detr_config.auxiliary_loss:
         aux_weight_dict = {}
         for i in range(detr_config.decoder_layers - 1):
