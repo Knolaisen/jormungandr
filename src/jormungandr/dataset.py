@@ -1,3 +1,4 @@
+import os
 from typing import Callable
 from transformers import DetrImageProcessor
 from torch.utils.data import DataLoader
@@ -89,7 +90,7 @@ def create_dataloaders(
         collate_fn=collate_fn,
         worker_init_fn=seed_worker,
         generator=train_generator,
-        num_workers=4,  # try 4, 8, maybe 12 depending on CPU
+        num_workers=len(os.sched_getaffinity(0)),  # try 4, 8, maybe 12 depending on CPU
         pin_memory=True,
         persistent_workers=True,  # keeps workers alive between epochs
         prefetch_factor=2,  # tune upward if needed
