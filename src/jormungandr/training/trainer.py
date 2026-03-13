@@ -140,9 +140,12 @@ def train_one_epoch(
             data["pixel_mask"],
             data["labels"],
         )
-        pixel_values = pixel_values.to(device)
-        pixel_mask = pixel_mask.to(device)
-        labels = [{k: v.to(device) for k, v in label.items()} for label in labels]
+        pixel_values = pixel_values.to(device, non_blocking=True)
+        pixel_mask = pixel_mask.to(device, non_blocking=True)
+        labels = [
+            {k: v.to(device, non_blocking=True) for k, v in label.items()}
+            for label in labels
+        ]
 
         # Zero the parameter gradients
         optimizer.zero_grad()

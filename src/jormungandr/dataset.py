@@ -90,7 +90,7 @@ def create_dataloaders(
         collate_fn=collate_fn,
         worker_init_fn=seed_worker,
         generator=train_generator,
-        num_workers=len(os.sched_getaffinity(0)),  # try 4, 8, maybe 12 depending on CPU
+        num_workers=len(os.sched_getaffinity(0)),
         pin_memory=True,
         persistent_workers=True,  # keeps workers alive between epochs
         prefetch_factor=2,  # tune upward if needed
@@ -103,7 +103,7 @@ def create_dataloaders(
         collate_fn=collate_fn,
         worker_init_fn=seed_worker,
         generator=val_generator,
-        num_workers=4,
+        num_workers=len(os.sched_getaffinity(0)),
         pin_memory=True,
         persistent_workers=True,
         prefetch_factor=2,

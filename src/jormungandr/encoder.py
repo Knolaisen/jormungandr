@@ -1,6 +1,5 @@
 from typing import Protocol
 from mamba_ssm import Mamba
-from transformers import DetrForObjectDetection
 from torch import nn, Tensor
 import torch
 
