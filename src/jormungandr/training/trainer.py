@@ -92,10 +92,10 @@ def train(
 
         wandb.log(
             {
-                "train_loss": average_training_loss,
-                "val_loss": average_validation_loss,
+                "avg_train_loss": average_training_loss,
+                "avg_val_loss": average_validation_loss,
                 "epoch": epoch,
-                "val_time": average_validation_time,
+                "avg_val_time": average_validation_time,
             }
         )
 
