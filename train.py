@@ -24,7 +24,7 @@ def main():
     wandb.init(
         project=WANDB_PROJECT,
         entity=WANDB_ENTITY,
-        mode="disabled",
+        # mode="disabled",
         config=config.model_dump(),
     )
 
