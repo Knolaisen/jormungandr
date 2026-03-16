@@ -11,16 +11,20 @@ from jormungandr.training.trainer import train
 from jormungandr.utils.seed import seed_everything
 
 
-@track_emissions(country_iso_code="NOR", project_name="fafnir_training")
+@track_emissions(
+    country_iso_code="NOR",
+    project_name="fafnir_training",
+    log_level="ERROR",
+)
 def main():
-    config = load_config("config.yaml")
+    config = load_config("experiment_2.yaml")
     seed_everything(config.trainer.seed)
 
     wandb.login(key=WANDB_API_KEY)
     wandb.init(
         project=WANDB_PROJECT,
         entity=WANDB_ENTITY,
-        # mode="disabled",
+        mode="disabled",
         config=config.model_dump(),
     )
 
