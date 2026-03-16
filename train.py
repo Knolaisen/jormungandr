@@ -13,7 +13,7 @@ from jormungandr.utils.seed import seed_everything
 
 @track_emissions(country_iso_code="NOR", project_name="fafnir_training")
 def main():
-    config = load_config("config.yaml")
+    config = load_config("experiment_3.yaml")
     seed_everything(config.trainer.seed)
 
     wandb.login(key=WANDB_API_KEY)
