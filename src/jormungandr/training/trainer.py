@@ -224,11 +224,12 @@ def run_validation(
             pred_boxes=bbox_coordinates,
             config=config.trainer.loss,
         )
-        running_val_loss += val_loss
+        batch_loss = val_loss.item()
+        running_val_loss += batch_loss
 
         wandb.log(
             {
-                "val/batch_loss": val_loss.item(),
+                "val/batch_loss": batch_loss,
                 **{f"val/loss/{k}": v for k, v in loss_dict.items()},
                 # **{f"batch/aux/{k}": v for k, v in auxiliary_outputs.items()},
             }
@@ -236,4 +237,4 @@ def run_validation(
 
     average_time = sum(timings) / len(timings)
     average_val_loss = running_val_loss / (i + 1)
-    return average_val_loss.item(), average_time
+    return average_val_loss, average_time
