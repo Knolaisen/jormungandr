@@ -29,6 +29,7 @@ def main():
     )
 
     train(config)
+    wandb.finish()
 
 
 if __name__ == "__main__":

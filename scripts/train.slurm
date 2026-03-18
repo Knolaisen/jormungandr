@@ -1,7 +1,7 @@
 #!/bin/sh
 #SBATCH --account=share-ie-idi
 #SBATCH --job-name="master-fafnir"
-#SBATCH --time=03-00:00:00
+#SBATCH --time=03-12:00:00
 #SBATCH --partition=GPUQ
 #SBATCH --mem=80GB
 #SBATCH --cpus-per-task=8
