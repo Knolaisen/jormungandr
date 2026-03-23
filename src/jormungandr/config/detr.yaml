@@ -26,6 +26,7 @@ fafnir:
   encoder:
     encoder_type: "detr"
     num_layers: 12
+    use_pre_trained: false
   decoder:
     freeze_decoder: false
     epoch_to_unfreeze_decoder: 0

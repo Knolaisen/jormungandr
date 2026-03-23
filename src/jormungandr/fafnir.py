@@ -46,7 +46,7 @@ class Fafnir(nn.Module):
                     model_dimension=model_dimension, num_layers=config.encoder.num_layers
                 ).to(device)
             case "detr":
-                self.encoder = DETREncoder().to(device)
+                self.encoder = DETREncoder(use_pre_trained=config.encoder.use_pre_trained).to(device)
             case _:
                 raise ValueError(f"Unsupported encoder type: {config.encoder.type}")
 
