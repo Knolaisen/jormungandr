@@ -38,6 +38,7 @@ from jormungandr.config.configuration import Config, load_config
 from jormungandr.dataset import create_dataloaders
 from jormungandr.fafnir import Fafnir
 from jormungandr.training.criterion import build_criterion
+from jormungandr.training.coco_eval import CocoEvaluator
 
 CONFIG = load_config("config.yaml")
 MODELS_PATH = "models/"
@@ -193,6 +194,7 @@ def run_validation(
     timings = []
     starter = torch.cuda.Event(enable_timing=True)
     ender = torch.cuda.Event(enable_timing=True)
+    evaluator = CocoEvaluator()
 
     for i, batch in enumerate(validation_loader):
         pixel_values, pixel_mask, labels = (
@@ -227,6 +229,8 @@ def run_validation(
         batch_loss = val_loss.item()
         running_val_loss += batch_loss
 
+        evaluator.update(class_labels, bbox_coordinates, labels)
+
         wandb.log(
             {
                 "val/batch_loss": batch_loss,
@@ -234,6 +238,8 @@ def run_validation(
                 # **{f"batch/aux/{k}": v for k, v in auxiliary_outputs.items()},
             }
         )
+    coco_metrics = evaluator.evaluate()
+    wandb.log({**{f"val/metrics/{k}": v for k, v in coco_metrics.items()}})
 
     average_time = sum(timings) / len(timings)
     average_val_loss = running_val_loss / (i + 1)
