@@ -195,6 +195,7 @@ def run_validation(
     starter = torch.cuda.Event(enable_timing=True)
     ender = torch.cuda.Event(enable_timing=True)
     evaluator = CocoEvaluator()
+    running_loss_dict: dict[str, float] = {}
 
     for i, batch in enumerate(validation_loader):
         pixel_values, pixel_mask, labels = (
@@ -226,20 +227,24 @@ def run_validation(
             pred_boxes=bbox_coordinates,
             config=config.trainer.loss,
         )
+
+        # Aggregate validation loss and metrics
         batch_loss = val_loss.item()
         running_val_loss += batch_loss
 
+        for k, v in loss_dict.items():
+            running_loss_dict[k] = running_loss_dict.get(k, 0.0) + v
+
         evaluator.update(class_labels, bbox_coordinates, labels)
 
-        wandb.log(
-            {
-                "val/batch_loss": batch_loss,
-                **{f"val/loss/{k}": v for k, v in loss_dict.items()},
-                # **{f"batch/aux/{k}": v for k, v in auxiliary_outputs.items()},
-            }
-        )
     coco_metrics = evaluator.evaluate()
-    wandb.log({**{f"val/metrics/{k}": v for k, v in coco_metrics.items()}})
+    average_loss_dict = {k: v / (i + 1) for k, v in running_loss_dict.items()}
+    wandb.log(
+        {
+            **{f"val/loss/{k}": v for k, v in average_loss_dict.items()},
+            **{f"val/metrics/{k}": v for k, v in coco_metrics.items()},
+        }
+    )
 
     average_time = sum(timings) / len(timings)
     average_val_loss = running_val_loss / (i + 1)

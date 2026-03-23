@@ -170,12 +170,8 @@ def create_dataloaders(
     val_generator = build_torch_generator(seed + 1)
 
     if subset_size is not None:
-        torch_train_ds = torch_train_ds.shuffle(seed=seed, generator=train_generator).select(
-            range(subset_size)
-        )
-        torch_val_ds = torch_val_ds.shuffle(seed=seed + 1, generator=val_generator).select(
-            range(subset_size)
-        )
+        torch_train_ds = torch_train_ds.shuffle(seed=seed).select(range(subset_size))
+        torch_val_ds = torch_val_ds.shuffle(seed=seed + 1).select(range(subset_size))
 
     train_loader = DataLoader(
         torch_train_ds,
