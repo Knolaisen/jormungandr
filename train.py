@@ -1,3 +1,4 @@
+import argparse
 import wandb
 from torch.profiler import profile, ProfilerActivity
 from codecarbon import track_emissions
@@ -16,8 +17,8 @@ from jormungandr.utils.seed import seed_everything
     project_name="fafnir_training",
     log_level="ERROR",
 )
-def main():
-    config = load_config("detr.yaml")
+def main(config_file: str):
+    config = load_config(config_file)
     seed_everything(config.trainer.seed)
 
     wandb.login(key=WANDB_API_KEY)
@@ -33,9 +34,17 @@ def main():
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "config",
+        nargs="?",
+        default="experiment_2.yaml",
+        help="Config file to load (e.g. detr.yaml)",
+    )
+    args = parser.parse_args()
     # with profile(
     #     activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
     #     record_shapes=True,
     #     profile_memory=True,
     # ) as prof:
-    main()
+    main(args.config)
