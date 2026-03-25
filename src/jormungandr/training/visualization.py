@@ -103,29 +103,35 @@ def log_validation_images(
     probs = class_logits.softmax(-1).cpu()
     pred_boxes = pred_boxes.cpu()
     pixel_values = pixel_values.cpu()
+    pixel_mask = pixel_mask.cpu()
 
     # Best foreground class per query (exclude no-object = last index)
     scores, pred_classes = probs[..., :-1].max(-1)  # [B, Q]
 
     wandb_images = []
+
     for b in range(min(num_images, len(labels))):
+        # Crop padding: find actual image dimensions from pixel_mask
+        actual_h = int(pixel_mask[b].any(dim=-1).sum().item())
+        actual_w = int(pixel_mask[b].any(dim=-2).sum().item())
+
         # Denormalize: (3, H, W) float -> (H, W, 3) uint8.
+        # Keep the full padded size so all images in the batch are the same dimensions.
+        # Box coordinates are absolute pixels within the actual image region (top-left),
+        # so they remain correct regardless of padding on the right/bottom.
         img = (
             pixel_values[b] * _IMAGENET_STD[:, None, None]
             + _IMAGENET_MEAN[:, None, None]
         )
         img = (img.clamp(0, 1).permute(1, 2, 0).numpy() * 255).astype(np.uint8)
 
-        # DetrImageProcessor normalizes box coordinates relative to the padded image
-        # size (Hmax x Wmax), not the resized image size. Scale by padded dims.
-        img_h, img_w = img.shape[:2]
-
-        # GT boxes: normalized cxcywh -> pixel xyxy scaled to padded image dims
+        # GT boxes: normalized cxcywh -> pixel xyxy scaled to actual (non-padded) dims
         gt_boxes_norm = labels[b]["boxes"].cpu()
         gt_classes = labels[b]["class_labels"].cpu()
+
         gt_xyxy = center_to_corners_format(gt_boxes_norm)
-        gt_xyxy[:, [0, 2]] *= img_w
-        gt_xyxy[:, [1, 3]] *= img_h
+        gt_xyxy[:, [0, 2]] *= actual_w
+        gt_xyxy[:, [1, 3]] *= actual_h
 
         gt_box_data = [
             {
@@ -146,8 +152,8 @@ def log_validation_images(
 
         # Predicted boxes: filter by score threshold, normalized cxcywh -> pixel xyxy
         pred_xyxy = center_to_corners_format(pred_boxes[b])
-        pred_xyxy[:, [0, 2]] *= img_w
-        pred_xyxy[:, [1, 3]] *= img_h
+        pred_xyxy[:, [0, 2]] *= actual_w
+        pred_xyxy[:, [1, 3]] *= actual_h
 
         pred_box_data = []
         for q, (x1, y1, x2, y2) in enumerate(pred_xyxy.tolist()):
