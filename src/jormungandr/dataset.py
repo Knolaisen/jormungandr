@@ -107,6 +107,9 @@ def _collate_fn(batch):
         # (N, 4) COCO xywh = [x_min, y_min, width, height]
         # Boxes: x, y, width, height
         boxes = item["objects"]["bbox"]
+        boxes[:, 2] -= boxes[:, 0]  # width = x_max - x_min
+        boxes[:, 3] -= boxes[:, 1]  # height = y_max - y_min
+      
         class_ids = item["objects"]["category"]  # (N,)
         areas = item["objects"].get("area", None)
         iscrowd = item["objects"].get("iscrowd", None)
