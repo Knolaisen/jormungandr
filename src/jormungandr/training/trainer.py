@@ -39,6 +39,7 @@ from jormungandr.dataset import create_dataloaders
 from jormungandr.fafnir import Fafnir
 from jormungandr.training.criterion import build_criterion
 from jormungandr.training.coco_eval import CocoEvaluator
+from jormungandr.training.visualization import log_validation_images
 
 CONFIG = load_config("config.yaml")
 MODELS_PATH = "models/"
@@ -55,6 +56,7 @@ def train(
     training_loader, validation_loader = create_dataloaders(
         batch_size=config.trainer.batch_size,
         seed=config.trainer.seed,
+        subset_size=100,
     )
 
     criterion = build_criterion(config.trainer.loss.name)
@@ -196,6 +198,7 @@ def run_validation(
     ender = torch.cuda.Event(enable_timing=True)
     evaluator = CocoEvaluator()
     running_loss_dict: dict[str, float] = {}
+    viz_batch: dict | None = None
 
     for i, batch in enumerate(validation_loader):
         pixel_values, pixel_mask, labels = (
@@ -237,10 +240,28 @@ def run_validation(
 
         evaluator.update(class_labels, bbox_coordinates, labels)
 
+        # Stash the first batch for image logging
+        if viz_batch is None:
+            n = config.trainer.num_log_images
+            viz_batch = {
+                "pixel_values": pixel_values[:n].cpu(),
+                "pixel_mask": pixel_mask[:n].cpu(),
+                "labels": [{k: v.cpu() for k, v in lbl.items()} for lbl in labels[:n]],
+                "class_logits": class_labels[:n].cpu(),
+                "pred_boxes": bbox_coordinates[:n].cpu(),
+            }
+
     coco_metrics = evaluator.evaluate()
     average_loss_dict = {k: v / (i + 1) for k, v in running_loss_dict.items()}
+
+    wandb_images = log_validation_images(
+        **viz_batch,
+        num_images=config.trainer.num_log_images,
+        score_threshold=config.trainer.viz_score_threshold,
+    )
     wandb.log(
         {
+            "val/images": wandb_images,
             **{f"val/loss/{k}": v for k, v in average_loss_dict.items()},
             **{f"val/metrics/{k}": v for k, v in coco_metrics.items()},
         }

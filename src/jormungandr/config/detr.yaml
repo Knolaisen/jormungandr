@@ -9,6 +9,8 @@ trainer:
   output_head_learning_rate: 1e-5
   optimizer: "AdamW"
   log_interval: 10
+  num_log_images: 8
+  viz_score_threshold: 0.5
   loss:
     name: "giouloss" # Options: "giouloss", "ciouloss"
     class_cost: 1.0

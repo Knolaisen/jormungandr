@@ -82,6 +82,12 @@ class TrainerConfig(BaseModel):
     log_interval: int = Field(
         default=10, description="Interval (in batches) for logging training progress"
     )
+    num_log_images: int = Field(
+        default=8, description="Number of validation images to log with bounding boxes per epoch"
+    )
+    viz_score_threshold: float = Field(
+        default=0.5, description="Minimum confidence score for predicted boxes to be visualized"
+    )
     loss: LossConfig = Field(
         default_factory=LossConfig, description="Configuration for the loss function"
     )
