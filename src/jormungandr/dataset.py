@@ -6,9 +6,8 @@ from torch.utils.data import DataLoader
 from datasets import load_dataset
 import torch
 
-from jormungandr.utils.image_processors import (
-    DetrImageProcessorNoPadBBoxUpdate as DetrImageProcessor,
-)
+from transformers import DetrImageProcessor
+
 from jormungandr.utils.seed import build_torch_generator, seed_worker
 
 model_name = "facebook/detr-resnet-50"
