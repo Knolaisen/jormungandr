@@ -31,6 +31,7 @@ import torch
 from torch.utils.data import DataLoader
 from torch import nn, optim
 from torch.optim import AdamW
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.nn.utils import clip_grad_norm_
 from datetime import datetime
 
@@ -38,6 +39,7 @@ from jormungandr.config.configuration import Config, load_config
 from jormungandr.dataset import create_dataloaders
 from jormungandr.fafnir import Fafnir
 from jormungandr.training.criterion import build_criterion
+from jormungandr.training.scheduler import build_scheduler
 from jormungandr.training.coco_eval import CocoEvaluator
 from jormungandr.training.visualization import log_validation_images
 
@@ -56,24 +58,34 @@ def train(
     training_loader, validation_loader = create_dataloaders(
         batch_size=config.trainer.batch_size,
         seed=config.trainer.seed,
+        subset_size=100,
     )
 
     criterion = build_criterion(config.trainer.loss.name)
     optimizer = AdamW(
         [
             {
+                "name": "encoder",
                 "params": model.encoder.parameters(),
                 "lr": config.trainer.encoder_learning_rate,
             },
             {
+                "name": "decoder",
                 "params": model.decoder.parameters(),
                 "lr": config.trainer.decoder_learning_rate,
             },
             {
+                "name": "output_head",
                 "params": model.output_head.parameters(),
                 "lr": config.trainer.output_head_learning_rate,
             },
         ]
+    )
+    scheduler = build_scheduler(
+        optimizer,
+        config.trainer.scheduler,
+        epochs=config.trainer.epochs,
+        steps_per_epoch=len(training_loader) // config.trainer.batch_size,
     )
 
     best_val_loss = float("inf")
@@ -94,12 +106,26 @@ def train(
             config=config,
         )
 
+        # Step the learning rate scheduler
+        if scheduler is not None:
+            if isinstance(scheduler, ReduceLROnPlateau):
+                scheduler.step(average_validation_loss)
+            else:
+                scheduler.step()
+        else:
+            optimizer.step()
+
+        current_lrs = {
+            f"lr/group_{i}": group["lr"]
+            for i, group in enumerate(optimizer.param_groups)
+        }
         wandb.log(
             {
                 "avg_train_loss": average_training_loss,
                 "avg_val_loss": average_validation_loss,
                 "epoch": epoch,
                 "avg_val_time": average_validation_time,
+                **current_lrs,
             }
         )
 
@@ -270,9 +296,8 @@ def run_validation(
     average_val_loss = running_val_loss / (i + 1)
     return average_val_loss, average_time
 
-def validate(
-    config: Config
-) -> None:
+
+def validate(config: Config) -> None:
     device = "cuda"
     model = Fafnir(config=config.fafnir).to(device)
     training_loader, validation_loader = create_dataloaders(
@@ -292,4 +317,3 @@ def validate(
 
     print(f"Average validation loss: {average_validation_loss:.4f}")
     print(f"Average validation time per batch: {average_validation_time:.2f} ms")
-

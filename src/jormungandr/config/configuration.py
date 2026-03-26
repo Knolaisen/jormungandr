@@ -57,6 +57,17 @@ class LossConfig(BaseModel):
     )
 
 
+class SchedulerConfig(BaseModel):
+    name: str = Field(
+        default="CosineAnnealingLR",
+        description="Name of the LR scheduler (e.g., 'StepLR', 'CosineAnnealingLR', 'ReduceLROnPlateau', 'CosineAnnealingWarmRestarts', 'OneCycleLR')",
+    )
+    params: dict = Field(
+        default_factory=dict,
+        description="Extra keyword arguments passed directly to the scheduler constructor (e.g., {T_max: 50, eta_min: 1e-6})",
+    )
+
+
 class TrainerConfig(BaseModel):
     epochs: int = Field(default=5, description="Number of training epochs")
     batch_size: int = Field(
@@ -90,6 +101,10 @@ class TrainerConfig(BaseModel):
     )
     loss: LossConfig = Field(
         default_factory=LossConfig, description="Configuration for the loss function"
+    )
+    scheduler: SchedulerConfig | None = Field(
+        default=None,
+        description="Configuration for the learning rate scheduler. If None, no scheduler is used.",
     )
 
 
