@@ -3,7 +3,6 @@ trainer:
   epochs: 100
   batch_size: 64
   seed: 42
-  subset_size: 1000 # Set to an integer to use a subset of the dataset for training and validation
   encoder_learning_rate: 1e-4
   decoder_learning_rate: 1e-5
   output_head_learning_rate: 1e-5

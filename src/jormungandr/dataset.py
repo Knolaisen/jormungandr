@@ -12,7 +12,7 @@ from jormungandr.utils.image_processors import (
 from jormungandr.utils.seed import build_torch_generator, seed_worker
 
 model_name = "facebook/detr-resnet-50"
-image_processor = DetrImageProcessor.from_pretrained(model_name)
+image_processor = DetrImageProcessor.from_pretrained(model_name, force_download=True)
 
 
 # maps 80-class index -> 91-class index
