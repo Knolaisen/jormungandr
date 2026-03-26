@@ -112,8 +112,6 @@ def train(
                 scheduler.step(average_validation_loss)
             else:
                 scheduler.step()
-        else:
-            optimizer.step()
 
         current_lrs = {
             f"lr/group_{i}": group["lr"]
