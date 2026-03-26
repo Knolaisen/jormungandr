@@ -10,9 +10,11 @@ import pytest
 def test_mamba_encoder_inference():
     batch_size, sequence_length, model_dimension = 2, 64, 16
     x = torch.randn(batch_size, sequence_length, model_dimension).to("cuda")
+    mask = torch.ones(batch_size, sequence_length).to("cuda")
+    # mask = None
     encoder = MambaEncoder(model_dimension=model_dimension).to("cuda")
 
-    y = encoder(x)
+    y = encoder(x=x, pixel_mask=mask)
 
     assert y.shape == x.shape, f"Expected output shape {x.shape}, got {y.shape}"
     assert not y.equal(x), "Output should be different from input after encoding"
@@ -27,6 +29,8 @@ def test_mamba_encoder_inference_with_position_embedding():
     batch_size, model_dimension = 2, 16
     embedder_shape = (batch_size, 0, weidth, height)
     x = torch.randn(batch_size, sequence_length, model_dimension).to("cuda")
+    mask = torch.ones(batch_size, sequence_length).to("cuda")
+    # mask = None
 
     embedder = DetrSinePositionEmbedding(num_position_features=model_dimension // 2).to(
         "cuda"
@@ -35,8 +39,8 @@ def test_mamba_encoder_inference_with_position_embedding():
     encoder = MambaEncoder(model_dimension=model_dimension).to("cuda")
     encoder_with_em = MambaEncoder(model_dimension=model_dimension).to("cuda")
 
-    y = encoder(x)
-    y_with_em = encoder_with_em(x, embedding)
+    y = encoder(x=x, pixel_mask=mask)
+    y_with_em = encoder_with_em(x, embedding, mask)
 
     assert y.shape == x.shape, f"Expected output shape {x.shape}, got {y.shape}"
     assert not y.equal(x), "Output should be different from input after encoding"

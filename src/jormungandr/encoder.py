@@ -42,7 +42,7 @@ class MambaEncoder(nn.Module, Encoder):
         )
         self.norm = nn.RMSNorm(model_dimension)
 
-    def forward(self, x: Tensor, position_embedding: Tensor | None = None) -> Tensor:
+    def forward(self, x: Tensor, position_embedding: Tensor | None = None, pixel_mask: Tensor | None = None) -> Tensor:
         """
         Args:
             x: Tensor of shape (batch_size, model_dimension)
@@ -53,6 +53,7 @@ class MambaEncoder(nn.Module, Encoder):
         for layer in self.layers:
             x = x + position_embedding if position_embedding is not None else x
             x = layer(self.norm(x))
+            x = x * pixel_mask.unsqueeze(-1) if pixel_mask is not None else x
         return x
 
 
