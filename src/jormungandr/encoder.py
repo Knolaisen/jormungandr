@@ -56,7 +56,7 @@ class BidirectionalMambaLayer(nn.Module):
 
         # --- Bidirectional SSM ---
         self.forward_mamba = Mamba2(d_model=d_model, d_state=d_state)
-    self.backward_mamba = Mamba2(d_model=d_model, d_state=d_state)
+        self.backward_mamba = Mamba2(d_model=d_model, d_state=d_state)
 
         # Only materialised when merging by concatenation.
         self.merge_proj = (
