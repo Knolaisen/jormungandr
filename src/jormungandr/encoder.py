@@ -40,21 +40,50 @@ class MambaEncoder(nn.Module, Encoder):
                 for _ in range(self.num_layers)
             ]
         )
-        self.norm = nn.RMSNorm(model_dimension)
-
-    def forward(self, x: Tensor, position_embedding: Tensor | None = None, pixel_mask: Tensor | None = None) -> Tensor:
+        # Per-layer norms (pre-norm architecture)
+        self.norms = nn.ModuleList(
+            [nn.RMSNorm(model_dimension) for _ in range(self.num_layers)]
+        )
+        self.final_norm = nn.RMSNorm(model_dimension)
+ 
+    def forward(
+        self,
+        x: Tensor,
+        position_embedding: Tensor | None = None,
+        pixel_mask: Tensor | None = None,
+    ) -> Tensor:
         """
         Args:
             x: Tensor of shape (batch_size, model_dimension)
         Returns:
             Tensor of shape (batch_size, model_dimension)
         """
-
-        for layer in self.layers:
-            x = x + position_embedding if position_embedding is not None else x
-            x = layer(self.norm(x))
-            x = x * pixel_mask.unsqueeze(-1) if pixel_mask is not None else x
-        return x
+        for layer, norm in zip(self.layers, self.norms):
+            residual = x
+ 
+            # Pre-norm
+            normed = norm(x)
+ 
+            # Inject position into the layer input — NOT into the residual.
+            # This is the Mamba analog of DETR adding pos to Q and K:
+            # position influences the layer's processing (selective scan gating)
+            # but the residual stream (analogous to V) stays position-free.
+            if position_embedding is not None:
+                layer_input = normed + position_embedding
+            else:
+                layer_input = normed
+ 
+            # Mamba selective scan
+            layer_output = layer(layer_input)
+ 
+            # Zero padded positions on the layer output (before residual add)
+            if pixel_mask is not None:
+                layer_output = layer_output * pixel_mask.unsqueeze(-1)
+ 
+            # Residual connection — x never directly receives position_embedding
+            x = residual + layer_output
+ 
+        return self.final_norm(x)
 
 
 class DETREncoder(nn.Module, Encoder):
