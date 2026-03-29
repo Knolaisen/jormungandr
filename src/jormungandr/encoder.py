@@ -1,7 +1,7 @@
 from typing import Literal, Protocol
 
 import torch
-from mamba_ssm import Mamba
+from mamba_ssm import Mamba2
 from torch import Tensor, nn
 
 from jormungandr.utils.model_fetcher import fetch_detr_model
@@ -55,8 +55,8 @@ class BidirectionalMambaLayer(nn.Module):
         self.merge = merge
 
         # --- Bidirectional SSM ---
-        self.forward_mamba = Mamba(d_model=d_model, d_state=d_state)
-        self.backward_mamba = Mamba(d_model=d_model, d_state=d_state)
+        self.forward_mamba = Mamba2(d_model=d_model, d_state=d_state)
+    self.backward_mamba = Mamba2(d_model=d_model, d_state=d_state)
 
         # Only materialised when merging by concatenation.
         self.merge_proj = (
