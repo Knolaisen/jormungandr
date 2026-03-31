@@ -1,5 +1,5 @@
 from typing import Protocol
-from mamba_ssm import Mamba
+from mamba_ssm import Mamba, Mamba2
 from torch import nn, Tensor
 import torch
 
@@ -33,7 +33,7 @@ class MambaEncoder(nn.Module, Encoder):
         self.num_layers = num_layers
         self.layers = nn.ModuleList(
             [
-                Mamba(
+                Mamba2(
                     d_model=model_dimension,
                     d_state=hidden_state_dim,
                 )
