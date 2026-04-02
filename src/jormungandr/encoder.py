@@ -16,7 +16,71 @@ class Encoder(Protocol):
     ) -> torch.Tensor: ...
 
 
-MergeStrategy = Literal["add", "concat"]
+class MambaEncoder(nn.Module, Encoder):
+    """
+    Bidirectional Mamba encoder that mirrors the DETR encoder structure.
+
+    Each of the `num_layers` stacked blocks follows:
+
+        x → BiMambaLayer(SSM sub-layer → FFN sub-layer) → x'
+
+    where each sub-layer uses a pre-norm residual connection.  The final
+    output is passed through a shared RMSNorm, matching the original design.
+
+    Args:
+        model_dimension:  token embedding width (d_model).
+        hidden_state_dim: SSM state size (d_state in Mamba notation).
+        num_layers:       number of stacked BidirectionalMambaLayers.
+        ffn_expand:       FFN inner-width multiplier (default 4).
+    """
+
+    def __init__(
+        self,
+        model_dimension: int = 256,
+        hidden_state_dim: int = 16,
+        num_layers: int = 6,
+        ffn_expand: int = 4,
+    ) -> None:
+        super().__init__()
+        if num_layers < 0:
+            raise ValueError("num_layers cant be negative")
+        if model_dimension < 1:
+            raise ValueError("model_dimension must be at least 1")
+        if hidden_state_dim < 1:
+            raise ValueError("hidden_state_dim must be at least 1")
+
+        self.num_layers = num_layers
+        self.layers = nn.ModuleList(
+            [
+                BidirectionalMambaLayer(
+                    d_model=model_dimension,
+                    d_state=hidden_state_dim,
+                    ffn_expand=ffn_expand,
+                )
+                for _ in range(num_layers)
+            ]
+        )
+        self.final_norm = nn.RMSNorm(model_dimension)
+
+    def forward(
+        self,
+        x: Tensor,
+        position_embedding: Tensor | None = None,
+        pixel_mask: Tensor | None = None,
+    ) -> Tensor:
+        """
+        Args:
+            x:                  (batch, seq_len, model_dimension)
+            position_embedding: (batch, seq_len, model_dimension) or None
+            pixel_mask:         (batch, seq_len) bool/float; 0 = padding token
+        Returns:
+            (batch, seq_len, model_dimension)
+        """
+
+        for layer in self.layers:
+            x = layer(x, position_embedding=position_embedding, pixel_mask=pixel_mask)
+
+        return self.final_norm(x)
 
 
 class BidirectionalMambaLayer(nn.Module):
@@ -48,22 +112,13 @@ class BidirectionalMambaLayer(nn.Module):
         self,
         d_model: int,
         d_state: int,
-        merge: MergeStrategy = "add",
         ffn_expand: int = 4,
     ) -> None:
         super().__init__()
-        self.merge = merge
 
-        # --- Bidirectional SSM ---
+        # Bidirectional SSM
         self.forward_mamba = Mamba2(d_model=d_model, d_state=d_state)
         self.backward_mamba = Mamba2(d_model=d_model, d_state=d_state)
-
-        # Only materialised when merging by concatenation.
-        self.merge_proj = (
-            nn.Linear(d_model * 2, d_model, bias=False)
-            if merge == "concat"
-            else nn.Identity()
-        )
 
         # Pre-norm for the SSM sub-layer.
         self.norm_ssm = nn.RMSNorm(d_model)
@@ -95,107 +150,31 @@ class BidirectionalMambaLayer(nn.Module):
         Returns:
             (batch, seq_len, d_model)
         """
-        # ── Sub-layer 1: Bidirectional SSM ───────────────────────────────────
+        # Bidirectional SSM with pre-norm and residual connection.
         residual = x
         h = self.norm_ssm(x)
 
-        # Inject position into the scan input — not the residual, not the FFN.
-        # This is the Mamba analog of DETR adding pos to Q and K:
-        # position biases the selective-scan gating from both directions
-        # while the residual stream (analogous to V) stays position-free.
         scan_input = h + position_embedding if position_embedding is not None else h
 
-        fwd = self.forward_mamba(scan_input)
-        # Flip along seq_len, scan right-to-left, flip back so that
-        # bwd[i] carries context from positions i … seq_len-1.
-        bwd = self.backward_mamba(scan_input.flip(1)).flip(1)
-
-        if self.merge == "add":
-            ssm_out = fwd + bwd
-        else:
-            ssm_out = self.merge_proj(torch.cat([fwd, bwd], dim=-1))
-
-        # Zero-out padding positions on the SSM output before the residual add.
+        # Zero-out padding positions on the scan input, ensuring the SSM doesn't attend to them.
         if pixel_mask is not None:
-            ssm_out = ssm_out * pixel_mask.unsqueeze(-1)
+            mask = pixel_mask.unsqueeze(-1)
+            scan_input = scan_input * mask
+
+        fwd = self.forward_mamba(scan_input)
+        bwd = self.backward_mamba(scan_input.flip(1)).flip(1)
+        ssm_out = (fwd + bwd) / 2
+
+        if pixel_mask is not None:
+            ssm_out = ssm_out * mask
 
         x = residual + ssm_out
 
-        # ── Sub-layer 2: FFN ─────────────────────────────────────────────────
-        x = x + self.ffn(self.norm_ffn(x))
+        # FFN with pre-norm with residual connection.
+        ffn_out = self.ffn(self.norm_ffn(x))
+        x = x + ffn_out
 
         return x
-
-
-class MambaEncoder(nn.Module, Encoder):
-    """
-    Bidirectional Mamba encoder that mirrors the DETR encoder structure.
-
-    Each of the `num_layers` stacked blocks follows:
-
-        x → BiMambaLayer(SSM sub-layer → FFN sub-layer) → x'
-
-    where each sub-layer uses a pre-norm residual connection.  The final
-    output is passed through a shared RMSNorm, matching the original design.
-
-    Args:
-        model_dimension:  token embedding width (d_model).
-        hidden_state_dim: SSM state size (d_state in Mamba notation).
-        num_layers:       number of stacked BidirectionalMambaLayers.
-        merge:            direction-merge strategy for the SSM output —
-                          "add"    → element-wise sum (default, no extra params)
-                          "concat" → concat then linear-project to d_model
-        ffn_expand:       FFN inner-width multiplier (default 4).
-    """
-
-    def __init__(
-        self,
-        model_dimension: int = 256,
-        hidden_state_dim: int = 16,
-        num_layers: int = 6,
-        merge: MergeStrategy = "add",
-        ffn_expand: int = 4,
-    ) -> None:
-        super().__init__()
-        if num_layers < 0:
-            raise ValueError("num_layers cant be negative")
-        if model_dimension < 1:
-            raise ValueError("model_dimension must be at least 1")
-        if hidden_state_dim < 1:
-            raise ValueError("hidden_state_dim must be at least 1")
-
-        self.num_layers = num_layers
-        self.layers = nn.ModuleList(
-            [
-                BidirectionalMambaLayer(
-                    d_model=model_dimension,
-                    d_state=hidden_state_dim,
-                    merge=merge,
-                    ffn_expand=ffn_expand,
-                )
-                for _ in range(num_layers)
-            ]
-        )
-        self.final_norm = nn.RMSNorm(model_dimension)
-
-    def forward(
-        self,
-        x: Tensor,
-        position_embedding: Tensor | None = None,
-        pixel_mask: Tensor | None = None,
-    ) -> Tensor:
-        """
-        Args:
-            x:                  (batch, seq_len, model_dimension)
-            position_embedding: (batch, seq_len, model_dimension) or None
-            pixel_mask:         (batch, seq_len) bool/float; 0 = padding token
-        Returns:
-            (batch, seq_len, model_dimension)
-        """
-        for layer in self.layers:
-            x = layer(x, position_embedding=position_embedding, pixel_mask=pixel_mask)
-
-        return self.final_norm(x)
 
 
 class DETREncoder(nn.Module, Encoder):
