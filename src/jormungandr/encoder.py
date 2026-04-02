@@ -12,7 +12,7 @@ class Encoder(Protocol):
         self,
         flattened_feature_maps: Tensor,
         position_embedding: Tensor | None = None,
-        mask: Tensor | None = None,
+        pixel_mask: Tensor | None = None,
     ) -> torch.Tensor: ...
 
 
