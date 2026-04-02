@@ -76,9 +76,9 @@ class MambaEncoder(nn.Module, Encoder):
         Returns:
             (batch, seq_len, model_dimension)
         """
-
+        mask = pixel_mask.unsqueeze(-1) if pixel_mask is not None else None
         for layer in self.layers:
-            x = layer(x, position_embedding=position_embedding, pixel_mask=pixel_mask)
+            x = layer(x, position_embedding=position_embedding, pixel_mask=mask)
 
         return self.final_norm(x)
 
@@ -93,17 +93,9 @@ class BidirectionalMambaLayer(nn.Module):
     Sub-layer 2 — FFN (pre-norm residual):
         x → RMSNorm → Linear → GELU → Linear → (+x)
 
-    This mirrors the DETR encoder block (Attention → FFN) while substituting
-    bidirectional Mamba for self-attention. Position embedding is injected only
-    into the SSM input — not the FFN — preserving the DETR convention of
-    adding position to Q/K (the scan) but not to V (the residual or FFN).
-
     Args:
         d_model:    token embedding width.
         d_state:    SSM hidden state size (d_state in Mamba notation).
-        merge:      how the two scan directions are combined —
-                    "add"    → element-wise sum (no extra params)
-                    "concat" → concatenate then project back to d_model
         ffn_expand: FFN inner width multiplier relative to d_model (default 4,
                     same as DETR / vanilla Transformer).
     """
@@ -158,15 +150,14 @@ class BidirectionalMambaLayer(nn.Module):
 
         # Zero-out padding positions on the scan input, ensuring the SSM doesn't attend to them.
         if pixel_mask is not None:
-            mask = pixel_mask.unsqueeze(-1)
-            scan_input = scan_input * mask
+            scan_input = scan_input * pixel_mask
 
         fwd = self.forward_mamba(scan_input)
         bwd = self.backward_mamba(scan_input.flip(1)).flip(1)
         ssm_out = (fwd + bwd) / 2
 
         if pixel_mask is not None:
-            ssm_out = ssm_out * mask
+            ssm_out = ssm_out * pixel_mask
 
         x = residual + ssm_out
 
