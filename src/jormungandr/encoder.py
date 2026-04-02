@@ -31,7 +31,7 @@ class MambaEncoder(nn.Module, Encoder):
         model_dimension:  token embedding width (d_model).
         hidden_state_dim: SSM state size (d_state in Mamba notation).
         num_layers:       number of stacked BidirectionalMambaLayers.
-        ffn_expand:       FFN inner-width multiplier (default 4).
+        ffn_expand:       FFN inner-width multiplier (default 8).
     """
 
     def __init__(
@@ -39,7 +39,7 @@ class MambaEncoder(nn.Module, Encoder):
         model_dimension: int = 256,
         hidden_state_dim: int = 16,
         num_layers: int = 6,
-        ffn_expand: int = 4,
+        ffn_expand: int = 8,
     ) -> None:
         super().__init__()
         if num_layers < 0:
@@ -87,16 +87,10 @@ class BidirectionalMambaLayer(nn.Module):
     """
     One layer of bidirectional Mamba followed by a position-wise FFN.
 
-    Sub-layer 1 — Bidirectional SSM (pre-norm residual):
-        x → RMSNorm → (+pos_emb) → [forward_mamba ‖ backward_mamba] → merge → (+x)
-
-    Sub-layer 2 — FFN (pre-norm residual):
-        x → RMSNorm → Linear → GELU → Linear → (+x)
-
     Args:
         d_model:    token embedding width.
         d_state:    SSM hidden state size (d_state in Mamba notation).
-        ffn_expand: FFN inner width multiplier relative to d_model (default 4,
+        ffn_expand: FFN inner width multiplier relative to d_model (default 8,
                     same as DETR / vanilla Transformer).
     """
 
@@ -104,7 +98,7 @@ class BidirectionalMambaLayer(nn.Module):
         self,
         d_model: int,
         d_state: int,
-        ffn_expand: int = 4,
+        ffn_expand: int = 8,
     ) -> None:
         super().__init__()
 
