@@ -1,8 +1,9 @@
-from typing import Literal, Protocol
+from typing import Protocol
 
 import torch
-from mamba_ssm import Mamba2
 from torch import Tensor, nn
+from timm.layers import DropPath
+from mamba_ssm import Mamba2
 
 from jormungandr.utils.model_fetcher import fetch_detr_model
 
@@ -31,7 +32,12 @@ class MambaEncoder(nn.Module, Encoder):
         model_dimension:  token embedding width (d_model).
         hidden_state_dim: SSM state size (d_state in Mamba notation).
         num_layers:       number of stacked BidirectionalMambaLayers.
-        ffn_expand:       FFN inner-width multiplier (default 8).
+        dim_feedforward:  FFN inner width (default 2048).
+        dropout:          dropout probability for FFN (default 0.1).
+        drop_path_rate:   max stochastic depth rate (default 0.1);
+                          linearly increases from 0 at layer 0 to this
+                          value at the last layer.
+
     """
 
     def __init__(
@@ -39,7 +45,9 @@ class MambaEncoder(nn.Module, Encoder):
         model_dimension: int = 256,
         hidden_state_dim: int = 16,
         num_layers: int = 6,
-        ffn_expand: int = 8,
+        dim_feedforward: int = 2048,
+        dropout: float = 0.1,
+        drop_path_rate: float = 0.1,
     ) -> None:
         super().__init__()
         if num_layers < 0:
@@ -50,16 +58,20 @@ class MambaEncoder(nn.Module, Encoder):
             raise ValueError("hidden_state_dim must be at least 1")
 
         self.num_layers = num_layers
+        dpr = [x.item() for x in torch.linspace(0, drop_path_rate, num_layers)]
         self.layers = nn.ModuleList(
             [
                 BidirectionalMambaLayer(
                     d_model=model_dimension,
                     d_state=hidden_state_dim,
-                    ffn_expand=ffn_expand,
+                    dim_feedforward=dim_feedforward,
+                    dropout=dropout,
+                    drop_path=dpr[i],
                 )
-                for _ in range(num_layers)
+                for i in range(num_layers)
             ]
         )
+
         self.final_norm = nn.RMSNorm(model_dimension)
 
     def forward(
@@ -90,15 +102,18 @@ class BidirectionalMambaLayer(nn.Module):
     Args:
         d_model:    token embedding width.
         d_state:    SSM hidden state size (d_state in Mamba notation).
-        ffn_expand: FFN inner width multiplier relative to d_model (default 8,
-                    same as DETR / vanilla Transformer).
+        dim_feedforward: FFN inner width (default 2048).
+        dropout:      dropout probability (default 0.1).
+        drop_path:       stochastic depth rate for this layer (default 0.0).
     """
 
     def __init__(
         self,
         d_model: int,
         d_state: int,
-        ffn_expand: int = 8,
+        dim_feedforward: int = 2048,
+        dropout: float = 0.1,
+        drop_path: float = 0.0,
     ) -> None:
         super().__init__()
 
@@ -110,15 +125,19 @@ class BidirectionalMambaLayer(nn.Module):
         self.norm_ssm = nn.RMSNorm(d_model)
 
         # --- FFN sub-layer ---
-        dim_ffn = d_model * ffn_expand
         self.ffn = nn.Sequential(
-            nn.Linear(d_model, dim_ffn),
+            nn.Linear(d_model, dim_feedforward),
             nn.GELU(),
-            nn.Linear(dim_ffn, d_model),
+            nn.Dropout(dropout),
+            nn.Linear(dim_feedforward, d_model),
+            nn.Dropout(dropout),
         )
 
         # Pre-norm for the FFN sub-layer.
         self.norm_ffn = nn.RMSNorm(d_model)
+
+        # Stochastic depth for both sub-layers
+        self.drop_path = DropPath(drop_path) if drop_path > 0.0 else nn.Identity()
 
     def forward(
         self,
@@ -153,11 +172,11 @@ class BidirectionalMambaLayer(nn.Module):
         if pixel_mask is not None:
             ssm_out = ssm_out * pixel_mask
 
-        x = residual + ssm_out
+        x = residual + self.drop_path(ssm_out)
 
         # FFN with pre-norm with residual connection.
-        ffn_out = self.ffn(self.norm_ffn(x))
-        x = x + ffn_out
+        ffn_output = self.ffn(self.norm_ffn(x))
+        x = x + self.drop_path(ffn_output)
 
         return x
 
