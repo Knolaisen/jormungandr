@@ -94,10 +94,12 @@ class TrainerConfig(BaseModel):
         default=10, description="Interval (in batches) for logging training progress"
     )
     num_log_images: int = Field(
-        default=8, description="Number of validation images to log with bounding boxes per epoch"
+        default=8,
+        description="Number of validation images to log with bounding boxes per epoch",
     )
     viz_score_threshold: float = Field(
-        default=0.5, description="Minimum confidence score for predicted boxes to be visualized"
+        default=0.5,
+        description="Minimum confidence score for predicted boxes to be visualized",
     )
     loss: LossConfig = Field(
         default_factory=LossConfig, description="Configuration for the loss function"
@@ -137,6 +139,12 @@ class EncoderConfig(BaseModel):
     )
 
 
+class OutputHeadConfig(BaseModel):
+    freeze_prediction_head: bool = Field(
+        default=False, description="Whether to freeze the output head during training"
+    )
+
+
 class FafnirConfig(BaseModel):
     input_size: int = Field(default=512, description="Input size for the Fafnir model")
     num_classes: int = Field(
@@ -149,6 +157,10 @@ class FafnirConfig(BaseModel):
     decoder: DecoderConfig = Field(
         default_factory=DecoderConfig,
         description="Configuration for the decoder used in Fafnir",
+    )
+    output_head: OutputHeadConfig = Field(
+        default_factory=OutputHeadConfig,
+        description="Configuration for the output head used in Fafnir",
     )
 
 
