@@ -27,6 +27,7 @@ def main(config_file: str):
         entity=WANDB_ENTITY,
         # mode="disabled",
         config=config.model_dump(),
+        settings=wandb.Settings(code_dir="./src"),
     )
 
     train(config)
