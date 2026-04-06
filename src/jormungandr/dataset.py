@@ -1,15 +1,16 @@
 import os
 from typing import Callable
 
-# from transformers import DetrImageProcessor
 from torch.utils.data import DataLoader
 from datasets import load_dataset
 import torch
+import torchvision.transforms.functional as TF
 
 from jormungandr.utils.image_processors import (
     DetrImageProcessorNoPadBBoxUpdate as DetrImageProcessor,
 )
 from jormungandr.utils.seed import build_torch_generator, seed_worker
+from jormungandr.utils.transforms import make_coco_transforms
 
 model_name = "facebook/detr-resnet-50"
 image_processor = DetrImageProcessor.from_pretrained(model_name, force_download=True)
@@ -100,49 +101,69 @@ coco80_to_coco91 = {
 }
 
 
-def _collate_fn(batch):
-    # images from dataset (CHW uint8)
-    # images = [item["image"] for item in batch]
-    images = [_ensure_3ch(item["image"]) for item in batch]
+def _make_collate_fn(image_set: str) -> Callable:
+    transform = make_coco_transforms(image_set)
 
-    # build COCO-style annotations per image
-    targets = []
-    for item in batch:
-        # (N, 4) COCO xywh = [x_min, y_min, width, height]
-        # Boxes: x, y, width, height
-        boxes = item["objects"]["bbox"]
-        boxes[:, 2] -= boxes[:, 0]  # width = x_max - x_min
-        boxes[:, 3] -= boxes[:, 1]  # height = y_max - y_min
+    def collate_fn(batch):
+        images = []
+        targets = []
 
-        class_ids = item["objects"]["category"]  # (N,)
-        areas = item["objects"].get("area", None)
-        iscrowd = item["objects"].get("iscrowd", None)
+        for item in batch:
+            # Convert CHW uint8 tensor -> PIL image for transforms
+            pil_img = TF.to_pil_image(_ensure_3ch(item["image"]))
 
-        annotations = []
-        for i in range(boxes.shape[0]):
-            ann = {
-                "bbox": boxes[i].tolist(),  # COCO expects python lists
-                "category_id": coco80_to_coco91[int(class_ids[i].item())],
+            # Dataset gives xyxy boxes; transforms expect xyxy
+            boxes = item["objects"]["bbox"].float()  # (N, 4) xyxy
+            class_ids = item["objects"]["category"]  # (N,) 0-indexed 80-class
+            areas = item["objects"].get("area", None)
+            iscrowd = item["objects"].get("iscrowd", None)
+
+            target = {
+                "boxes": boxes,
+                "labels": torch.tensor(
+                    [coco80_to_coco91[int(c)] for c in class_ids], dtype=torch.long
+                ),
             }
             if areas is not None:
-                ann["area"] = float(areas[i].item())
+                target["area"] = areas.float()
             if iscrowd is not None:
-                ann["iscrowd"] = int(iscrowd[i].item())
-            else:
-                ann["iscrowd"] = 0
-            annotations.append(ann)
+                target["iscrowd"] = iscrowd
 
-        targets.append(
-            {"image_id": int(item["image_id"].item()), "annotations": annotations}
-        )
+            # Apply spatial augmentations (flip, resize, crop)
+            pil_img, target = transform(pil_img, target)
 
-    encoded = image_processor(images=images, annotations=targets, return_tensors="pt")
+            # Convert augmented xyxy boxes -> COCO xywh for image_processor
+            aug_boxes = target["boxes"]  # (M, 4) xyxy; M <= N after crop filtering
+            aug_class_ids = target["labels"]
+            aug_areas = target.get("area", None)
+            aug_iscrowd = target.get("iscrowd", None)
 
-    return {
-        "pixel_values": encoded["pixel_values"],  # (B, 3, Hmax, Wmax)
-        "pixel_mask": encoded["pixel_mask"],  # (B, Hmax, Wmax)
-        "labels": encoded["labels"],  # list[dict] length B
-    }
+            annotations = []
+            for i in range(aug_boxes.shape[0]):
+                x1, y1, x2, y2 = aug_boxes[i].tolist()
+                ann = {
+                    "bbox": [x1, y1, x2 - x1, y2 - y1],  # COCO xywh
+                    "category_id": int(aug_class_ids[i].item()),
+                }
+                if aug_areas is not None:
+                    ann["area"] = float(aug_areas[i].item())
+                ann["iscrowd"] = int(aug_iscrowd[i].item()) if aug_iscrowd is not None else 0
+                annotations.append(ann)
+
+            images.append(pil_img)
+            targets.append(
+                {"image_id": int(item["image_id"].item()), "annotations": annotations}
+            )
+
+        encoded = image_processor(images=images, annotations=targets, return_tensors="pt")
+
+        return {
+            "pixel_values": encoded["pixel_values"],  # (B, 3, Hmax, Wmax)
+            "pixel_mask": encoded["pixel_mask"],  # (B, Hmax, Wmax)
+            "labels": encoded["labels"],  # list[dict] length B
+        }
+
+    return collate_fn
 
 
 def _ensure_3ch(img: torch.Tensor) -> torch.Tensor:
@@ -166,7 +187,6 @@ def create_dataloaders(
     batch_size: int = 32,
     seed: int = 42,
     shuffle: bool = True,
-    collate_fn: Callable = _collate_fn,
     subset_size: int | None = None,
 ) -> tuple[DataLoader, DataLoader]:
     ds = load_dataset(dataset_name, cache_dir=cache_dir)
@@ -184,7 +204,7 @@ def create_dataloaders(
         torch_train_ds,
         batch_size=batch_size,
         shuffle=shuffle,
-        collate_fn=collate_fn,
+        collate_fn=_make_collate_fn("train"),
         worker_init_fn=seed_worker,
         generator=train_generator,
         num_workers=len(os.sched_getaffinity(0)),
@@ -195,7 +215,7 @@ def create_dataloaders(
         torch_val_ds,
         batch_size=batch_size,
         shuffle=False,
-        collate_fn=collate_fn,
+        collate_fn=_make_collate_fn("val"),
         worker_init_fn=seed_worker,
         generator=val_generator,
         num_workers=len(os.sched_getaffinity(0)),
