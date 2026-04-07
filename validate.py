@@ -35,11 +35,18 @@ def main(config_file: str):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    experiment = "experiment_1.yaml"
     parser.add_argument(
         "config",
         nargs="?",
-        default="experiment_2.yaml",
-        help="Config file to load (e.g. detr.yaml)",
+        default=None,
+        help=f"Config file to load (e.g. {experiment})",
+    )
+    parser.add_argument(
+        "--config",
+        dest="config_flag",
+        default=None,
+        help=f"Config file to load (e.g. {experiment})",
     )
     args = parser.parse_args()
     # with profile(
