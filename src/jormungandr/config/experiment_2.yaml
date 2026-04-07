@@ -28,5 +28,7 @@ fafnir:
     encoder_type: "mamba"
     num_layers: 12
   decoder:
-    freeze_decoder: false
+    freeze_decoder: true
     epoch_to_unfreeze_decoder: 0
+  output_head:
+    freeze_prediction_head: true

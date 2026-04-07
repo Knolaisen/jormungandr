@@ -1,5 +1,6 @@
 from torch import nn, Tensor
 from transformers import DetrForObjectDetection
+from jormungandr.config.configuration import OutputHeadConfig
 
 
 class FCNNPredictionHead(nn.Module):
@@ -12,6 +13,7 @@ class FCNNPredictionHead(nn.Module):
     def __init__(
         self,
         model_name: str = "facebook/detr-resnet-50",
+        config: OutputHeadConfig = OutputHeadConfig(),
     ):
         super().__init__()
         self.class_labels_classifier = DetrForObjectDetection.from_pretrained(
@@ -20,6 +22,12 @@ class FCNNPredictionHead(nn.Module):
         self.bbox_predictor = DetrForObjectDetection.from_pretrained(
             model_name
         ).bbox_predictor
+
+        if config.freeze_prediction_head:
+            for param in self.class_labels_classifier.parameters():
+                param.requires_grad = False
+            for param in self.bbox_predictor.parameters():
+                param.requires_grad = False
 
     def forward(
         self,

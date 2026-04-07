@@ -13,7 +13,19 @@ from jormungandr.utils.seed import build_torch_generator, seed_worker
 from jormungandr.utils.transforms import make_coco_transforms
 
 model_name = "facebook/detr-resnet-50"
-image_processor = DetrImageProcessor.from_pretrained(model_name, force_download=True)
+image_processor: DetrImageProcessor | None = None
+try:
+    image_processor = DetrImageProcessor.from_pretrained(
+        model_name, force_download=True
+    )
+except Exception as e:
+    print(f"Error occurred while loading image processor: {e}")
+    print(
+        "There is likely an issue with the Hugging Face Hub or your internet connection. If you have previously loaded the model, it should be cached locally. Attempting to load from cache..."
+    )
+    image_processor = DetrImageProcessor.from_pretrained(
+        model_name, local_files_only=True
+    )
 
 
 # maps 80-class index -> 91-class index

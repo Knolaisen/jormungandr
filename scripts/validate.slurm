@@ -1,13 +1,13 @@
 #!/bin/sh
 #SBATCH --account=share-ie-idi
-#SBATCH --job-name="fast-train"
-#SBATCH --time=02:00:00
+#SBATCH --job-name="validate"
+#SBATCH --time=01:00:00
 #SBATCH --partition=GPUQ
 #SBATCH --mem=80GB
 #SBATCH --cpus-per-task=6
 #SBATCH --gres=gpu:1
 #SBATCH --nodes=1
-#SBATCH --constraint="(a100)&(gpu80g)"
+#SBATCH --constraint="(a100)&(gpu40g)"
 #SBATCH --output=slurm_outputs/output_master.txt
 #SBATCH --error=slurm_outputs/output_master.err
 
@@ -28,6 +28,6 @@ pip install uv --user
 uv sync
 
 # Run the Python script
-uv run python train.py experiment_2.yaml
+uv run python validate.py --detr_pretrained.yaml
 
 echo "Job finished"
