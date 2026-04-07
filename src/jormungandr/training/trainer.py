@@ -32,8 +32,8 @@ from torch.utils.data import DataLoader
 from torch import nn, optim
 from torch.optim import AdamW
 from torch.optim.lr_scheduler import ReduceLROnPlateau
-from torch.nn.utils import clip_grad_norm_
 from datetime import datetime
+from accelerate import Accelerator
 
 from jormungandr.config.configuration import Config, load_config
 from jormungandr.dataset import create_dataloaders
@@ -52,9 +52,19 @@ timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 def train(
     config: Config,
 ):
-    device = "cuda"
-    model = Fafnir(config=config.fafnir).to(device)
-    wandb.watch(model, log="all", log_freq=100)
+    accelerator = Accelerator(
+        mixed_precision=getattr(config.trainer, "mixed_precision", "no"),
+        gradient_accumulation_steps=getattr(
+            config.trainer, "gradient_accumulation_steps", 1
+        ),
+    )
+    device = accelerator.device
+
+    model = Fafnir(config=config.fafnir)
+
+    if accelerator.is_main_process:
+        wandb.watch(model, log="all", log_freq=100)
+
     training_loader, validation_loader = create_dataloaders(
         batch_size=config.trainer.batch_size,
         seed=config.trainer.seed,
@@ -88,21 +98,33 @@ def train(
         steps_per_epoch=len(training_loader) // config.trainer.batch_size,
     )
 
+    # ── Accelerate: wrap model, optimizer, dataloaders, and scheduler ──
+    model, optimizer, training_loader, validation_loader, scheduler = (
+        accelerator.prepare(
+            model, optimizer, training_loader, validation_loader, scheduler
+        )
+    )
+
     best_val_loss = float("inf")
-    for epoch in trange(config.trainer.epochs, desc="Epochs", unit="epoch"):
+    for epoch in trange(
+        config.trainer.epochs,
+        desc="Epochs",
+        unit="epoch",
+        disable=not accelerator.is_main_process,
+    ):
         average_training_loss = train_one_epoch(
             model,
             training_loader,
             optimizer,
             criterion,
-            device=device,
+            accelerator=accelerator,
             config=config,
         )
         average_validation_loss, average_validation_time = run_validation(
             model,
             validation_loader,
             criterion,
-            device=device,
+            accelerator=accelerator,
             config=config,
         )
 
@@ -113,33 +135,40 @@ def train(
             else:
                 scheduler.step()
 
-        current_lrs = {
-            f"lr/group_{i}": group["lr"]
-            for i, group in enumerate(optimizer.param_groups)
-        }
-        wandb.log(
-            {
-                "avg_train_loss": average_training_loss,
-                "avg_val_loss": average_validation_loss,
-                "epoch": epoch,
-                "avg_val_time": average_validation_time,
-                **current_lrs,
+        if accelerator.is_main_process:
+            current_lrs = {
+                f"lr/group_{i}": group["lr"]
+                for i, group in enumerate(optimizer.param_groups)
             }
-        )
+            wandb.log(
+                {
+                    "avg_train_loss": average_training_loss,
+                    "avg_val_loss": average_validation_loss,
+                    "epoch": epoch,
+                    "avg_val_time": average_validation_time,
+                    **current_lrs,
+                }
+            )
 
         # Track best performance, and save the model's state
         if average_validation_loss < best_val_loss:
             best_val_loss = average_validation_loss
-            artifact_name = f"model_{timestamp}_{best_val_loss:.3f}_{epoch}"
-            model_path = f"{MODELS_PATH}{artifact_name}"
-            torch.save(model.state_dict(), model_path)
 
-            model_artifact = wandb.Artifact(
-                artifact_name,
-                type="model",
-            )
-            model_artifact.add_file(model_path)
-            wandb.log_artifact(model_artifact)
+            # Wait for all processes before saving
+            accelerator.wait_for_everyone()
+
+            if accelerator.is_main_process:
+                unwrapped_model = accelerator.unwrap_model(model)
+                artifact_name = f"model_{timestamp}_{best_val_loss:.3f}_{epoch}"
+                model_path = f"{MODELS_PATH}{artifact_name}"
+                torch.save(unwrapped_model.state_dict(), model_path)
+
+                model_artifact = wandb.Artifact(
+                    artifact_name,
+                    type="model",
+                )
+                model_artifact.add_file(model_path)
+                wandb.log_artifact(model_artifact)
 
     return model
 
@@ -149,15 +178,20 @@ def train_one_epoch(
     dataloader: DataLoader,
     optimizer: optim.Optimizer,
     criterion: nn.Module | Callable,
-    device: torch.device | str,
+    accelerator: Accelerator,
     config: Config,
 ) -> float:
     model.train(True)
+    device = accelerator.device
 
     running_loss = 0.0
 
     for i, data in tqdm(
-        enumerate(dataloader), desc="Batches", unit="batch", leave=False
+        enumerate(dataloader),
+        desc="Batches",
+        unit="batch",
+        leave=False,
+        disable=not accelerator.is_main_process,
     ):
         pixel_values, pixel_mask, labels = (
             data["pixel_values"],
@@ -185,19 +219,21 @@ def train_one_epoch(
         )
 
         # Backward pass and optimize
-        loss.backward()
-        clip_grad_norm_(model.parameters(), max_norm=1.0)
+        accelerator.backward(loss)
+        accelerator.clip_grad_norm_(model.parameters(), max_norm=1.0)
         optimizer.step()
 
         batch_loss = loss.item()
         running_loss += batch_loss
-        wandb.log(
-            {
-                "train/batch_loss": batch_loss,
-                **{f"train/loss/{k}": v for k, v in loss_dict.items()},
-                # **{f"batch/aux/{k}": v for k, v in auxiliary_outputs.items()},
-            }
-        )
+
+        if accelerator.is_main_process:
+            wandb.log(
+                {
+                    "train/batch_loss": batch_loss,
+                    **{f"train/loss/{k}": v for k, v in loss_dict.items()},
+                }
+            )
+
     average_loss = running_loss / (i + 1)
     return average_loss
 
@@ -208,17 +244,21 @@ def run_validation(
     model: Fafnir,
     validation_loader: DataLoader,
     criterion: nn.Module | Callable,
-    device: torch.device | str,
+    accelerator: Accelerator,
     config: Config = CONFIG,
 ) -> tuple[float, float]:
     running_val_loss = 0.0
+    device = accelerator.device
     # Set the model to evaluation mode, disabling dropout and using population
     # statistics for batch normalization.
     model.eval()
 
     timings = []
-    starter = torch.cuda.Event(enable_timing=True)
-    ender = torch.cuda.Event(enable_timing=True)
+    use_cuda_events = device.type == "cuda"
+    if use_cuda_events:
+        starter = torch.cuda.Event(enable_timing=True)
+        ender = torch.cuda.Event(enable_timing=True)
+
     evaluator = CocoEvaluator()
     running_loss_dict: dict[str, float] = {}
     viz_batch: dict | None = None
@@ -236,15 +276,16 @@ def run_validation(
             for label in labels
         ]
 
-        if torch.cuda.is_available():
+        if use_cuda_events:
             torch.cuda.synchronize()
+            starter.record()
 
-        starter.record()
         class_labels, bbox_coordinates = model(pixel_values, pixel_mask)
-        ender.record()
 
-        torch.cuda.synchronize()
-        timings.append(starter.elapsed_time(ender))
+        if use_cuda_events:
+            ender.record()
+            torch.cuda.synchronize()
+            timings.append(starter.elapsed_time(ender))
 
         val_loss, loss_dict, auxiliary_outputs = criterion(
             logits=class_labels,
@@ -261,10 +302,13 @@ def run_validation(
         for k, v in loss_dict.items():
             running_loss_dict[k] = running_loss_dict.get(k, 0.0) + v
 
-        evaluator.update(class_labels, bbox_coordinates, labels)
+        # Gather predictions from all processes for correct COCO metrics
+        all_class_labels = accelerator.gather(class_labels)
+        all_bbox_coordinates = accelerator.gather(bbox_coordinates)
+        evaluator.update(all_class_labels, all_bbox_coordinates, labels)
 
-        # Stash the first batch for image logging
-        if viz_batch is None:
+        # Stash the first batch for image logging (main process only)
+        if viz_batch is None and accelerator.is_main_process:
             n = config.trainer.num_log_images
             viz_batch = {
                 "pixel_values": pixel_values[:n].cpu(),
@@ -277,27 +321,30 @@ def run_validation(
     coco_metrics = evaluator.evaluate()
     average_loss_dict = {k: v / (i + 1) for k, v in running_loss_dict.items()}
 
-    wandb_images = log_validation_images(
-        **viz_batch,
-        num_images=config.trainer.num_log_images,
-        score_threshold=config.trainer.viz_score_threshold,
-    )
-    wandb.log(
-        {
-            "val/images": wandb_images,
-            **{f"val/loss/{k}": v for k, v in average_loss_dict.items()},
-            **{f"val/metrics/{k}": v for k, v in coco_metrics.items()},
-        }
-    )
+    if accelerator.is_main_process:
+        wandb_images = log_validation_images(
+            **viz_batch,
+            num_images=config.trainer.num_log_images,
+            score_threshold=config.trainer.viz_score_threshold,
+        )
+        wandb.log(
+            {
+                "val/images": wandb_images,
+                **{f"val/loss/{k}": v for k, v in average_loss_dict.items()},
+                **{f"val/metrics/{k}": v for k, v in coco_metrics.items()},
+            }
+        )
 
-    average_time = sum(timings) / len(timings)
+    average_time = sum(timings) / len(timings) if timings else 0.0
     average_val_loss = running_val_loss / (i + 1)
     return average_val_loss, average_time
 
 
 def validate(config: Config) -> None:
-    device = "cuda"
-    model = Fafnir(config=config.fafnir).to(device)
+    accelerator = Accelerator()
+    device = accelerator.device
+
+    model = Fafnir(config=config.fafnir)
     training_loader, validation_loader = create_dataloaders(
         batch_size=config.trainer.batch_size,
         seed=config.trainer.seed,
@@ -305,13 +352,16 @@ def validate(config: Config) -> None:
 
     criterion = build_criterion(config.trainer.loss.name)
 
+    model, validation_loader = accelerator.prepare(model, validation_loader)
+
     average_validation_loss, average_validation_time = run_validation(
         model,
         validation_loader,
         criterion,
-        device=device,
+        accelerator=accelerator,
         config=config,
     )
 
-    print(f"Average validation loss: {average_validation_loss:.4f}")
-    print(f"Average validation time per batch: {average_validation_time:.2f} ms")
+    if accelerator.is_main_process:
+        print(f"Average validation loss: {average_validation_loss:.4f}")
+        print(f"Average validation time per batch: {average_validation_time:.2f} ms")
