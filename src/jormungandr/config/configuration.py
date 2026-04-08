@@ -164,6 +164,35 @@ class FafnirConfig(BaseModel):
     )
 
 
+class JormungandrConfig(BaseModel):
+    input_size: int = Field(
+        default=512, description="Input size for the Jormungandr model"
+    )
+    num_classes: int = Field(
+        default=80, description="Number of classes for object detection"
+    )
+    num_frames: int = Field(
+        default=4,
+        description="Number of frames in the input video clip for Jormungandr",
+    )
+    spatial_encoder: EncoderConfig = Field(
+        default_factory=EncoderConfig,
+        description="Configuration for the spatial encoder used in Jormungandr (operates on individual frames)",
+    )
+    temporal_encoder: EncoderConfig = Field(
+        default_factory=EncoderConfig,
+        description="Configuration for the temporal encoder used in Jormungandr (operates across frames)",
+    )
+    decoder: DecoderConfig = Field(
+        default_factory=DecoderConfig,
+        description="Configuration for the decoder used in Jormungandr",
+    )
+    output_head: OutputHeadConfig = Field(
+        default_factory=OutputHeadConfig,
+        description="Configuration for the output head used in Jormungandr",
+    )
+
+
 class Config(BaseModel):
     trainer: TrainerConfig
     fafnir: FafnirConfig

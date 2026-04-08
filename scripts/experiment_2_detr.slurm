@@ -1,15 +1,15 @@
 #!/bin/sh
 #SBATCH --account=share-ie-idi
-#SBATCH --job-name="experiment-1"
-#SBATCH --time=1:00:00
+#SBATCH --job-name="experiment-2 DETR"
+#SBATCH --time=03-12:00:00
 #SBATCH --partition=GPUQ
 #SBATCH --mem=80GB
 #SBATCH --cpus-per-task=6
 #SBATCH --gres=gpu:1
 #SBATCH --nodes=1
 #SBATCH --constraint="(a100)&(gpu80g)"
-#SBATCH --output=slurm_outputs/output_experiment_1.txt
-#SBATCH --error=slurm_outputs/output_experiment_1.err
+#SBATCH --output=slurm_outputs/output_experiment_2_detr.txt
+#SBATCH --error=slurm_outputs/output_experiment_2_detr.err
 
 
 WORKDIR=../${SLURM_SUBMIT_DIR}
@@ -28,7 +28,7 @@ pip install uv --user
 uv sync
 
 # Run the Python script
-uv run python validate.py --config experiment_1.yaml
+uv run python train.py --config experiment_2_detr.yaml
 
 
 echo "Job finished"

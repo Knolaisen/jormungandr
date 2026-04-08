@@ -1,14 +1,15 @@
 
 trainer:
-  epochs: 10
-  batch_size: 16
+  epochs: 100
+  batch_size: 64
   seed: 42
-  subset_size: 1000 # Set to an integer to use a subset of the dataset for training and validation
   encoder_learning_rate: 1e-4
   decoder_learning_rate: 1e-5
   output_head_learning_rate: 1e-5
   optimizer: "AdamW"
   log_interval: 10
+  num_log_images: 8
+  viz_score_threshold: 0.5
   loss:
     name: "giouloss" # Options: "giouloss", "ciouloss"
     class_cost: 1.0
@@ -26,7 +27,7 @@ fafnir:
   encoder:
     encoder_type: "detr"
     num_layers: 4
-    use_pre_trained: true
+    use_pre_trained: false
   decoder:
     freeze_decoder: false
     epoch_to_unfreeze_decoder: 0
