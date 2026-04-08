@@ -175,13 +175,20 @@ def train_one_epoch(
         optimizer.zero_grad()
 
         # Forward pass
-        class_labels, bbox_coordinates = model.forward(pixel_values, pixel_mask)
+        class_labels, bbox_coordinates, intermediate = model.forward(
+            pixel_values, pixel_mask
+        )
+
+        output_class, output_coord = model.output_head.forward(intermediate)
+
         loss, loss_dict, auxiliary_outputs = criterion(
             logits=class_labels,
             labels=labels,
             device=device,
             pred_boxes=bbox_coordinates,
             config=config.trainer.loss,
+            outputs_class=output_class,
+            outputs_coord=output_coord,
         )
 
         # Backward pass and optimize
@@ -195,7 +202,7 @@ def train_one_epoch(
             {
                 "train/batch_loss": batch_loss,
                 **{f"train/loss/{k}": v for k, v in loss_dict.items()},
-                # **{f"batch/aux/{k}": v for k, v in auxiliary_outputs.items()},
+                **{f"batch/aux/{k}": v for k, v in auxiliary_outputs.items()},
             }
         )
     average_loss = running_loss / (i + 1)
@@ -240,7 +247,7 @@ def run_validation(
             torch.cuda.synchronize()
 
         starter.record()
-        class_labels, bbox_coordinates = model(pixel_values, pixel_mask)
+        class_labels, bbox_coordinates, intermediate = model(pixel_values, pixel_mask)
         ender.record()
 
         torch.cuda.synchronize()

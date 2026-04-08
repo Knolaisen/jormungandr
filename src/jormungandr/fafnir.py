@@ -32,9 +32,9 @@ class Fafnir(nn.Module):
             if embedder is not None
             else DetrSinePositionEmbedding(num_position_features=model_dimension // 2)
         )
-        assert self.embedder is not None, (
-            "Embedder should not be None after initialization"
-        )
+        assert (
+            self.embedder is not None
+        ), "Embedder should not be None after initialization"
 
         self.embedder = self.embedder.to(device)
 
@@ -43,10 +43,14 @@ class Fafnir(nn.Module):
         match config.encoder.encoder_type.lower():
             case "mamba":
                 self.encoder = MambaEncoder(
-                    model_dimension=model_dimension, num_layers=config.encoder.num_layers
+                    model_dimension=model_dimension,
+                    num_layers=config.encoder.num_layers,
                 ).to(device)
             case "detr":
-                self.encoder = DETREncoder(use_pre_trained=config.encoder.use_pre_trained, num_layers=config.encoder.num_layers).to(device)
+                self.encoder = DETREncoder(
+                    use_pre_trained=config.encoder.use_pre_trained,
+                    num_layers=config.encoder.num_layers,
+                ).to(device)
             case _:
                 raise ValueError(f"Unsupported encoder type: {config.encoder.type}")
 
@@ -61,7 +65,7 @@ class Fafnir(nn.Module):
         self,
         pixel_values: Tensor,
         pixel_mask: Tensor | None = None,
-    ) -> tuple[Tensor, Tensor]:
+    ) -> tuple[Tensor, Tensor, Tensor]:
         pixel_values = pixel_values.to(self.device)
         # Backbone
         feature_maps, mask = self.backbone.forward(pixel_values, pixel_mask)
@@ -87,7 +91,7 @@ class Fafnir(nn.Module):
         )
 
         # Decoder
-        decoder_output = self.decoder.forward(
+        decoder_output, intermediate = self.decoder.forward(
             encoder_output=encoder_outputs,
             position_embedding=position_embedding,
             encoder_mask_flattened=flattened_mask,
@@ -95,4 +99,4 @@ class Fafnir(nn.Module):
 
         # Detection Head
         class_labels, bbox_coordinates = self.output_head.forward(decoder_output)
-        return class_labels, bbox_coordinates
+        return class_labels, bbox_coordinates, intermediate
