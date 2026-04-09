@@ -46,10 +46,12 @@ class Jormungandr(nn.Module):
         # Encoders
         self.spatial_encoder = MambaEncoder(
             model_dimension=model_dimension,
+            hidden_state_dim=config.spatial_encoder.hidden_state_dim,
             num_layers=config.spatial_encoder.num_layers,
         ).to(device)
         self.temporal_encoder = MambaEncoder(
             model_dimension=model_dimension,
+            hidden_state_dim=config.temporal_encoder.hidden_state_dim,
             num_layers=config.temporal_encoder.num_layers,
         ).to(device)
 

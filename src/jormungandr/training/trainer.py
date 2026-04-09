@@ -85,7 +85,7 @@ def train(
         optimizer,
         config.trainer.scheduler,
         epochs=config.trainer.epochs,
-        steps_per_epoch=len(training_loader) // config.trainer.batch_size,
+        steps_per_epoch=len(training_loader),
     )
 
     best_val_loss = float("inf")
@@ -175,7 +175,7 @@ def train_one_epoch(
         optimizer.zero_grad()
 
         # Forward pass
-        class_labels, bbox_coordinates = model.forward(pixel_values)
+        class_labels, bbox_coordinates = model.forward(pixel_values, pixel_mask)
         loss, loss_dict, auxiliary_outputs = criterion(
             logits=class_labels,
             labels=labels,

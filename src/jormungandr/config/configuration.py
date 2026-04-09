@@ -137,6 +137,14 @@ class EncoderConfig(BaseModel):
         default=True,
         description="Whether to use a pre-trained encoder (e.g., from a DETR model) or a custom Mamba encoder",
     )
+    hidden_state_dim: int = Field(
+        default=64,
+        description="SSM state dimension (d_state). Mamba-2 recommended range: 64–256. Mamba-1 default of 16 under-utilizes Mamba-2.",
+    )
+    model_dimension: int = Field(
+        default=256,
+        description="Model/token embedding dimension (d_model).",
+    )
 
 
 class OutputHeadConfig(BaseModel):
