@@ -589,6 +589,8 @@
       
         
       
+        
+      
     
     
     
@@ -908,6 +910,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../jormungandr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    jormungandr
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../output_head/" class="md-nav__link">
         
   
@@ -963,7 +993,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_1_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_1_10" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -985,14 +1015,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4_1_1_9" id="__nav_4_1_1_9_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_4_1_1_10" id="__nav_4_1_1_10_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_1_9_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_1_1_9">
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_1_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1_1_10">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1184,7 +1214,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_1_10" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_1_11" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -1206,14 +1236,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4_1_1_10" id="__nav_4_1_1_10_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_4_1_1_11" id="__nav_4_1_1_11_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_1_10_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_1_1_10">
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_1_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1_1_11">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1680,7 +1710,11 @@
 <span class="normal">40</span>
 <span class="normal">41</span>
 <span class="normal">42</span>
-<span class="normal">43</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">model_dimension</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">256</span><span class="p">,</span>
     <span class="n">hidden_state_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span>
@@ -1697,14 +1731,18 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">num_layers</span> <span class="o">=</span> <span class="n">num_layers</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">(</span>
         <span class="p">[</span>
-            <span class="n">Mamba</span><span class="p">(</span>
+            <span class="n">Mamba2</span><span class="p">(</span>
                 <span class="n">d_model</span><span class="o">=</span><span class="n">model_dimension</span><span class="p">,</span>
                 <span class="n">d_state</span><span class="o">=</span><span class="n">hidden_state_dim</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_layers</span><span class="p">)</span>
         <span class="p">]</span>
     <span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">norm</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">RMSNorm</span><span class="p">(</span><span class="n">model_dimension</span><span class="p">)</span>
+    <span class="c1"># Per-layer norms (pre-norm architecture)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">norms</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">RMSNorm</span><span class="p">(</span><span class="n">model_dimension</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_layers</span><span class="p">)]</span>
+    <span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">final_norm</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">RMSNorm</span><span class="p">(</span><span class="n">model_dimension</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
                   </details>
 
@@ -1729,7 +1767,7 @@
 
 
 </h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">forward</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">position_embedding</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">forward</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">position_embedding</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">pixel_mask</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -1753,29 +1791,81 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/jormungandr/encoder.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">45</span>
-<span class="normal">46</span>
-<span class="normal">47</span>
-<span class="normal">48</span>
-<span class="normal">49</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">49</span>
 <span class="normal">50</span>
 <span class="normal">51</span>
 <span class="normal">52</span>
 <span class="normal">53</span>
 <span class="normal">54</span>
 <span class="normal">55</span>
-<span class="normal">56</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">position_embedding</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">position_embedding</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">pixel_mask</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Args:</span>
 <span class="sd">        x: Tensor of shape (batch_size, model_dimension)</span>
 <span class="sd">    Returns:</span>
 <span class="sd">        Tensor of shape (batch_size, model_dimension)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">layer</span><span class="p">,</span> <span class="n">norm</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">norms</span><span class="p">):</span>
+        <span class="n">residual</span> <span class="o">=</span> <span class="n">x</span>
 
-    <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">:</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">position_embedding</span> <span class="k">if</span> <span class="n">position_embedding</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">x</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">x</span>
+        <span class="c1"># Pre-norm</span>
+        <span class="n">normed</span> <span class="o">=</span> <span class="n">norm</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="c1"># Inject position into the layer input — NOT into the residual.</span>
+        <span class="c1"># This is the Mamba analog of DETR adding pos to Q and K:</span>
+        <span class="c1"># position influences the layer&#39;s processing (selective scan gating)</span>
+        <span class="c1"># but the residual stream (analogous to V) stays position-free.</span>
+        <span class="k">if</span> <span class="n">position_embedding</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">layer_input</span> <span class="o">=</span> <span class="n">normed</span> <span class="o">+</span> <span class="n">position_embedding</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">layer_input</span> <span class="o">=</span> <span class="n">normed</span>
+
+        <span class="c1"># Mamba selective scan</span>
+        <span class="n">layer_output</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">layer_input</span><span class="p">)</span>
+
+        <span class="c1"># Zero padded positions on the layer output (before residual add)</span>
+        <span class="k">if</span> <span class="n">pixel_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">layer_output</span> <span class="o">=</span> <span class="n">layer_output</span> <span class="o">*</span> <span class="n">pixel_mask</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Residual connection — x never directly receives position_embedding</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">residual</span> <span class="o">+</span> <span class="n">layer_output</span>
+
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">final_norm</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>

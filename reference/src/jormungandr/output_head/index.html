@@ -9,7 +9,7 @@
       
       
       
-        <link rel="prev" href="../fafnir/">
+        <link rel="prev" href="../jormungandr/">
       
       
         <link rel="next" href="../training/">
@@ -589,6 +589,8 @@
       
         
       
+        
+      
     
     
     
@@ -813,6 +815,34 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../jormungandr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    jormungandr
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -974,7 +1004,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_1_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_1_10" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -996,14 +1026,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4_1_1_9" id="__nav_4_1_1_9_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_4_1_1_10" id="__nav_4_1_1_10_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_1_9_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_1_1_9">
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_1_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1_1_10">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1195,7 +1225,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_1_10" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_1_11" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -1217,14 +1247,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4_1_1_10" id="__nav_4_1_1_10_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_4_1_1_11" id="__nav_4_1_1_11_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_1_10_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_1_1_10">
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_1_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1_1_11">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1643,7 +1673,7 @@
 
 
 </h2>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">FCNNPredictionHead</span><span class="p">(</span><span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;facebook/detr-resnet-50&#39;</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">FCNNPredictionHead</span><span class="p">(</span><span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;facebook/detr-resnet-50&#39;</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">OutputHeadConfig</span> <span class="o">=</span> <span class="n">OutputHeadConfig</span><span class="p">())</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -1681,8 +1711,7 @@ height and width of a bounding box w.r.t. an image.</p>
 
                   <details class="mkdocstrings-source">
                     <summary>Source code in <code>src/jormungandr/output_head.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">12</span>
-<span class="normal">13</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">13</span>
 <span class="normal">14</span>
 <span class="normal">15</span>
 <span class="normal">16</span>
@@ -1691,9 +1720,18 @@ height and width of a bounding box w.r.t. an image.</p>
 <span class="normal">19</span>
 <span class="normal">20</span>
 <span class="normal">21</span>
-<span class="normal">22</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;facebook/detr-resnet-50&quot;</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">OutputHeadConfig</span> <span class="o">=</span> <span class="n">OutputHeadConfig</span><span class="p">(),</span>
 <span class="p">):</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">class_labels_classifier</span> <span class="o">=</span> <span class="n">DetrForObjectDetection</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
@@ -1702,6 +1740,12 @@ height and width of a bounding box w.r.t. an image.</p>
     <span class="bp">self</span><span class="o">.</span><span class="n">bbox_predictor</span> <span class="o">=</span> <span class="n">DetrForObjectDetection</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
         <span class="n">model_name</span>
     <span class="p">)</span><span class="o">.</span><span class="n">bbox_predictor</span>
+
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">freeze_prediction_head</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">class_labels_classifier</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+            <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bbox_predictor</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+            <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
 </code></pre></div></td></tr></table></div>
                   </details>
 
@@ -1764,15 +1808,7 @@ in the image,)</code> and the boxes a <code>torch.FloatTensor</code> of shape <c
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/jormungandr/output_head.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">32</span>
 <span class="normal">33</span>
 <span class="normal">34</span>
 <span class="normal">35</span>
@@ -1784,7 +1820,15 @@ in the image,)</code> and the boxes a <code>torch.FloatTensor</code> of shape <c
 <span class="normal">41</span>
 <span class="normal">42</span>
 <span class="normal">43</span>
-<span class="normal">44</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">decoder_output</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
     <span class="n">labels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1867,7 +1911,7 @@ in the image,)</code> and the boxes a <code>torch.FloatTensor</code> of shape <c
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../fafnir/" class="md-footer__link md-footer__link--prev" aria-label="Previous: fafnir">
+          <a href="../jormungandr/" class="md-footer__link md-footer__link--prev" aria-label="Previous: jormungandr">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1877,7 +1921,7 @@ in the image,)</code> and the boxes a <code>torch.FloatTensor</code> of shape <c
                 Previous
               </span>
               <div class="md-ellipsis">
-                fafnir
+                jormungandr
               </div>
             </div>
           </a>
