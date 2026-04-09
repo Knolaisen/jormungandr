@@ -33,7 +33,7 @@ class MambaEncoder(nn.Module, Encoder):
         self.num_layers = num_layers
         self.layers = nn.ModuleList(
             [
-                Mamba2(
+                Mamba(
                     d_model=model_dimension,
                     d_state=hidden_state_dim,
                 )
@@ -45,7 +45,7 @@ class MambaEncoder(nn.Module, Encoder):
             [nn.RMSNorm(model_dimension) for _ in range(self.num_layers)]
         )
         self.final_norm = nn.RMSNorm(model_dimension)
- 
+
     def forward(
         self,
         x: Tensor,
@@ -60,10 +60,10 @@ class MambaEncoder(nn.Module, Encoder):
         """
         for layer, norm in zip(self.layers, self.norms):
             residual = x
- 
+
             # Pre-norm
             normed = norm(x)
- 
+
             # Inject position into the layer input — NOT into the residual.
             # This is the Mamba analog of DETR adding pos to Q and K:
             # position influences the layer's processing (selective scan gating)
@@ -72,29 +72,41 @@ class MambaEncoder(nn.Module, Encoder):
                 layer_input = normed + position_embedding
             else:
                 layer_input = normed
- 
+
             # Mamba selective scan
             layer_output = layer(layer_input)
- 
+
             # Zero padded positions on the layer output (before residual add)
             if pixel_mask is not None:
                 layer_output = layer_output * pixel_mask.unsqueeze(-1)
- 
+
             # Residual connection — x never directly receives position_embedding
             x = residual + layer_output
- 
+
         return self.final_norm(x)
 
 
 class DETREncoder(nn.Module, Encoder):
-    def __init__(self, model_name: str = "facebook/detr-resnet-50", use_pre_trained: bool = True, num_layers: int = 6):
+    def __init__(
+        self,
+        model_name: str = "facebook/detr-resnet-50",
+        use_pre_trained: bool = True,
+        num_layers: int = 6,
+    ):
         super(DETREncoder, self).__init__()
-        self.encoder = fetch_detr_model(model_name, is_pre_trained=use_pre_trained, num_encoder_layers=num_layers).model.encoder
+        self.encoder = fetch_detr_model(
+            model_name, is_pre_trained=use_pre_trained, num_encoder_layers=num_layers
+        ).model.encoder
 
         for layer in self.encoder.layers:
             layer.training = True
 
-    def forward(self, x: Tensor, position_embedding: Tensor | None = None, pixel_mask: Tensor | None = None) -> Tensor:
+    def forward(
+        self,
+        x: Tensor,
+        position_embedding: Tensor | None = None,
+        pixel_mask: Tensor | None = None,
+    ) -> Tensor:
         encoder_outputs = self.encoder.forward(
             x, spatial_position_embeddings=position_embedding, attention_mask=pixel_mask
         )
