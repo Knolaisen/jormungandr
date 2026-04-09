@@ -197,14 +197,12 @@ def train_one_epoch(
         loss.backward()
         clip_grad_norm_(model.parameters(), max_norm=1.0)
         optimizer.step()
-
         batch_loss = loss.item()
         running_loss += batch_loss
         wandb.log(
             {
                 "train/batch_loss": batch_loss,
                 **{f"train/loss/{k}": v for k, v in loss_dict.items()},
-                **{f"batch/aux/{k}": v for k, v in auxiliary_outputs.items()},
             }
         )
     average_loss = running_loss / (i + 1)
