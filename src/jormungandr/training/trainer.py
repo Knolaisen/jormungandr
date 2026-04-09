@@ -179,7 +179,9 @@ def train_one_epoch(
             pixel_values, pixel_mask
         )
 
-        output_class, output_coord = model.output_head.forward(intermediate)
+        output_class, output_coord = None, None
+        if config.trainer.loss.auxiliary_loss:
+            output_class, output_coord = model.output_head.forward(intermediate)
 
         loss, loss_dict, auxiliary_outputs = criterion(
             logits=class_labels,

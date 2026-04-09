@@ -55,6 +55,10 @@ class LossConfig(BaseModel):
         default=2.0,
         description="Coefficient for the GIoU loss in the total loss calculation",
     )
+    decoder_layers: int = Field(
+        default=6,
+        description="Number of decoder layers in the model, used to determine how many auxiliary losses to compute if auxiliary_loss is True",
+    )
 
 
 class SchedulerConfig(BaseModel):
@@ -124,6 +128,10 @@ class DecoderConfig(BaseModel):
     hidden_dim: int = Field(
         default=256,
         description="Hidden dimension size for the decoder's query position embeddings",
+    )
+    auxiliary_loss: bool = Field(
+        default=False,
+        description="Whether the decoder is configured to compute auxiliary losses from intermediate layers",
     )
 
 
