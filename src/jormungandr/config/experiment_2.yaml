@@ -21,7 +21,7 @@ trainer:
     giou_cost: 2.0  
     num_labels: 91
     eos_coefficient: 0.1
-    auxiliary_loss: false
+    auxiliary_loss: true
     bbox_loss_coefficient: 5.0
     giou_loss_coefficient: 2.0
     decoder_layers: 6
