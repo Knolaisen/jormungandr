@@ -33,6 +33,7 @@ from torch import nn, optim
 from torch.optim import AdamW
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.nn.utils import clip_grad_norm_
+from torch.optim.swa_utils import AveragedModel, get_ema_multi_avg_fn
 from datetime import datetime
 
 from jormungandr.config.configuration import Config, load_config
@@ -54,6 +55,13 @@ def train(
 ):
     device = "cuda"
     model = Fafnir(config=config.fafnir).to(device)
+    ema_model = (
+        AveragedModel(
+            model, multi_avg_fn=get_ema_multi_avg_fn(config.trainer.ema_decay)
+        )
+        if config.trainer.use_ema
+        else None
+    )
     wandb.watch(model, log="all", log_freq=100)
     training_loader, validation_loader = create_dataloaders(
         batch_size=config.trainer.batch_size,
@@ -103,9 +111,11 @@ def train(
             criterion,
             device=device,
             config=config,
+            ema_model=ema_model,
         )
+        eval_model = ema_model if ema_model is not None else model
         average_validation_loss, average_validation_time = run_validation(
-            model,
+            eval_model,
             validation_loader,
             criterion,
             device=device,
@@ -138,7 +148,12 @@ def train(
             best_val_loss = average_validation_loss
             artifact_name = f"model_{timestamp}_{best_val_loss:.3f}_{epoch}"
             model_path = f"{MODELS_PATH}{artifact_name}"
-            torch.save(model.state_dict(), model_path)
+            state_dict = (
+                ema_model.module.state_dict()
+                if ema_model is not None
+                else model.state_dict()
+            )
+            torch.save(state_dict, model_path)
 
             model_artifact = wandb.Artifact(
                 artifact_name,
@@ -172,6 +187,7 @@ def train_one_epoch(
     criterion: nn.Module | Callable,
     device: torch.device | str,
     config: Config,
+    ema_model: AveragedModel | None = None,
 ) -> float:
     model.train(True)
 
@@ -218,6 +234,8 @@ def train_one_epoch(
         loss.backward()
         clip_grad_norm_(model.parameters(), max_norm=1.0)
         optimizer.step()
+        if ema_model is not None:
+            ema_model.update_parameters(model)
         batch_loss = loss.item()
         running_loss += batch_loss
         wandb.log(
@@ -233,7 +251,7 @@ def train_one_epoch(
 # Disable gradient computation and reduce memory consumption.
 @torch.no_grad()
 def run_validation(
-    model: Fafnir,
+    model: Fafnir | AveragedModel,
     validation_loader: DataLoader,
     criterion: nn.Module | Callable,
     device: torch.device | str,

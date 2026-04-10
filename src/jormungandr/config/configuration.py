@@ -127,6 +127,14 @@ class TrainerConfig(BaseModel):
         default=0,
         description="Epoch number at which to unfreeze the output head if it is initially frozen",
     )
+    use_ema: bool = Field(
+        default=False,
+        description="Whether to use Exponential Moving Average (EMA) of model weights during training",
+    )
+    ema_decay: float = Field(
+        default=0.9999,
+        description="Decay factor for EMA; higher values mean slower adaptation (e.g. 0.999–0.9999)",
+    )
 
 
 class DecoderConfig(BaseModel):
