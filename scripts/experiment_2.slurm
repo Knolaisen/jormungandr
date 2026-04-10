@@ -28,7 +28,7 @@ pip install uv --user
 uv sync
 
 # Run the Python script
-uv run python train.py --config experiment_2_no_freeze.yaml
+uv run python train.py --config experiment_2.yaml
 
 
 echo "Job finished"
