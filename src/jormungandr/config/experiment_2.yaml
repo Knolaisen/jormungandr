@@ -29,7 +29,7 @@ trainer:
 fafnir:
   input_size: 224
   num_classes: 92
-  detr_name: "facebook/detr-resnet-50-dc5" # Options: "facebook/detr-resnet-50" "facebook/detr-resnet-50-dc5"
+  detr_name: "facebook/detr-resnet-50" # Options: "facebook/detr-resnet-50" "facebook/detr-resnet-50-dc5"
   encoder:
     encoder_type: "mamba"
     num_layers: 12
