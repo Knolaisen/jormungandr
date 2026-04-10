@@ -1,7 +1,8 @@
 
 trainer:
-  epochs: 100
-  batch_size: 64
+  epochs: 1
+  batch_size: 5
+  subset_size: 1000
   seed: 42
   backbone_learning_rate: 1e-6
   encoder_learning_rate: 1e-4
@@ -34,8 +35,10 @@ fafnir:
     encoder_type: "mamba"
     num_layers: 12
     hidden_state_dim: 16 # Mamba-2 minimum; paper recommends 64-256 (vs Mamba-1 default of 16)
+  backbone:
+    freeze_backbone: true
   decoder:
-    freeze_decoder: false
+    freeze_decoder: true
     auxiliary_loss: true
   output_head:
-    freeze_prediction_head: false
+    freeze_prediction_head: true

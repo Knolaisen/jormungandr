@@ -151,15 +151,15 @@ def train(
 
 
 def _handle_unfreezing(model: Fafnir, epoch: int, config: Config) -> None:
-    if not config.fafnir.decoder.freeze_decoder:
+    if config.fafnir.decoder.freeze_decoder:
         if epoch == config.trainer.epoch_to_unfreeze_decoder:
             for param in model.decoder.parameters():
                 param.requires_grad = True
-    if not config.fafnir.backbone.freeze_backbone:
+    if config.fafnir.backbone.freeze_backbone:
         if epoch == config.trainer.epoch_to_unfreeze_backbone:
             for param in model.backbone.parameters():
                 param.requires_grad = True
-    if not config.fafnir.output_head.freeze_prediction_head:
+    if config.fafnir.output_head.freeze_prediction_head:
         if epoch == config.trainer.epoch_to_unfreeze_output_head:
             for param in model.output_head.parameters():
                 param.requires_grad = True
