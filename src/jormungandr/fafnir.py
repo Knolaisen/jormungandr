@@ -44,6 +44,7 @@ class Fafnir(nn.Module):
             case "mamba":
                 self.encoder = MambaEncoder(
                     model_dimension=model_dimension,
+                    hidden_state_dim=config.encoder.hidden_state_dim,
                     num_layers=config.encoder.num_layers,
                 ).to(device)
             case "detr":

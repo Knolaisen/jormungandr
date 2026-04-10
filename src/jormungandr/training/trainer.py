@@ -85,7 +85,7 @@ def train(
         optimizer,
         config.trainer.scheduler,
         epochs=config.trainer.epochs,
-        steps_per_epoch=len(training_loader) // config.trainer.batch_size,
+        steps_per_epoch=len(training_loader),
     )
 
     best_val_loss = float("inf")
