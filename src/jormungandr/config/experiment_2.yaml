@@ -3,6 +3,7 @@ trainer:
   epochs: 100
   batch_size: 64
   seed: 42
+  backbone_learning_rate: 1e-6
   encoder_learning_rate: 1e-4
   decoder_learning_rate: 1e-5
   output_head_learning_rate: 1e-5
@@ -10,6 +11,9 @@ trainer:
   log_interval: 10
   num_log_images: 8
   viz_score_threshold: 0.5
+  epoch_to_unfreeze_backbone: 30
+  epoch_to_unfreeze_decoder: 30
+  epoch_to_unfreeze_output_head: 30
   loss:
     name: "giouloss" # Options: "giouloss", "ciouloss"
     class_cost: 1.0
@@ -25,13 +29,13 @@ trainer:
 fafnir:
   input_size: 224
   num_classes: 92
+  detr_name: "facebook/detr-resnet-50-dc5" # Options: "facebook/detr-resnet-50" "facebook/detr-resnet-50-dc5"
   encoder:
     encoder_type: "mamba"
     num_layers: 12
     hidden_state_dim: 16 # Mamba-2 minimum; paper recommends 64-256 (vs Mamba-1 default of 16)
   decoder:
-    freeze_decoder: true
-    epoch_to_unfreeze_decoder: 0
+    freeze_decoder: false
     auxiliary_loss: true
   output_head:
-    freeze_prediction_head: true
+    freeze_prediction_head: false
