@@ -16,9 +16,9 @@ def fetch_detr_model(
 
     if not is_pre_trained:
         return DetrForObjectDetection(config)
-    
+
     if auxiliary_loss:
         config.auxiliary_loss = True
         return DetrForObjectDetection.from_pretrained(model_name, config=config)
 
-    return DetrForObjectDetection.from_pretrained(model_name)
+    return DetrForObjectDetection.from_pretrained(model_name, config=config)
