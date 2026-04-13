@@ -1,7 +1,7 @@
 
 trainer:
   epochs: 10
-  batch_size: 16
+  batch_size: 2
   seed: 42
   encoder_learning_rate: 1e-4
   decoder_learning_rate: 1e-5
@@ -24,7 +24,7 @@ fafnir:
   num_classes: 92
   encoder:
     encoder_type: "detr"
-    num_layers: 6
+    num_layers: 0
     use_pre_trained: true
   decoder:
     freeze_decoder: false

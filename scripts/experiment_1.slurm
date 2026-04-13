@@ -28,7 +28,9 @@ pip install uv --user
 uv sync
 
 # Run the Python script
-uv run python validate.py --config experiment_1.yaml
+uv run python validate.py --config experiment_1_0.yaml
+uv run python validate.py --config experiment_1_4.yaml
+uv run python validate.py --config experiment_1_6.yaml
 
 
 echo "Job finished"

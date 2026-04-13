@@ -16,7 +16,9 @@ class DETRDecoder(nn.Module):
         self.decoder_config = decoder_config
 
         if self.decoder_config.num_queries is not None:
-            self.query_position_embeddings = nn.Embedding(self.decoder_config.num_queries, self.decoder_config.hidden_dim)
+            self.query_position_embeddings = nn.Embedding(
+                self.decoder_config.num_queries, self.decoder_config.hidden_dim
+            )
         else:
             self.query_position_embeddings = fetch_detr_model(
                 model_name
@@ -24,7 +26,7 @@ class DETRDecoder(nn.Module):
 
         # Additional layers can be added here
 
-        self.decoder = fetch_detr_model(model_name).model.decoder
+        self.decoder = fetch_detr_model(model_name=model_name, auxiliary_loss=self.decoder_config.auxiliary_loss).model.decoder
 
         if self.decoder_config.freeze_decoder:
             for param in self.decoder.parameters():
@@ -37,7 +39,7 @@ class DETRDecoder(nn.Module):
         encoder_mask_flattened: Tensor | None = None,
         decoder_inputs_embeds: Tensor | None = None,
         decoder_attention_mask: torch.FloatTensor | None = None,
-    ) -> Tensor:
+    ) -> tuple[Tensor, Tensor]:
         """
         Args:
             encoder_output: Tensor of shape (batch_size, sequence_length, hidden_dim)
@@ -64,5 +66,8 @@ class DETRDecoder(nn.Module):
             object_queries_position_embeddings=object_queries_position_embeddings,
             attention_mask=decoder_attention_mask,
             encoder_attention_mask=encoder_mask_flattened,
-        )[0]
-        return decoder_output
+        )
+        decoder_final_output = decoder_output[0]
+        decoder_intermediate_outputs = decoder_output[1]
+
+        return decoder_final_output, decoder_intermediate_outputs

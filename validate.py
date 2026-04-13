@@ -49,9 +49,4 @@ if __name__ == "__main__":
         help=f"Config file to load (e.g. {experiment})",
     )
     args = parser.parse_args()
-    # with profile(
-    #     activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
-    #     record_shapes=True,
-    #     profile_memory=True,
-    # ) as prof:
-    main(args.config)
+    main(args.config_flag or args.config or experiment)

@@ -225,7 +225,7 @@ def create_dataloaders(
     )
     val_loader = DataLoader(
         torch_val_ds,
-        batch_size=batch_size,
+        batch_size=2,
         shuffle=False,
         collate_fn=_make_collate_fn("val"),
         worker_init_fn=seed_worker,

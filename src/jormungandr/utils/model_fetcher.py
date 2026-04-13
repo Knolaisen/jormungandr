@@ -7,6 +7,7 @@ def fetch_detr_model(
     model_name: str = "facebook/detr-resnet-50",
     is_pre_trained: bool = True,
     num_encoder_layers: int | None = None,
+    auxiliary_loss: bool = False,
 ) -> DetrForObjectDetection:
     config = DetrConfig.from_pretrained(model_name)
 
@@ -15,4 +16,9 @@ def fetch_detr_model(
 
     if not is_pre_trained:
         return DetrForObjectDetection(config)
+    
+    if auxiliary_loss:
+        config.auxiliary_loss = True
+        return DetrForObjectDetection.from_pretrained(model_name, config=config)
+
     return DetrForObjectDetection.from_pretrained(model_name)
