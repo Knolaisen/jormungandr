@@ -17,7 +17,7 @@ from jormungandr.utils.seed import seed_everything
     project_name="fafnir_training",
     log_level="ERROR",
 )
-def main(config_file: str, model_path: str | None) -> None:
+def main(config_file: str, model_path: str | None = None) -> None:
     config = load_config(config_file)
     seed_everything(config.trainer.seed)
 
@@ -28,7 +28,6 @@ def main(config_file: str, model_path: str | None) -> None:
         # mode="disabled",
         config=config.model_dump(),
     )
-    model_path = "models/model_20260410_223240_9.349_31"
     validate(config=config, model_path=model_path)
     wandb.finish()
 
