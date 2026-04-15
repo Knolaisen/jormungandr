@@ -10,6 +10,7 @@ def fetch_detr_model(
     auxiliary_loss: bool = False,
 ) -> DetrForObjectDetection:
     config = DetrConfig.from_pretrained(model_name)
+    config.auxiliary_loss = auxiliary_loss
 
     if num_encoder_layers is not None:
         config.encoder_layers = num_encoder_layers
@@ -18,7 +19,6 @@ def fetch_detr_model(
         return DetrForObjectDetection(config)
 
     if auxiliary_loss:
-        config.auxiliary_loss = True
         return DetrForObjectDetection.from_pretrained(model_name, config=config)
 
     return DetrForObjectDetection.from_pretrained(model_name, config=config)

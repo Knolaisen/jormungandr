@@ -144,6 +144,10 @@ class DecoderConfig(BaseModel):
         default=True,
         description="Whether the decoder is configured to compute auxiliary losses from intermediate layers",
     )
+    use_pre_trained: bool = Field(
+        default=True,
+        description="Whether to use a pre-trained decoder (e.g., from a DETR model) or a custom Mamba decoder",
+    )
 
 
 class EncoderConfig(BaseModel):
@@ -170,6 +174,10 @@ class OutputHeadConfig(BaseModel):
     freeze_prediction_head: bool = Field(
         default=False, description="Whether to freeze the output head during training"
     )
+    use_pre_trained: bool = Field(
+        default=True,
+        description="Whether to use a pre-trained output head (e.g., from a DETR model) or a custom FCNN prediction head",
+    )
 
 
 class BackboneConfig(BaseModel):
@@ -178,7 +186,7 @@ class BackboneConfig(BaseModel):
         description="Name of the pre-trained DETR model to use for the backbone (e.g., 'facebook/detr-resnet-50')",
     )
     freeze_backbone: bool = Field(
-        default=False, description="Whether to freeze the backbone during training"
+        default=True, description="Whether to freeze the backbone during training"
     )
 
 
