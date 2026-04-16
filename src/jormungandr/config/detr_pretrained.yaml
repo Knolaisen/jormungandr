@@ -1,9 +1,8 @@
 
 trainer:
   epochs: 10
-  batch_size: 1
+  batch_size: 2
   seed: 42
-  
   encoder_learning_rate: 1e-4
   decoder_learning_rate: 1e-5
   output_head_learning_rate: 1e-5
