@@ -77,6 +77,10 @@ class TrainerConfig(BaseModel):
     batch_size: int = Field(
         default=16, description="Batch size for training and validation"
     )
+    val_batch_size: int = Field(
+        default=1,
+        description="Batch size for validation (can be different from training batch size if desired)",
+    )
     seed: int = Field(default=42, description="Random seed for reproducible runs")
     subset_size: int | None = Field(
         default=None,

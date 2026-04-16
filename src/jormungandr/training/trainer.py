@@ -338,7 +338,7 @@ def validate(config: Config, model_path: str | None = None) -> None:
         model.load_state_dict(torch.load(model_path))
 
     training_loader, validation_loader = create_dataloaders(
-        batch_size=config.trainer.batch_size,
+        batch_size=config.trainer.val_batch_size,
         seed=config.trainer.seed,
     )
 

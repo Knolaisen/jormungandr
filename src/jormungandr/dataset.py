@@ -1,7 +1,6 @@
 import os
 from typing import Callable
 
-# from transformers import DetrImageProcessor
 from torch.utils.data import DataLoader
 from datasets import load_dataset
 import torch
@@ -114,14 +113,12 @@ coco80_to_coco91 = {
 
 def _collate_fn(batch):
     # images from dataset (CHW uint8)
-    # images = [item["image"] for item in batch]
     images = [_ensure_3ch(item["image"]) for item in batch]
 
     # build COCO-style annotations per image
     targets = []
     for item in batch:
-        # (N, 4) COCO xywh = [x_min, y_min, width, height]
-        # Boxes: x, y, width, height
+        # dataset bbox format: [x_min, y_min, x_max, y_max] (absolute pixels)
         boxes = item["objects"]["bbox"]
         boxes[:, 2] -= boxes[:, 0]  # width = x_max - x_min
         boxes[:, 3] -= boxes[:, 1]  # height = y_max - y_min
@@ -149,6 +146,17 @@ def _collate_fn(batch):
         )
 
     encoded = image_processor(images=images, annotations=targets, return_tensors="pt")
+
+    # DetrImageProcessor scales label["area"] by the resize ratio
+    # (resize_annotation multiplies by ratio_w * ratio_h). COCO eval size
+    # thresholds (small < 32², medium < 96²) are defined in original image
+    # pixel space, so we restore each image's areas to original coordinates
+    # using label["orig_size"] (original) and label["size"] (after resize).
+    for label in encoded["labels"]:
+        if "area" in label:
+            orig_h, orig_w = label["orig_size"].tolist()
+            size_h, size_w = label["size"].tolist()
+            label["area"] = label["area"] * (orig_h / size_h) * (orig_w / size_w)
 
     return {
         "pixel_values": encoded["pixel_values"],  # (B, 3, Hmax, Wmax)
@@ -205,7 +213,7 @@ def create_dataloaders(
     )
     val_loader = DataLoader(
         torch_val_ds,
-        batch_size=2,
+        batch_size=batch_size,
         shuffle=False,
         collate_fn=collate_fn,
         worker_init_fn=seed_worker,
