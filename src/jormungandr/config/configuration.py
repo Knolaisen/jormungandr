@@ -124,7 +124,7 @@ class TrainerConfig(BaseModel):
         description="Epoch number at which to unfreeze the decoder if it is initially frozen",
     )
     epoch_to_unfreeze_backbone: int = Field(
-        default=0,
+        default=500,
         description="Epoch number at which to unfreeze the backbone if it is initially frozen",
     )
     epoch_to_unfreeze_output_head: int = Field(
@@ -147,6 +147,10 @@ class DecoderConfig(BaseModel):
     auxiliary_loss: bool = Field(
         default=True,
         description="Whether the decoder is configured to compute auxiliary losses from intermediate layers",
+    )
+    use_pre_trained: bool = Field(
+        default=True,
+        description="Whether to use a pre-trained decoder (e.g., from a DETR model) or a custom Mamba decoder",
     )
 
 
@@ -174,6 +178,10 @@ class OutputHeadConfig(BaseModel):
     freeze_prediction_head: bool = Field(
         default=False, description="Whether to freeze the output head during training"
     )
+    use_pre_trained: bool = Field(
+        default=True,
+        description="Whether to use a pre-trained output head (e.g., from a DETR model) or a custom FCNN prediction head",
+    )
 
 
 class BackboneConfig(BaseModel):
@@ -182,7 +190,7 @@ class BackboneConfig(BaseModel):
         description="Name of the pre-trained DETR model to use for the backbone (e.g., 'facebook/detr-resnet-50')",
     )
     freeze_backbone: bool = Field(
-        default=False, description="Whether to freeze the backbone during training"
+        default=True, description="Whether to freeze the backbone during training"
     )
 
 

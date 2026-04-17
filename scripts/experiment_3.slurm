@@ -1,7 +1,7 @@
 #!/bin/sh
 #SBATCH --account=share-ie-idi
 #SBATCH --job-name="experiment-3"
-#SBATCH --time=03-12:00:00
+#SBATCH --time=10-12:00:00
 #SBATCH --partition=GPUQ
 #SBATCH --mem=80GB
 #SBATCH --cpus-per-task=6
@@ -28,7 +28,7 @@ pip install uv --user
 uv sync
 
 # Run the Python script
-uv run python train.py --config experiment_3.yaml
+uv run python train.py --config experiment_3_0.yaml
 
 
 echo "Job finished"

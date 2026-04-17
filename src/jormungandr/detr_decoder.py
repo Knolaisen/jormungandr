@@ -27,7 +27,9 @@ class DETRDecoder(nn.Module):
         # Additional layers can be added here
 
         self.decoder = fetch_detr_model(
-            model_name=model_name, auxiliary_loss=self.decoder_config.auxiliary_loss
+            model_name=model_name,
+            is_pre_trained=self.decoder_config.use_pre_trained,
+            auxiliary_loss=self.decoder_config.auxiliary_loss,
         ).model.decoder
 
         if self.decoder_config.freeze_decoder:

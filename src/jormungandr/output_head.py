@@ -1,6 +1,7 @@
 from torch import nn, Tensor
 from transformers import DetrForObjectDetection
 from jormungandr.config.configuration import OutputHeadConfig
+from jormungandr.utils.model_fetcher import fetch_detr_model
 
 
 class FCNNPredictionHead(nn.Module):
@@ -16,12 +17,12 @@ class FCNNPredictionHead(nn.Module):
         config: OutputHeadConfig = OutputHeadConfig(),
     ):
         super().__init__()
-        self.class_labels_classifier = DetrForObjectDetection.from_pretrained(
-            model_name
-        ).class_labels_classifier
-        self.bbox_predictor = DetrForObjectDetection.from_pretrained(
-            model_name
-        ).bbox_predictor
+        detr = fetch_detr_model(
+            model_name=model_name,
+            is_pre_trained=config.use_pre_trained,
+        )
+        self.class_labels_classifier = detr.class_labels_classifier
+        self.bbox_predictor = detr.bbox_predictor
 
         if config.freeze_prediction_head:
             for param in self.class_labels_classifier.parameters():

@@ -1,0 +1,37 @@
+
+trainer:
+  epochs: 300
+  batch_size: 64
+  seed: 42
+  encoder_learning_rate: 1e-4
+  decoder_learning_rate: 1e-4
+  output_head_learning_rate: 1e-4
+  optimizer: "AdamW"
+  log_interval: 10
+  num_log_images: 8
+  viz_score_threshold: 0.5
+  loss:
+    name: "ciouloss" # Options: "giouloss", "ciouloss"
+    class_cost: 1.0
+    bbox_cost: 5.0
+    giou_cost: 2.0  
+    num_labels: 91
+    eos_coefficient: 0.1
+    auxiliary_loss: true
+    bbox_loss_coefficient: 5.0
+    giou_loss_coefficient: 2.0
+
+fafnir:
+  input_size: 224
+  num_classes: 92
+  encoder:
+    encoder_type: "mamba"
+    num_layers: 12
+  decoder:
+    freeze_decoder: false
+    epoch_to_unfreeze_decoder: 0
+    auxiliary_loss: true
+    use_pre_trained: false
+  output_head:
+    freeze_prediction_head: false
+    use_pre_trained: false
