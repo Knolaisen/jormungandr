@@ -1,6 +1,6 @@
 
 trainer:
-  epochs: 100
+  epochs: 300
   batch_size: 64
   seed: 42
   backbone_learning_rate: 1e-6
@@ -37,7 +37,9 @@ fafnir:
   backbone:
     freeze_backbone: true
   decoder:
+    use_pre_trained: false
     freeze_decoder: true
     auxiliary_loss: true
   output_head:
+    use_pre_trained: false
     freeze_prediction_head: true
