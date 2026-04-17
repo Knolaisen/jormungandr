@@ -1,4 +1,4 @@
-from typing import Protocol
+from typing import Protocol, Literal
 from mamba_ssm import Mamba, Mamba2
 from torch import nn, Tensor
 import torch
@@ -21,6 +21,7 @@ class MambaEncoder(nn.Module, Encoder):
         model_dimension: int = 256,
         hidden_state_dim: int = 16,
         num_layers: int = 6,
+        mamba_variant: Literal["mamba1", "mamba2"] = "mamba2",
     ):
         super(MambaEncoder, self).__init__()
         if num_layers < 0:
@@ -31,21 +32,32 @@ class MambaEncoder(nn.Module, Encoder):
             raise ValueError("hidden_state_dim must be at least 1")
 
         self.num_layers = num_layers
-        self.layers = nn.ModuleList(
-            [
-                Mamba2(
-                    d_model=model_dimension,
-                    d_state=hidden_state_dim,
-                )
-                for _ in range(self.num_layers)
-            ]
-        )
+        if mamba_variant == "mamba1":
+            self.layers = nn.ModuleList(
+                [
+                    Mamba(
+                        d_model=model_dimension,
+                        d_state=hidden_state_dim,
+                    )
+                    for _ in range(self.num_layers)
+                ]
+            )
+        elif mamba_variant == "mamba2":
+            self.layers = nn.ModuleList(
+                [
+                    Mamba2(
+                        d_model=model_dimension,
+                        d_state=hidden_state_dim,
+                    )
+                    for _ in range(self.num_layers)
+                ]
+            )
         # Per-layer norms (pre-norm architecture)
         self.norms = nn.ModuleList(
             [nn.RMSNorm(model_dimension) for _ in range(self.num_layers)]
         )
         self.final_norm = nn.RMSNorm(model_dimension)
- 
+
     def forward(
         self,
         x: Tensor,
@@ -60,10 +72,10 @@ class MambaEncoder(nn.Module, Encoder):
         """
         for layer, norm in zip(self.layers, self.norms):
             residual = x
- 
+
             # Pre-norm
             normed = norm(x)
- 
+
             # Inject position into the layer input — NOT into the residual.
             # This is the Mamba analog of DETR adding pos to Q and K:
             # position influences the layer's processing (selective scan gating)
@@ -72,22 +84,33 @@ class MambaEncoder(nn.Module, Encoder):
                 layer_input = normed + position_embedding
             else:
                 layer_input = normed
- 
+
             # Mamba selective scan
             layer_output = layer(layer_input)
- 
+
             # Zero padded positions on the layer output (before residual add)
             if pixel_mask is not None:
                 layer_output = layer_output * pixel_mask.unsqueeze(-1)
 
             x = residual + layer_output
- 
+
         return self.final_norm(x)
 
+
 class MambaEncoderLayer(nn.Module):
-    def __init__(self, model_dimension: int = 256, hidden_state_dim: int = 16, dim_feedforward: int = 2048, dropout: float = 0.1):
+    def __init__(
+        self,
+        model_dimension: int = 256,
+        hidden_state_dim: int = 16,
+        dim_feedforward: int = 2048,
+        dropout: float = 0.1,
+        mamba_variant: Literal["mamba1", "mamba2"] = "mamba2",
+    ):
         super().__init__()
-        self.mamba = Mamba2(d_model=model_dimension, d_state=hidden_state_dim)
+        if mamba_variant == "mamba1":
+            self.mamba = Mamba(d_model=model_dimension, d_state=hidden_state_dim)
+        elif mamba_variant == "mamba2":
+            self.mamba = Mamba2(d_model=model_dimension, d_state=hidden_state_dim)
         self.ffn = nn.Sequential(
             nn.Linear(model_dimension, dim_feedforward),
             nn.GELU(),
@@ -98,7 +121,12 @@ class MambaEncoderLayer(nn.Module):
         self.norm_mamba = nn.RMSNorm(model_dimension)
         self.norm_ffn = nn.RMSNorm(model_dimension)
 
-    def forward(self, x: Tensor, position_embedding: Tensor | None = None, pixel_mask: Tensor | None = None) -> Tensor:
+    def forward(
+        self,
+        x: Tensor,
+        position_embedding: Tensor | None = None,
+        pixel_mask: Tensor | None = None,
+    ) -> Tensor:
         residual = x
 
         x = self.norm_mamba(x)
@@ -109,7 +137,6 @@ class MambaEncoderLayer(nn.Module):
         x = self.mamba(x)
         if pixel_mask is not None:
             x = x * pixel_mask.unsqueeze(-1)
-
 
         x = x + residual
         residual = x
@@ -123,8 +150,16 @@ class MambaEncoderLayer(nn.Module):
         x = x + residual
         return x
 
+
 class MambaEncoderFFN(nn.Module, Encoder):
-    def __init__(self, model_dimension: int = 256, hidden_state_dim: int = 16, num_layers: int = 6, dim_feedforward: int = 2048, dropout: float = 0.1):
+    def __init__(
+        self,
+        model_dimension: int = 256,
+        hidden_state_dim: int = 16,
+        num_layers: int = 6,
+        dim_feedforward: int = 2048,
+        dropout: float = 0.1,
+    ):
         super(MambaEncoderFFN, self).__init__()
         if num_layers < 0:
             raise ValueError("num_layers cant be negative")
@@ -146,21 +181,38 @@ class MambaEncoderFFN(nn.Module, Encoder):
         )
         self.final_norm = nn.RMSNorm(model_dimension)
 
-    def forward(self, x: Tensor, position_embedding: Tensor | None = None, pixel_mask: Tensor | None = None) -> Tensor:
+    def forward(
+        self,
+        x: Tensor,
+        position_embedding: Tensor | None = None,
+        pixel_mask: Tensor | None = None,
+    ) -> Tensor:
         for layer in self.layers:
             x = layer(x, position_embedding=position_embedding, pixel_mask=pixel_mask)
         return self.final_norm(x)
-    
-    
+
+
 class DETREncoder(nn.Module, Encoder):
-    def __init__(self, model_name: str = "facebook/detr-resnet-50", use_pre_trained: bool = True, num_layers: int = 6):
+    def __init__(
+        self,
+        model_name: str = "facebook/detr-resnet-50",
+        use_pre_trained: bool = True,
+        num_layers: int = 6,
+    ):
         super(DETREncoder, self).__init__()
-        self.encoder = fetch_detr_model(model_name, is_pre_trained=use_pre_trained, num_encoder_layers=num_layers).model.encoder
+        self.encoder = fetch_detr_model(
+            model_name, is_pre_trained=use_pre_trained, num_encoder_layers=num_layers
+        ).model.encoder
 
         for layer in self.encoder.layers:
             layer.training = True
 
-    def forward(self, x: Tensor, position_embedding: Tensor | None = None, pixel_mask: Tensor | None = None) -> Tensor:
+    def forward(
+        self,
+        x: Tensor,
+        position_embedding: Tensor | None = None,
+        pixel_mask: Tensor | None = None,
+    ) -> Tensor:
         encoder_outputs = self.encoder.forward(
             x, spatial_position_embeddings=position_embedding, attention_mask=pixel_mask
         )

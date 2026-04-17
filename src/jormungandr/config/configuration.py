@@ -180,6 +180,10 @@ class EncoderConfig(BaseModel):
         default=256,
         description="Model/token embedding dimension (d_model).",
     )
+    mamba_variant: str = Field(
+        default="mamba2",
+        description="Variant of Mamba to use if encoder_type is 'Mamba' or 'MambaFFN' (e.g., 'mamba1', 'mamba2')",
+    )
 
 
 class OutputHeadConfig(BaseModel):
