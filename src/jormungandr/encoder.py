@@ -79,13 +79,79 @@ class MambaEncoder(nn.Module, Encoder):
             # Zero padded positions on the layer output (before residual add)
             if pixel_mask is not None:
                 layer_output = layer_output * pixel_mask.unsqueeze(-1)
- 
-            # Residual connection — x never directly receives position_embedding
+
             x = residual + layer_output
  
         return self.final_norm(x)
 
+class MambaEncoderLayer(nn.Module):
+    def __init__(self, model_dimension: int = 256, hidden_state_dim: int = 16, dim_feedforward: int = 2048, dropout: float = 0.1):
+        super().__init__()
+        self.mamba = Mamba2(d_model=model_dimension, d_state=hidden_state_dim)
+        self.ffn = nn.Sequential(
+            nn.Linear(model_dimension, dim_feedforward),
+            nn.GELU(),
+            nn.Dropout(dropout),
+            nn.Linear(dim_feedforward, model_dimension),
+            nn.Dropout(dropout),
+        )
+        self.norm_mamba = nn.RMSNorm(model_dimension)
+        self.norm_ffn = nn.RMSNorm(model_dimension)
 
+    def forward(self, x: Tensor, position_embedding: Tensor | None = None, pixel_mask: Tensor | None = None) -> Tensor:
+        residual = x
+
+        x = self.norm_mamba(x)
+
+        # mamba path
+        if position_embedding is not None:
+            x = x + position_embedding
+        x = self.mamba(x)
+        if pixel_mask is not None:
+            x = x * pixel_mask.unsqueeze(-1)
+
+
+        x = x + residual
+        residual = x
+
+        # ffn path
+        x = self.norm_ffn(x)
+        x = self.ffn(x)
+        if pixel_mask is not None:
+            x = x * pixel_mask.unsqueeze(-1)
+
+        x = x + residual
+        return x
+
+class MambaEncoderFFN(nn.Module, Encoder):
+    def __init__(self, model_dimension: int = 256, hidden_state_dim: int = 16, num_layers: int = 6, dim_feedforward: int = 2048, dropout: float = 0.1):
+        super(MambaEncoderFFN, self).__init__()
+        if num_layers < 0:
+            raise ValueError("num_layers cant be negative")
+        if model_dimension < 1:
+            raise ValueError("model_dimension must be at least 1")
+        if hidden_state_dim < 1:
+            raise ValueError("hidden_state_dim must be at least 1")
+
+        self.layers = nn.ModuleList(
+            [
+                MambaEncoderLayer(
+                    model_dimension=model_dimension,
+                    hidden_state_dim=hidden_state_dim,
+                    dim_feedforward=dim_feedforward,
+                    dropout=dropout,
+                )
+                for _ in range(num_layers)
+            ]
+        )
+        self.final_norm = nn.RMSNorm(model_dimension)
+
+    def forward(self, x: Tensor, position_embedding: Tensor | None = None, pixel_mask: Tensor | None = None) -> Tensor:
+        for layer in self.layers:
+            x = layer(x, position_embedding=position_embedding, pixel_mask=pixel_mask)
+        return self.final_norm(x)
+    
+    
 class DETREncoder(nn.Module, Encoder):
     def __init__(self, model_name: str = "facebook/detr-resnet-50", use_pre_trained: bool = True, num_layers: int = 6):
         super(DETREncoder, self).__init__()

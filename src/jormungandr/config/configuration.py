@@ -164,6 +164,14 @@ class EncoderConfig(BaseModel):
         default=True,
         description="Whether to use a pre-trained encoder (e.g., from a DETR model) or a custom Mamba encoder",
     )
+    dim_feedforward: int = Field(
+        default=2048,
+        description="Dimension of the feedforward network in the MambaEncoderFFN variant (ignored if encoder_type is not 'MambaFFN')",
+    )
+    dropout: float = Field(
+        default=0.1,
+        description="Dropout rate for the feedforward network in the MambaEncoderFFN variant (ignored if encoder_type is not 'MambaFFN')",
+    )
     hidden_state_dim: int = Field(
         default=64,
         description="SSM state dimension (d_state). Mamba-2 recommended range: 64–256. Mamba-1 default of 16 under-utilizes Mamba-2.",
