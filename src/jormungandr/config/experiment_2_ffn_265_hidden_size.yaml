@@ -33,7 +33,7 @@ fafnir:
   encoder:
     encoder_type: "mamba_ffn"
     num_layers: 12
-    hidden_state_dim: 16 # Mamba-2 minimum; paper recommends 64-256 (vs Mamba-1 default of 16)
+    hidden_state_dim: 256 # Mamba-2 minimum; paper recommends 64-256 (vs Mamba-1 default of 16)
   backbone:
     freeze_backbone: true
   decoder:
