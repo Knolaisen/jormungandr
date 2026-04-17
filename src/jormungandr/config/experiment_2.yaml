@@ -37,7 +37,7 @@ fafnir:
   backbone:
     freeze_backbone: true
   decoder:
-    freeze_decoder: false
+    freeze_decoder: true
     auxiliary_loss: true
   output_head:
-    freeze_prediction_head: false
+    freeze_prediction_head: true
