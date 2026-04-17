@@ -20,10 +20,9 @@ class FCNNPredictionHead(nn.Module):
         detr = fetch_detr_model(
             model_name=model_name,
             is_pre_trained=config.use_pre_trained,
-            auxiliary_loss=config.auxiliary_loss,
         )
-        self.class_labels_classifier = detr.model.class_labels_classifier
-        self.bbox_predictor = detr.model.bbox_predictor
+        self.class_labels_classifier = detr.class_labels_classifier
+        self.bbox_predictor = detr.bbox_predictor
 
         if config.freeze_prediction_head:
             for param in self.class_labels_classifier.parameters():
