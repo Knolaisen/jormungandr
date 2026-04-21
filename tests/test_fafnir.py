@@ -28,13 +28,12 @@ def test_fafnir_forward_pass(
     batch_size, channels, height, width, num_queries, encoder_type
 ):
     pixel_values = torch.randn(batch_size, channels, height, width)
-    backbone = Backbone()
 
     config.decoder.num_queries = num_queries
     config.encoder.encoder_type = encoder_type
 
-    fafnir = Fafnir(backbone=backbone, config=config)
-    class_labels, bbox_coordinates = fafnir.forward(pixel_values)
+    fafnir = Fafnir(config=config)
+    class_labels, bbox_coordinates, intermediate_outputs = fafnir.forward(pixel_values)
 
     assert class_labels.shape[0] == batch_size, (
         f"Expected batch size {batch_size}, got {class_labels.shape[0]}"
