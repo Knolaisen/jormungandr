@@ -17,7 +17,7 @@ from jormungandr.utils.seed import seed_everything
     project_name="fafnir_training",
     log_level="ERROR",
 )
-def main(config_file: str, model_path: str | None = None) -> None:
+def main(config_file: str) -> None:
     config = load_config(config_file)
     seed_everything(config.trainer.seed)
 
@@ -28,7 +28,7 @@ def main(config_file: str, model_path: str | None = None) -> None:
         # mode="disabled",
         config=config.model_dump(),
     )
-    validate(config=config, model_path=model_path)
+    validate(config=config)
     wandb.finish()
 
 
@@ -59,4 +59,4 @@ if __name__ == "__main__":
     #     record_shapes=True,
     #     profile_memory=True,
     # ) as prof:
-    main(args.config_flag or args.config or experiment, args.model_path)
+    main(args.config_flag or args.config or experiment)

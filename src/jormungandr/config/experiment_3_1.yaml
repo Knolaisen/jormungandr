@@ -20,6 +20,11 @@ trainer:
     auxiliary_loss: true
     bbox_loss_coefficient: 5.0
     giou_loss_coefficient: 2.0
+  scheduler:
+    name: StepLR
+    params:
+      step_size: 200
+      gamma: 0.1
 
 fafnir:
   input_size: 224

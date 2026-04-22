@@ -27,6 +27,8 @@ It shall use:
 from tqdm import tqdm, trange
 from typing import Callable
 import wandb
+import os
+import shutil
 import torch
 from torch.utils.data import DataLoader
 from torch import nn, optim
@@ -54,6 +56,20 @@ def train(
 ):
     device = "cuda"
     model = Fafnir(config=config.fafnir).to(device)
+
+    if config.fafnir.checkpoint_name is not None:
+        try:
+            api = wandb.Api()
+            artifact = api.artifact(config.fafnir.checkpoint_name, type="model")
+            artifact_dir = artifact.download()
+            checkpoint_path = os.path.join(artifact_dir, os.listdir(artifact_dir)[0])
+            model.load_state_dict(torch.load(checkpoint_path))
+            print(f"Successfully loaded checkpoint from {config.fafnir.checkpoint_name}")
+            shutil.rmtree(artifact_dir)  # Clean up the downloaded artifact directory
+        except Exception as e:
+            print(f"Error loading checkpoint: {e}")
+            print("Continuing with randomly initialized weights.")
+
     wandb.watch(model, log="all", log_freq=100)
     training_loader, validation_loader = create_dataloaders(
         batch_size=config.trainer.batch_size,
@@ -94,6 +110,7 @@ def train(
     )
 
     best_val_loss = float("inf")
+    best_val_ap = 0.0
     for epoch in trange(config.trainer.epochs, desc="Epochs", unit="epoch"):
         _handle_unfreezing(model, epoch, config)
         average_training_loss = train_one_epoch(
@@ -104,7 +121,7 @@ def train(
             device=device,
             config=config,
         )
-        average_validation_loss, average_validation_time = run_validation(
+        average_validation_loss, average_validation_time, val_ap = run_validation(
             model,
             validation_loader,
             criterion,
@@ -133,10 +150,10 @@ def train(
             }
         )
 
-        # Track best performance, and save the model's state
-        if average_validation_loss < best_val_loss:
-            best_val_loss = average_validation_loss
-            artifact_name = f"model_{timestamp}_{best_val_loss:.3f}_{epoch}"
+        if val_ap > best_val_ap:
+            os.remove(artifact_name) if os.path.exists(artifact_name) else None
+            best_val_ap = val_ap
+            artifact_name = f"model_{timestamp}_best_ap_{best_val_ap:.3f}_{epoch}"
             model_path = f"{MODELS_PATH}{artifact_name}"
             torch.save(model.state_dict(), model_path)
 
@@ -238,7 +255,7 @@ def run_validation(
     criterion: nn.Module | Callable,
     device: torch.device | str,
     config: Config = CONFIG,
-) -> tuple[float, float]:
+) -> tuple[float, float, float]:
     running_val_loss = 0.0
     # Set the model to evaluation mode, disabling dropout and using population
     # statistics for batch normalization.
@@ -324,18 +341,26 @@ def run_validation(
         }
     )
 
+    val_ap = coco_metrics.get("coco/AP", 0.0)
+
     average_time = sum(timings) / len(timings)
     average_val_loss = running_val_loss / (i + 1)
-    return average_val_loss, average_time
+    return average_val_loss, average_time, val_ap
 
 
-def validate(config: Config, model_path: str | None = None) -> None:
+def validate(config: Config) -> None:
     device = "cuda"
 
     model = Fafnir(config=config.fafnir).to(device)
 
-    if model_path is not None:
-        model.load_state_dict(torch.load(model_path))
+    if config.fafnir.checkpoint_name is not None:
+        api = wandb.Api()
+        artifact = api.artifact(config.fafnir.checkpoint_name, type="model")
+        artifact_dir = artifact.download()
+        checkpoint_path = os.path.join(artifact_dir, os.listdir(artifact_dir)[0])
+        model.load_state_dict(torch.load(checkpoint_path))
+        print(f"Successfully loaded checkpoint from {config.fafnir.checkpoint_name}")
+        shutil.rmtree(artifact_dir)  # Clean up the downloaded artifact directory
 
     training_loader, validation_loader = create_dataloaders(
         batch_size=config.trainer.val_batch_size,
@@ -344,7 +369,7 @@ def validate(config: Config, model_path: str | None = None) -> None:
 
     criterion = build_criterion(config.trainer.loss.name)
 
-    average_validation_loss, average_validation_time = run_validation(
+    average_validation_loss, average_validation_time, val_ap = run_validation(
         model,
         validation_loader,
         criterion,
@@ -354,3 +379,4 @@ def validate(config: Config, model_path: str | None = None) -> None:
 
     print(f"Average validation loss: {average_validation_loss:.4f}")
     print(f"Average validation time per batch: {average_validation_time:.2f} ms")
+    print(f"Average validation AP: {val_ap:.4f}")

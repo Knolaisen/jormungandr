@@ -231,6 +231,10 @@ class FafnirConfig(BaseModel):
         default="facebook/detr-resnet-50",
         description="Name of the pre-trained DETR model to use for the encoder and decoder (e.g., 'facebook/detr-resnet-50')",
     )
+    checkpoint_name: str | None = Field(
+        default=None,
+        description="Name of a checkpoint artifact stored in Weight & Biases to load model weights from (e.g., 'jormungandr/fafnir-checkpoint:v0'). If None, no checkpoint is loaded and the model is trained from scratch.",
+    )
 
 
 class JormungandrConfig(BaseModel):
