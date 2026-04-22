@@ -1,7 +1,7 @@
 
 trainer:
   epochs: 300
-  batch_size: 64
+  batch_size: 16
   seed: 42
   encoder_learning_rate: 1e-4
   decoder_learning_rate: 1e-4
@@ -20,6 +20,11 @@ trainer:
     auxiliary_loss: true
     bbox_loss_coefficient: 5.0
     giou_loss_coefficient: 2.0
+  scheduler:
+    name: StepLR
+    params:
+      step_size: 200
+      gamma: 0.1
 
 fafnir:
   input_size: 224
