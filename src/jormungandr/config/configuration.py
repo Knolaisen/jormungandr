@@ -248,6 +248,10 @@ class JormungandrConfig(BaseModel):
         default=4,
         description="Number of frames in the input video clip for Jormungandr",
     )
+    backbone: BackboneConfig = Field(
+        default_factory=BackboneConfig,
+        description="Configuration for the backbone used in Fafnir",
+    )
     spatial_encoder: EncoderConfig = Field(
         default_factory=EncoderConfig,
         description="Configuration for the spatial encoder used in Jormungandr (operates on individual frames)",
@@ -263,6 +267,10 @@ class JormungandrConfig(BaseModel):
     output_head: OutputHeadConfig = Field(
         default_factory=OutputHeadConfig,
         description="Configuration for the output head used in Jormungandr",
+    )
+    detr_name: str = Field(
+        default="facebook/detr-resnet-50",
+        description="Name of the pre-trained DETR model to use for the encoder and decoder (e.g., 'facebook/detr-resnet-50')",
     )
 
 

@@ -20,7 +20,7 @@ class Jormungandr(nn.Module):
 
     def __init__(
         self,
-        backbone: Backbone = Backbone(),
+        backbone: Backbone | None = None,
         embedder: Embedder | None = None,
         model_dimension: int = 256,
         variant="Jormungandr-b",
@@ -31,7 +31,11 @@ class Jormungandr(nn.Module):
         self.device = device
 
         # Backbone
-        self.backbone = backbone.to(device)
+        if backbone is None:
+            self.backbone = Backbone(
+                model_name=config.detr_name,
+                freeze_backbone=config.backbone.freeze_backbone,
+            ).to(device)
         self.embedder = (
             embedder
             if embedder is not None
