@@ -74,19 +74,50 @@ class Jormungandr(nn.Module):
         Sequence-to-sequence forward pass for the Jormungandr model.
         This method processes a batch of video frames and produces class labels and bounding box coordinates for object detection.
         Args:
-            frames_pixel_values (Tensor): A tensor of shape (batch_size, num_frames, channels, height, width) containing the pixel values of the input video frames.
+            frames_pixel_values (Tensor): A tensor of shape (num_frames, channels, height, width) containing the pixel values of the input video frames.
         Returns:
-            class_labels (Tensor): A tensor of shape (batch_size, num_queries, num_classes) containing the predicted class probabilities for each query.
-            bbox_coordinates (Tensor): A tensor of shape (batch_size, num_queries, 4) containing the predicted bounding box coordinates for each query, where the last dimension represents (x_center, y_center, width, height) normalized to [0, 1].
+            class_labels (Tensor): A tensor of shape (num_frames, num_queries, num_classes) containing the predicted class probabilities for each query.
+            bbox_coordinates (Tensor): A tensor of shape (num_frames, num_queries, 4) containing the predicted bounding box coordinates for each query, where the last dimension represents (x_center, y_center, width, height) normalized to [0, 1].
         """
         frames_pixel_values = frames_pixel_values.to(self.device)
         # Backbone
+        feature_maps, mask = self.backbone.forward(frames_pixel_values)
+        projected_feature_maps = self.backbone.project_feature_maps(feature_maps)
+        
+        # Flatten H and W into sequence length, and permute to (num_frames, sequence_length, model_dimension)
+        flattened_feature_maps = projected_feature_maps.flatten(2).permute(0, 2, 1)
+        flattened_mask = mask.flatten(1)
+
+
+        # Generate position embeddings for each frame
+        feature_map_shape = feature_maps.shape
+        position_embedding = self.embedder.forward(
+            shape=feature_map_shape,
+            device=self.device,
+            dtype=feature_maps.dtype,
+            mask=mask,
+        )
 
         # Extract Spatial features from each frame using the Spatial encoders with weight sharing
+        spatial_features = self.spatial_encoder.forward(
+            flattened_feature_maps,
+            position_embedding=position_embedding,
+            pixel_mask=flattened_mask,
+        )
 
-        # Generate position embeddings for each frame and flatten the spatial features of all frames
+        # Flatten spacial features across frames to create a long sequence for the temporal encoder. We have now done temporal_sequence = [sequence_frame_1, sequence_frame_2, ..., sequence_frame_n]. Might want to experiment with other ways of flattening, e.g. interleaving pixels from different frames, or adding special tokens to indicate frame boundaries, etc.
+        num_frames, sequence_length, model_dimension = spatial_features.shape
+        temporal_input = spatial_features.reshape(num_frames * sequence_length, model_dimension)
+
+        # add time positional embeddings to the temporal input
+        # TODO
+
 
         # Extract Temporal features across frames using the Temporal encoders
+        temporal_features = self.temporal_encoder.forward(temporal_input)
+
+        # Reshape temporal features back to (num_frames, sequence_length, model_dimension) for the decoder
+        encoder_outputs = temporal_features.reshape(num_frames, sequence_length, model_dimension)
 
         # Sequence to sequence prediction using the decoders with weight sharing
         decoder_output = self.decoder.forward(
