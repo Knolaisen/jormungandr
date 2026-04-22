@@ -24,10 +24,10 @@ def test_mamba_encoder_inference():
     not torch.cuda.is_available(), reason="CUDA is required for this test"
 )
 def test_mamba_encoder_inference_with_position_embedding():
-    weidth, height = 8, 8
-    sequence_length = weidth * height
+    width, height = 8, 8
+    sequence_length = width * height
     batch_size, model_dimension = 2, 16
-    embedder_shape = (batch_size, 0, weidth, height)
+    embedder_shape = (batch_size, 0, width, height)
     x = torch.randn(batch_size, sequence_length, model_dimension).to("cuda")
     mask = torch.ones(batch_size, sequence_length).to("cuda")
     # mask = None
@@ -36,8 +36,12 @@ def test_mamba_encoder_inference_with_position_embedding():
         "cuda"
     )
     embedding = embedder(embedder_shape, device="cuda", dtype=x.dtype)
-    encoder = MambaEncoder(model_dimension=model_dimension).to("cuda")
-    encoder_with_em = MambaEncoder(model_dimension=model_dimension).to("cuda")
+    encoder = MambaEncoder(model_dimension=model_dimension, mamba_variant="mamba1").to(
+        "cuda"
+    )
+    encoder_with_em = MambaEncoder(
+        model_dimension=model_dimension, mamba_variant="mamba1"
+    ).to("cuda")
 
     y = encoder(x=x, pixel_mask=mask)
     y_with_em = encoder_with_em(x, embedding, mask)

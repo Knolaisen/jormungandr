@@ -1,5 +1,5 @@
 import torch
-from jormungandr.dataset import create_dataloaders
+from jormungandr.dataset import create_dataloaders, create_vod_dataloader
 # Fixture for the dataloader
 
 import pytest
@@ -55,3 +55,18 @@ def test_padding_mask_consistency(loaders):
     assert frac_nonzero < tol_frac_nonzero, (
         f"Too many nonzero padded pixels: {frac_nonzero:.3f}"
     )
+
+
+def test_mot_dataset():
+    train_loader, val_loader = create_vod_dataloader(dataset_name="mot20", n_frames=4)
+
+    # Entire batch must have same width and height
+    for batch in train_loader:
+        images = batch["pixel_values"]
+        targets = batch["labels"]
+
+        B, C, H, W = images.shape
+        assert C == 3
+        assert len(targets) == B
+
+        break  # just test one batch
