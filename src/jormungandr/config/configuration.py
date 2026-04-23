@@ -137,7 +137,7 @@ class DecoderConfig(BaseModel):
     freeze_decoder: bool = Field(
         default=False, description="Whether to freeze the decoder during training"
     )
-    num_queries: int = Field(
+    num_queries: int | None = Field(
         default=None, description="Number of object queries for the decoder"
     )
     hidden_dim: int = Field(
@@ -211,6 +211,9 @@ class FafnirConfig(BaseModel):
     num_classes: int = Field(
         default=80, description="Number of classes for object detection"
     )
+    model_dimension: int = Field(
+        default=256, description="Model/token embedding dimension (d_model)"
+    )
     backbone: BackboneConfig = Field(
         default_factory=BackboneConfig,
         description="Configuration for the backbone used in Fafnir",
@@ -240,6 +243,9 @@ class FafnirConfig(BaseModel):
 class JormungandrConfig(BaseModel):
     input_size: int = Field(
         default=512, description="Input size for the Jormungandr model"
+    )
+    model_dimension: int = Field(
+        default=256, description="Model/token embedding dimension (d_model)"
     )
     num_classes: int = Field(
         default=80, description="Number of classes for object detection"
