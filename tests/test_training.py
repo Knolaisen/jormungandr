@@ -44,7 +44,7 @@ def test_run_validation(model):
     criterion = build_criterion(config.trainer.loss.name)
 
     # only use a few batches for testing
-    average_val_loss, average_time = run_validation(
+    average_val_loss, average_time, val_ap = run_validation(
         model,
         val_loader,
         criterion,
@@ -54,6 +54,12 @@ def test_run_validation(model):
 
     assert isinstance(average_val_loss, float)
     assert average_val_loss >= 0.0
+
+    assert isinstance(average_time, float)
+    assert average_time >= 0.0
+
+    assert isinstance(val_ap, float)
+    assert 0.0 <= val_ap <= 1.0
 
     # Check model is still the same after validation (i.e., no training should have occurred)
     for param in model.parameters():
@@ -76,8 +82,6 @@ def test_run_train_one_epoch(model):
     config = load_config("config.yaml")
     criterion = build_criterion(config.trainer.loss.name)
     optimizer = AdamW(model.parameters(), lr=config.trainer.encoder_learning_rate)
-
-                
 
     # Copy model parameters before training to check for updates later
     original_params = [param.clone() for param in model.parameters()]
@@ -102,4 +106,6 @@ def test_run_train_one_epoch(model):
         for orig, new in zip(original_params, model.parameters())
     )
 
-    assert params_changed, "At least one model parameter should have been updated during training"
+    assert params_changed, (
+        "At least one model parameter should have been updated during training"
+    )
