@@ -1,6 +1,5 @@
 import torch
 from torch import nn, Tensor
-from transformers import DetrForObjectDetection
 
 from jormungandr.utils.model_fetcher import fetch_detr_model
 from jormungandr.config.configuration import DecoderConfig
