@@ -69,12 +69,14 @@ class Jormungandr(nn.Module):
     def forward(
         self,
         frames_pixel_values: Tensor,
+        pixel_mask: Tensor | None = None,
     ) -> tuple[Tensor, Tensor, Tensor | None]:
         """
         Sequence-to-sequence forward pass for the Jormungandr model.
         This method processes a batch of video frames and produces class labels and bounding box coordinates for object detection.
         Args:
             frames_pixel_values (Tensor): A tensor of shape (num_frames, channels, height, width) containing the pixel values of the input video frames.
+            pixel_mask (Tensor | None): An optional tensor of shape (num_frames, height, width) indicating valid pixels (1 for valid, 0 for padding). If None, all pixels are considered valid.
         Returns:
             class_labels (Tensor): A tensor of shape (num_frames, num_queries, num_classes) containing the predicted class probabilities for each query.
             bbox_coordinates (Tensor): A tensor of shape (num_frames, num_queries, 4) containing the predicted bounding box coordinates for each query, where the last dimension represents (x_center, y_center, width, height) normalized to [0, 1].
@@ -86,7 +88,7 @@ class Jormungandr(nn.Module):
             )
         frames_pixel_values = frames_pixel_values.to(self.device)
         # Backbone
-        feature_maps, mask = self.backbone.forward(frames_pixel_values)
+        feature_maps, mask = self.backbone.forward(frames_pixel_values, pixel_mask)
         projected_feature_maps = self.backbone.project_feature_maps(feature_maps)
 
         # Flatten H and W into sequence length, and permute to (num_frames, sequence_length, model_dimension)
