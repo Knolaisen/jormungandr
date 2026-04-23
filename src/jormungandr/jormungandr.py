@@ -72,10 +72,13 @@ class Jormungandr(nn.Module):
             bbox_coordinates (Tensor): A tensor of shape (num_frames, num_queries, 4) containing the predicted bounding box coordinates for each query, where the last dimension represents (x_center, y_center, width, height) normalized to [0, 1].
             intermediate_outputs (Tensor | None): A tensor containing intermediate outputs from the model.
         """
-        if frames_pixel_values.ndim != 4 and frames_pixel_values.ndim != 5:
+        if frames_pixel_values.ndim != 4:
             raise ValueError(
-                f"Expected frames_pixel_values to have 4 or 5 dimensions (num_frames, channels, height, width) or (batch_size, num_frames, channels, height, width), but got {frames_pixel_values.ndim} dimensions."
+                f"Expected frames_pixel_values to have 4 dimensions (num_frames, channels, height, width), but got {frames_pixel_values.ndim} dimensions."
             )
+
+        batch_size = 1
+
         frames_pixel_values = frames_pixel_values.to(self.device)
         # Backbone
         feature_maps, mask = self.backbone.forward(frames_pixel_values, pixel_mask)
@@ -104,14 +107,16 @@ class Jormungandr(nn.Module):
         # Flatten spacial features across frames to create a long sequence for the temporal encoder. We have now done temporal_sequence = [sequence_frame_1, sequence_frame_2, ..., sequence_frame_n]. Might want to experiment with other ways of flattening, e.g. interleaving pixels from different frames, or adding special tokens to indicate frame boundaries, etc.
         num_frames, sequence_length, model_dimension = spatial_features.shape
         temporal_input = spatial_features.reshape(
-            num_frames * sequence_length, model_dimension
+            batch_size, num_frames * sequence_length, model_dimension
         )
 
         # add time positional embeddings to the temporal input
         # TODO
 
         # Extract Temporal features across frames using the Temporal encoders
-        temporal_features = self.temporal_encoder.forward(temporal_input)
+        temporal_features = self.temporal_encoder.forward(
+            temporal_input,
+        )
 
         # Reshape temporal features back to (num_frames, sequence_length, model_dimension) for the decoder
         encoder_outputs = temporal_features.reshape(
