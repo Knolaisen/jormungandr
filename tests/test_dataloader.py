@@ -58,7 +58,7 @@ def test_padding_mask_consistency(loaders):
 
 
 def test_mot_dataset():
-    train_loader, val_loader = create_vod_dataloader(dataset_name="mot20", n_frames=4)
+    train_loader, val_loader = create_vod_dataloader(n_frames=4)
 
     # Entire batch must have same width and height
     for batch in train_loader:
