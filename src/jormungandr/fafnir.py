@@ -6,19 +6,12 @@ from jormungandr.detr_decoder import DETRDecoder
 from jormungandr.output_head import FCNNPredictionHead
 from jormungandr.backbone import Backbone
 from jormungandr.embedder import Embedder, DetrSinePositionEmbedding
-from jormungandr.config.configuration import FafnirConfig, DecoderConfig, EncoderConfig
+from jormungandr.config.configuration import FafnirConfig
 
 
 class Fafnir(nn.Module):
     def __init__(
         self,
-        backbone: Backbone | None = None,
-        embedder: Embedder | None = None,
-        model_dimension: int = 256,
-        num_encoder_layers: int = 6,
-        num_decoder_layers: int = 6,
-        num_classes: int = 10,
-        variant="fafnir-b",
         device: torch.device | str = "cuda",
         config: FafnirConfig = FafnirConfig(),
     ):
@@ -26,30 +19,29 @@ class Fafnir(nn.Module):
         self.device = device
 
         # Backbone
-        if backbone is None:
-            self.backbone = Backbone(
-                model_name=config.detr_name,
-                freeze_backbone=config.backbone.freeze_backbone,
-            ).to(device)
-        self.embedder = (
-            embedder
-            if embedder is not None
-            else DetrSinePositionEmbedding(num_position_features=model_dimension // 2)
-        )
-        assert self.embedder is not None, (
-            "Embedder should not be None after initialization"
-        )
-
-        self.embedder = self.embedder.to(device)
+        self.backbone = Backbone(
+            model_name=config.detr_name,
+            freeze_backbone=config.backbone.freeze_backbone,
+        ).to(device)
+        self.embedder: Embedder = DetrSinePositionEmbedding(
+            num_position_features=config.model_dimension // 2,
+        ).to(device)
 
         # Encoder
         self.encoder = None
         match config.encoder.encoder_type.lower():
             case "mamba":
                 self.encoder = MambaEncoder(
-                    model_dimension=model_dimension,
+                    model_dimension=config.model_dimension,
                     hidden_state_dim=config.encoder.hidden_state_dim,
                     num_layers=config.encoder.num_layers,
+                ).to(device)
+            case "mamba_ffn":
+                self.encoder = MambaEncoderFFN(
+                    model_dimension=config.model_dimension,
+                    num_layers=config.encoder.num_layers,
+                    dim_feedforward=config.encoder.dim_feedforward,
+                    dropout=config.encoder.dropout,
                 ).to(device)
             case "detr":
                 self.encoder = DETREncoder(
@@ -57,15 +49,10 @@ class Fafnir(nn.Module):
                     use_pre_trained=config.encoder.use_pre_trained,
                     num_layers=config.encoder.num_layers,
                 ).to(device)
-            case "mamba_ffn":
-                self.encoder = MambaEncoderFFN(
-                    model_dimension=model_dimension,
-                    num_layers=config.encoder.num_layers,
-                    dim_feedforward=config.encoder.dim_feedforward,
-                    dropout=config.encoder.dropout,
-                ).to(device)
             case _:
-                raise ValueError(f"Unsupported encoder type: {config.encoder.type}")
+                raise ValueError(
+                    f"Unsupported encoder type: {config.encoder.encoder_type}"
+                )
 
         self.decoder = DETRDecoder(
             model_name=config.detr_name,
