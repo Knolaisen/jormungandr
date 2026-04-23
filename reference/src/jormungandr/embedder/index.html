@@ -882,6 +882,34 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#src.jormungandr.embedder.TemporalSinePositionEmbedding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;TemporalSinePositionEmbedding
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" TemporalSinePositionEmbedding">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#src.jormungandr.embedder.TemporalSinePositionEmbedding.forward" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;forward
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1557,6 +1585,34 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#src.jormungandr.embedder.TemporalSinePositionEmbedding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;TemporalSinePositionEmbedding
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" TemporalSinePositionEmbedding">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#src.jormungandr.embedder.TemporalSinePositionEmbedding.forward" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;forward
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1717,6 +1773,13 @@
           –
           <div class="doc-md-description">
             <p>This is a more standard version of the position embedding, very similar to the one used by the Attention is all you</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;TemporalSinePositionEmbedding&lt;/span&gt; (&lt;code&gt;src.jormungandr.embedder.TemporalSinePositionEmbedding&lt;/code&gt;)" href="#src.jormungandr.embedder.TemporalSinePositionEmbedding">TemporalSinePositionEmbedding</a></code></b>
+          –
+          <div class="doc-md-description">
+            
           </div>
         </li>
     </ul>
@@ -2043,6 +2106,212 @@ need paper, generalized to work on images.</p>
     <span class="c1"># expected by the encoder</span>
     <span class="n">pos</span> <span class="o">=</span> <span class="n">pos</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">pos</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="src.jormungandr.embedder.TemporalSinePositionEmbedding" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">TemporalSinePositionEmbedding</span>
+
+
+</h2>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">TemporalSinePositionEmbedding</span><span class="p">(</span><span class="n">num_position_features</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">128</span><span class="p">,</span> <span class="n">temperature</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span> <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="torch.nn.Module">Module</span></code>, <code><span title="src.jormungandr.embedder.Embedder">Embedder</span></code></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p><span class="doc-section-title">Methods:</span></p>
+    <ul>
+          <li class="doc-section-item field-body">
+            <b><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;forward&lt;/span&gt; (&lt;code&gt;src.jormungandr.embedder.TemporalSinePositionEmbedding.forward&lt;/code&gt;)" href="#src.jormungandr.embedder.TemporalSinePositionEmbedding.forward">forward</a></code></b>
+            –
+            <div class="doc-md-description">
+              <p>Generate temporal sine position embeddings.</p>
+            </div>
+          </li>
+    </ul>
+
+
+
+                  <details class="mkdocstrings-source">
+                    <summary>Source code in <code>src/jormungandr/embedder.py</code></summary>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">num_position_features</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">128</span><span class="p">,</span>
+    <span class="n">temperature</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span>
+    <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">num_position_features</span> <span class="o">=</span> <span class="n">num_position_features</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">temperature</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">normalize</span> <span class="o">=</span> <span class="n">normalize</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="n">scale</span>
+</code></pre></div></td></tr></table></div>
+                  </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="src.jormungandr.embedder.TemporalSinePositionEmbedding.forward" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">forward</span>
+
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">forward</span><span class="p">(</span><span class="n">shape</span><span class="p">:</span> <span class="n">Size</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">device</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Generate temporal sine position embeddings.
+Args:
+    shape: The shape of the input tensor for which to compute the position embedding, expected to be (n_frames, sequence_length, model_dimension)
+    device: The device on which to create the position embedding
+    dtype: The dtype of the position embedding
+    delta_t: The time interval between frames, used to compute the sine and cosine values.
+    n_frames: The number of frames in the temporal sequence for which to compute the position embeddings.
+Returns:
+A position embedding tensor of shape (sequence_length * n_frames, num_position_features * 2) where num_position_features is the number of sine and cosine features for each temporal position. The first half of the features correspond to sine values and the second half correspond to cosine values.</p>
+<p>PE(n_f, 2i) = sin(n_f * delta_t / (10000^(2i/d_model)))
+PE(n_f, 2i+1) = cos(n_f * delta_t / (10000^(2i/d_model)))</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/jormungandr/embedder.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">shape</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">,</span>
+    <span class="n">device</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+    <span class="n">delta_t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate temporal sine position embeddings.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        shape: The shape of the input tensor for which to compute the position embedding, expected to be (n_frames, sequence_length, model_dimension)</span>
+<span class="sd">        device: The device on which to create the position embedding</span>
+<span class="sd">        dtype: The dtype of the position embedding</span>
+<span class="sd">        delta_t: The time interval between frames, used to compute the sine and cosine values.</span>
+<span class="sd">        n_frames: The number of frames in the temporal sequence for which to compute the position embeddings.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">    A position embedding tensor of shape (sequence_length * n_frames, num_position_features * 2) where num_position_features is the number of sine and cosine features for each temporal position. The first half of the features correspond to sine values and the second half correspond to cosine values.</span>
+
+<span class="sd">    PE(n_f, 2i) = sin(n_f * delta_t / (10000^(2i/d_model)))</span>
+<span class="sd">    PE(n_f, 2i+1) = cos(n_f * delta_t / (10000^(2i/d_model)))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">n_frames</span><span class="p">,</span> <span class="n">sequence_length</span><span class="p">,</span> <span class="n">model_dimension</span> <span class="o">=</span> <span class="n">shape</span>
+
+    <span class="c1"># Create frame indices tensor of shape (n_frames,)</span>
+    <span class="n">frame_indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_frames</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="n">dim_t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_position_features</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="n">dim_t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span> <span class="o">**</span> <span class="p">(</span>
+        <span class="mi">2</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">dim_t</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">rounding_mode</span><span class="o">=</span><span class="s2">&quot;floor&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_position_features</span>
+    <span class="p">)</span>
+
+
+    <span class="c1"># Compute the temporal position embeddings</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n_frames</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="n">pos</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">frame_indices</span> <span class="o">*</span> <span class="n">delta_t</span> <span class="o">/</span> <span class="n">dim_t</span><span class="p">)</span><span class="o">.</span><span class="n">sin</span><span class="p">()</span>
+    <span class="n">pos</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">frame_indices</span> <span class="o">*</span> <span class="n">delta_t</span> <span class="o">/</span> <span class="n">dim_t</span><span class="p">)</span><span class="o">.</span><span class="n">cos</span><span class="p">()</span>
+
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">pos</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Add sequence length dimension</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">pos</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">sequence_length</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># Repeat for each position in the sequence</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>

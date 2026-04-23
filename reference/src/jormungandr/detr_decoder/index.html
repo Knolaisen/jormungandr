@@ -1730,7 +1730,8 @@
 
                   <details class="mkdocstrings-source">
                     <summary>Source code in <code>src/jormungandr/detr_decoder.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">10</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 9</span>
+<span class="normal">10</span>
 <span class="normal">11</span>
 <span class="normal">12</span>
 <span class="normal">13</span>
@@ -1751,7 +1752,12 @@
 <span class="normal">28</span>
 <span class="normal">29</span>
 <span class="normal">30</span>
-<span class="normal">31</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;facebook/detr-resnet-50&quot;</span><span class="p">,</span>
     <span class="n">decoder_config</span><span class="p">:</span> <span class="n">DecoderConfig</span> <span class="o">=</span> <span class="n">DecoderConfig</span><span class="p">(),</span>
@@ -1760,7 +1766,9 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">decoder_config</span> <span class="o">=</span> <span class="n">decoder_config</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder_config</span><span class="o">.</span><span class="n">num_queries</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">query_position_embeddings</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decoder_config</span><span class="o">.</span><span class="n">num_queries</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder_config</span><span class="o">.</span><span class="n">hidden_dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">query_position_embeddings</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">decoder_config</span><span class="o">.</span><span class="n">num_queries</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder_config</span><span class="o">.</span><span class="n">hidden_dim</span>
+        <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">query_position_embeddings</span> <span class="o">=</span> <span class="n">fetch_detr_model</span><span class="p">(</span>
             <span class="n">model_name</span>
@@ -1768,7 +1776,11 @@
 
     <span class="c1"># Additional layers can be added here</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span> <span class="o">=</span> <span class="n">fetch_detr_model</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">decoder</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span> <span class="o">=</span> <span class="n">fetch_detr_model</span><span class="p">(</span>
+        <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span>
+        <span class="n">is_pre_trained</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">decoder_config</span><span class="o">.</span><span class="n">use_pre_trained</span><span class="p">,</span>
+        <span class="n">auxiliary_loss</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">decoder_config</span><span class="o">.</span><span class="n">auxiliary_loss</span><span class="p">,</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">decoder</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder_config</span><span class="o">.</span><span class="n">freeze_decoder</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
@@ -1797,7 +1809,7 @@
 
 
 </h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">forward</span><span class="p">(</span><span class="n">encoder_output</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">position_embedding</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">encoder_mask_flattened</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">decoder_inputs_embeds</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">decoder_attention_mask</span><span class="p">:</span> <span class="n">FloatTensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">forward</span><span class="p">(</span><span class="n">encoder_output</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">position_embedding</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">encoder_mask_flattened</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">decoder_inputs_embeds</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">decoder_attention_mask</span><span class="p">:</span> <span class="n">FloatTensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -1839,12 +1851,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/jormungandr/detr_decoder.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">33</span>
-<span class="normal">34</span>
-<span class="normal">35</span>
-<span class="normal">36</span>
-<span class="normal">37</span>
-<span class="normal">38</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">38</span>
 <span class="normal">39</span>
 <span class="normal">40</span>
 <span class="normal">41</span>
@@ -1874,14 +1881,24 @@
 <span class="normal">65</span>
 <span class="normal">66</span>
 <span class="normal">67</span>
-<span class="normal">68</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">encoder_output</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
     <span class="n">position_embedding</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
     <span class="n">encoder_mask_flattened</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">decoder_inputs_embeds</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">decoder_attention_mask</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Args:</span>
 <span class="sd">        encoder_output: Tensor of shape (batch_size, sequence_length, hidden_dim)</span>
@@ -1908,8 +1925,13 @@
         <span class="n">object_queries_position_embeddings</span><span class="o">=</span><span class="n">object_queries_position_embeddings</span><span class="p">,</span>
         <span class="n">attention_mask</span><span class="o">=</span><span class="n">decoder_attention_mask</span><span class="p">,</span>
         <span class="n">encoder_attention_mask</span><span class="o">=</span><span class="n">encoder_mask_flattened</span><span class="p">,</span>
-    <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">decoder_output</span>
+    <span class="p">)</span>
+    <span class="n">decoder_final_output</span> <span class="o">=</span> <span class="n">decoder_output</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">decoder_intermediate_outputs</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">decoder_output</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">decoder_intermediate_outputs</span> <span class="o">=</span> <span class="n">decoder_output</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">decoder_final_output</span><span class="p">,</span> <span class="n">decoder_intermediate_outputs</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>

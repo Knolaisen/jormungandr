@@ -1617,7 +1617,7 @@
 
 
 </h2>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">Jormungandr</span><span class="p">(</span><span class="n">backbone</span><span class="p">:</span> <span class="n">Backbone</span> <span class="o">=</span> <span class="n">Backbone</span><span class="p">(),</span> <span class="n">embedder</span><span class="p">:</span> <span class="n">Embedder</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">model_dimension</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">256</span><span class="p">,</span> <span class="n">variant</span><span class="o">=</span><span class="s1">&#39;Jormungandr-b&#39;</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">device</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;cuda&#39;</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">JormungandrConfig</span> <span class="o">=</span> <span class="n">JormungandrConfig</span><span class="p">())</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">Jormungandr</span><span class="p">(</span><span class="n">device</span><span class="p">:</span> <span class="n">device</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;cuda&#39;</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">JormungandrConfig</span> <span class="o">=</span> <span class="n">JormungandrConfig</span><span class="p">())</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -1654,7 +1654,9 @@
 
                   <details class="mkdocstrings-source">
                     <summary>Source code in <code>src/jormungandr/jormungandr.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">21</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
 <span class="normal">22</span>
 <span class="normal">23</span>
 <span class="normal">24</span>
@@ -1690,18 +1692,8 @@
 <span class="normal">54</span>
 <span class="normal">55</span>
 <span class="normal">56</span>
-<span class="normal">57</span>
-<span class="normal">58</span>
-<span class="normal">59</span>
-<span class="normal">60</span>
-<span class="normal">61</span>
-<span class="normal">62</span>
-<span class="normal">63</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<span class="normal">57</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-    <span class="n">backbone</span><span class="p">:</span> <span class="n">Backbone</span> <span class="o">=</span> <span class="n">Backbone</span><span class="p">(),</span>
-    <span class="n">embedder</span><span class="p">:</span> <span class="n">Embedder</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">model_dimension</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">256</span><span class="p">,</span>
-    <span class="n">variant</span><span class="o">=</span><span class="s2">&quot;Jormungandr-b&quot;</span><span class="p">,</span>
     <span class="n">device</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span><span class="p">,</span>
     <span class="n">config</span><span class="p">:</span> <span class="n">JormungandrConfig</span> <span class="o">=</span> <span class="n">JormungandrConfig</span><span class="p">(),</span>
 <span class="p">):</span>
@@ -1709,36 +1701,36 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">device</span>
 
     <span class="c1"># Backbone</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">backbone</span> <span class="o">=</span> <span class="n">backbone</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">embedder</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">embedder</span>
-        <span class="k">if</span> <span class="n">embedder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="k">else</span> <span class="n">DetrSinePositionEmbedding</span><span class="p">(</span><span class="n">num_position_features</span><span class="o">=</span><span class="n">model_dimension</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
-    <span class="p">)</span>
-    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span>
-        <span class="s2">&quot;Embedder should not be None after initialization&quot;</span>
-    <span class="p">)</span>
-
-    <span class="bp">self</span><span class="o">.</span><span class="n">embedder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedder</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">backbone</span> <span class="o">=</span> <span class="n">Backbone</span><span class="p">(</span>
+        <span class="n">model_name</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">detr_name</span><span class="p">,</span>
+        <span class="n">freeze_backbone</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">backbone</span><span class="o">.</span><span class="n">freeze_backbone</span><span class="p">,</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">embedder</span><span class="p">:</span> <span class="n">Embedder</span> <span class="o">=</span> <span class="n">DetrSinePositionEmbedding</span><span class="p">(</span>
+        <span class="n">num_position_features</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">model_dimension</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
 
     <span class="c1"># Encoders</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">spatial_encoder</span> <span class="o">=</span> <span class="n">MambaEncoder</span><span class="p">(</span>
-        <span class="n">model_dimension</span><span class="o">=</span><span class="n">model_dimension</span><span class="p">,</span>
+        <span class="n">model_dimension</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">model_dimension</span><span class="p">,</span>
         <span class="n">hidden_state_dim</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">spatial_encoder</span><span class="o">.</span><span class="n">hidden_state_dim</span><span class="p">,</span>
         <span class="n">num_layers</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">spatial_encoder</span><span class="o">.</span><span class="n">num_layers</span><span class="p">,</span>
     <span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">temporal_encoder</span> <span class="o">=</span> <span class="n">MambaEncoder</span><span class="p">(</span>
-        <span class="n">model_dimension</span><span class="o">=</span><span class="n">model_dimension</span><span class="p">,</span>
+        <span class="n">model_dimension</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">model_dimension</span><span class="p">,</span>
         <span class="n">hidden_state_dim</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">temporal_encoder</span><span class="o">.</span><span class="n">hidden_state_dim</span><span class="p">,</span>
         <span class="n">num_layers</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">temporal_encoder</span><span class="o">.</span><span class="n">num_layers</span><span class="p">,</span>
     <span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
 
     <span class="c1"># Decoder + Output Head</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span> <span class="o">=</span> <span class="n">DETRDecoder</span><span class="p">(</span>
+        <span class="n">model_name</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">detr_name</span><span class="p">,</span>
         <span class="n">decoder_config</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">decoder</span><span class="p">,</span>
     <span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">output_head</span> <span class="o">=</span> <span class="n">FCNNPredictionHead</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">output_head</span> <span class="o">=</span> <span class="n">FCNNPredictionHead</span><span class="p">(</span>
+        <span class="n">model_name</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">detr_name</span><span class="p">,</span>
+        <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">output_head</span><span class="p">,</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
                   </details>
 
@@ -1763,7 +1755,7 @@
 
 
 </h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">forward</span><span class="p">(</span><span class="n">frames_pixel_values</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">]</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">forward</span><span class="p">(</span><span class="n">frames_pixel_values</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">pixel_mask</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -1771,69 +1763,161 @@
         <p>Sequence-to-sequence forward pass for the Jormungandr model.
 This method processes a batch of video frames and produces class labels and bounding box coordinates for object detection.
 Args:
-    frames_pixel_values (Tensor): A tensor of shape (batch_size, num_frames, channels, height, width) containing the pixel values of the input video frames.
+    frames_pixel_values (Tensor): A tensor of shape (num_frames, channels, height, width) containing the pixel values of the input video frames.
+    pixel_mask (Tensor | None): An optional tensor of shape (num_frames, height, width) indicating valid pixels (1 for valid, 0 for padding). If None, all pixels are considered valid.
 Returns:
-    class_labels (Tensor): A tensor of shape (batch_size, num_queries, num_classes) containing the predicted class probabilities for each query.
-    bbox_coordinates (Tensor): A tensor of shape (batch_size, num_queries, 4) containing the predicted bounding box coordinates for each query, where the last dimension represents (x_center, y_center, width, height) normalized to [0, 1].</p>
+    class_labels (Tensor): A tensor of shape (num_frames, num_queries, num_classes) containing the predicted class probabilities for each query.
+    bbox_coordinates (Tensor): A tensor of shape (num_frames, num_queries, 4) containing the predicted bounding box coordinates for each query, where the last dimension represents (x_center, y_center, width, height) normalized to [0, 1].
+    intermediate_outputs (Tensor | None): A tensor containing intermediate outputs from the model.</p>
 
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/jormungandr/jormungandr.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">65</span>
-<span class="normal">66</span>
-<span class="normal">67</span>
-<span class="normal">68</span>
-<span class="normal">69</span>
-<span class="normal">70</span>
-<span class="normal">71</span>
-<span class="normal">72</span>
-<span class="normal">73</span>
-<span class="normal">74</span>
-<span class="normal">75</span>
-<span class="normal">76</span>
-<span class="normal">77</span>
-<span class="normal">78</span>
-<span class="normal">79</span>
-<span class="normal">80</span>
-<span class="normal">81</span>
-<span class="normal">82</span>
-<span class="normal">83</span>
-<span class="normal">84</span>
-<span class="normal">85</span>
-<span class="normal">86</span>
-<span class="normal">87</span>
-<span class="normal">88</span>
-<span class="normal">89</span>
-<span class="normal">90</span>
-<span class="normal">91</span>
-<span class="normal">92</span>
-<span class="normal">93</span>
-<span class="normal">94</span>
-<span class="normal">95</span>
-<span class="normal">96</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 59</span>
+<span class="normal"> 60</span>
+<span class="normal"> 61</span>
+<span class="normal"> 62</span>
+<span class="normal"> 63</span>
+<span class="normal"> 64</span>
+<span class="normal"> 65</span>
+<span class="normal"> 66</span>
+<span class="normal"> 67</span>
+<span class="normal"> 68</span>
+<span class="normal"> 69</span>
+<span class="normal"> 70</span>
+<span class="normal"> 71</span>
+<span class="normal"> 72</span>
+<span class="normal"> 73</span>
+<span class="normal"> 74</span>
+<span class="normal"> 75</span>
+<span class="normal"> 76</span>
+<span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">frames_pixel_values</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">]:</span>
+    <span class="n">pixel_mask</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sequence-to-sequence forward pass for the Jormungandr model.</span>
 <span class="sd">    This method processes a batch of video frames and produces class labels and bounding box coordinates for object detection.</span>
 <span class="sd">    Args:</span>
-<span class="sd">        frames_pixel_values (Tensor): A tensor of shape (batch_size, num_frames, channels, height, width) containing the pixel values of the input video frames.</span>
+<span class="sd">        frames_pixel_values (Tensor): A tensor of shape (num_frames, channels, height, width) containing the pixel values of the input video frames.</span>
+<span class="sd">        pixel_mask (Tensor | None): An optional tensor of shape (num_frames, height, width) indicating valid pixels (1 for valid, 0 for padding). If None, all pixels are considered valid.</span>
 <span class="sd">    Returns:</span>
-<span class="sd">        class_labels (Tensor): A tensor of shape (batch_size, num_queries, num_classes) containing the predicted class probabilities for each query.</span>
-<span class="sd">        bbox_coordinates (Tensor): A tensor of shape (batch_size, num_queries, 4) containing the predicted bounding box coordinates for each query, where the last dimension represents (x_center, y_center, width, height) normalized to [0, 1].</span>
+<span class="sd">        class_labels (Tensor): A tensor of shape (num_frames, num_queries, num_classes) containing the predicted class probabilities for each query.</span>
+<span class="sd">        bbox_coordinates (Tensor): A tensor of shape (num_frames, num_queries, 4) containing the predicted bounding box coordinates for each query, where the last dimension represents (x_center, y_center, width, height) normalized to [0, 1].</span>
+<span class="sd">        intermediate_outputs (Tensor | None): A tensor containing intermediate outputs from the model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">frames_pixel_values</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Expected frames_pixel_values to have 4 dimensions (num_frames, channels, height, width), but got </span><span class="si">{</span><span class="n">frames_pixel_values</span><span class="o">.</span><span class="n">ndim</span><span class="si">}</span><span class="s2"> dimensions.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">1</span>
+
     <span class="n">frames_pixel_values</span> <span class="o">=</span> <span class="n">frames_pixel_values</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
     <span class="c1"># Backbone</span>
+    <span class="n">feature_maps</span><span class="p">,</span> <span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backbone</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">frames_pixel_values</span><span class="p">,</span> <span class="n">pixel_mask</span><span class="p">)</span>
+    <span class="n">projected_feature_maps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backbone</span><span class="o">.</span><span class="n">project_feature_maps</span><span class="p">(</span><span class="n">feature_maps</span><span class="p">)</span>
+
+    <span class="c1"># Flatten H and W into sequence length, and permute to (num_frames, sequence_length, model_dimension)</span>
+    <span class="n">flattened_feature_maps</span> <span class="o">=</span> <span class="n">projected_feature_maps</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">flattened_mask</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Generate position embeddings for each frame</span>
+    <span class="n">feature_map_shape</span> <span class="o">=</span> <span class="n">feature_maps</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">position_embedding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedder</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span>
+        <span class="n">shape</span><span class="o">=</span><span class="n">feature_map_shape</span><span class="p">,</span>
+        <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">,</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="n">feature_maps</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+        <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">,</span>
+    <span class="p">)</span>
 
     <span class="c1"># Extract Spatial features from each frame using the Spatial encoders with weight sharing</span>
+    <span class="n">spatial_features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spatial_encoder</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span>
+        <span class="n">flattened_feature_maps</span><span class="p">,</span>
+        <span class="n">position_embedding</span><span class="o">=</span><span class="n">position_embedding</span><span class="p">,</span>
+        <span class="n">pixel_mask</span><span class="o">=</span><span class="n">flattened_mask</span><span class="p">,</span>
+    <span class="p">)</span>
 
-    <span class="c1"># Generate position embeddings for each frame and flatten the spatial features of all frames</span>
+    <span class="c1"># Flatten spacial features across frames to create a long sequence for the temporal encoder. We have now done temporal_sequence = [sequence_frame_1, sequence_frame_2, ..., sequence_frame_n]. Might want to experiment with other ways of flattening, e.g. interleaving pixels from different frames, or adding special tokens to indicate frame boundaries, etc.</span>
+    <span class="n">num_frames</span><span class="p">,</span> <span class="n">sequence_length</span><span class="p">,</span> <span class="n">model_dimension</span> <span class="o">=</span> <span class="n">spatial_features</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">temporal_input</span> <span class="o">=</span> <span class="n">spatial_features</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+        <span class="n">batch_size</span><span class="p">,</span> <span class="n">num_frames</span> <span class="o">*</span> <span class="n">sequence_length</span><span class="p">,</span> <span class="n">model_dimension</span>
+    <span class="p">)</span>
+
+    <span class="c1"># add time positional embeddings to the temporal input</span>
+    <span class="c1"># TODO</span>
 
     <span class="c1"># Extract Temporal features across frames using the Temporal encoders</span>
+    <span class="n">temporal_features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">temporal_encoder</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span>
+        <span class="n">temporal_input</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Reshape temporal features back to (num_frames, sequence_length, model_dimension) for the decoder</span>
+    <span class="n">encoder_outputs</span> <span class="o">=</span> <span class="n">temporal_features</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+        <span class="n">num_frames</span><span class="p">,</span> <span class="n">sequence_length</span><span class="p">,</span> <span class="n">model_dimension</span>
+    <span class="p">)</span>
 
     <span class="c1"># Sequence to sequence prediction using the decoders with weight sharing</span>
-    <span class="n">decoder_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span>
+    <span class="n">decoder_output</span><span class="p">,</span> <span class="n">intermediate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span>
         <span class="n">encoder_output</span><span class="o">=</span><span class="n">encoder_outputs</span><span class="p">,</span>
         <span class="n">position_embedding</span><span class="o">=</span><span class="n">position_embedding</span><span class="p">,</span>
         <span class="n">encoder_mask_flattened</span><span class="o">=</span><span class="n">flattened_mask</span><span class="p">,</span>
@@ -1841,7 +1925,7 @@ Returns:
 
     <span class="c1"># Detection Heads with weight sharing</span>
     <span class="n">class_labels</span><span class="p">,</span> <span class="n">bbox_coordinates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_head</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">decoder_output</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">class_labels</span><span class="p">,</span> <span class="n">bbox_coordinates</span>
+    <span class="k">return</span> <span class="n">class_labels</span><span class="p">,</span> <span class="n">bbox_coordinates</span><span class="p">,</span> <span class="n">intermediate</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
