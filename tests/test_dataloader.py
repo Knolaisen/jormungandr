@@ -1,17 +1,15 @@
 import torch
-from jormungandr.dataset import create_dataloaders, create_vod_dataloader
-# Fixture for the dataloader
-
+from jormungandr.dataset import create_dataloaders
 import pytest
 
 
 @pytest.fixture(scope="module")
-def loaders():
+def image_loaders():
     return create_dataloaders(batch_size=4)
 
 
-def test_batch_basic(loaders):
-    train_loader, _ = loaders
+def test_batch_basic(image_loaders):
+    train_loader, _ = image_loaders
     batch = next(iter(train_loader))
     assert set(batch.keys()) == {"pixel_values", "pixel_mask", "labels"}
 
@@ -32,9 +30,9 @@ def test_batch_basic(loaders):
     assert masks.dtype in (torch.bool, torch.uint8, torch.int64, torch.int32)
 
 
-def test_padding_mask_consistency(loaders):
+def test_padding_mask_consistency(image_loaders):
     tol_frac_nonzero = 0.02
-    train_loader, _ = loaders
+    train_loader, _ = image_loaders
     batch = next(iter(train_loader))
     images = batch["pixel_values"]
     masks = batch["pixel_mask"].bool()
@@ -57,16 +55,19 @@ def test_padding_mask_consistency(loaders):
     )
 
 
-def test_mot_dataset():
-    train_loader, val_loader = create_vod_dataloader(path="./data", n_frames=4)
+@pytest.mark.parametrize("n_frames", [4, 8, 16])
+def test_mot_dataset(n_frames):
+    train_loader, val_loader = create_dataloaders(
+        "video", data_dir="./data", batch_size=1, n_frames=n_frames
+    )
 
     # Entire batch must have same width and height
-    for batch in train_loader:
-        images = batch["pixel_values"]
-        targets = batch["labels"]
+    batch = next(iter(train_loader))
 
-        B, C, H, W = images.shape
-        assert C == 3
-        assert len(targets) == B
+    images = batch["pixel_values"]
+    targets = batch["labels"]
 
-        break  # just test one batch
+    B, C, H, W = images.shape
+    assert B == n_frames, f"Expected batch size {n_frames}, got {B}"
+    assert C == 3, f"Expected 3 RGB channels, got {C}"
+    assert len(targets) == B, f"Expected {B} targets, got {len(targets)}"
