@@ -142,43 +142,52 @@ class TemporalSinePositionEmbedding(nn.Module, Embedder):
         self.scale = scale
 
     def forward(
-        self,
-        shape: torch.Size,
-        device: torch.device | str,
-        dtype: torch.dtype,
-        delta_t: float = 1.0,
-    ) -> torch.Tensor:
-        """
-        Generate temporal sine position embeddings.
-        Args:
-            shape: The shape of the input tensor for which to compute the position embedding, expected to be (n_frames, sequence_length, model_dimension)
-            device: The device on which to create the position embedding
-            dtype: The dtype of the position embedding
-            delta_t: The time interval between frames, used to compute the sine and cosine values.
-            n_frames: The number of frames in the temporal sequence for which to compute the position embeddings.
-        Returns:
-        A position embedding tensor of shape (sequence_length * n_frames, num_position_features * 2) where num_position_features is the number of sine and cosine features for each temporal position. The first half of the features correspond to sine values and the second half correspond to cosine values.
+            self,
+            shape: torch.Size,
+            device: torch.device | str,
+            dtype: torch.dtype,
+            delta_t: float = 1.0,
+        ) -> torch.Tensor:
+            """
+            Generate temporal sine position embeddings.
+            Args:
+                shape: The shape of the input tensor for which to compute the position embedding, expected to be (n_frames, sequence_length, model_dimension)
+                device: The device on which to create the position embedding
+                dtype: The dtype of the position embedding
+                delta_t: The time interval between frames, used to compute the sine and cosine values.
+                n_frames: The number of frames in the temporal sequence for which to compute the position embeddings.
+            Returns:
+            A position embedding tensor of shape (sequence_length * n_frames, num_position_features * 2) where num_position_features is the number of sine and cosine features for each temporal position. The first half of the features correspond to sine values and the second half correspond to cosine values.
 
-        PE(n_f, 2i) = sin(n_f * delta_t / (10000^(2i/d_model)))
-        PE(n_f, 2i+1) = cos(n_f * delta_t / (10000^(2i/d_model)))
-        """
+            PE(n_f, 2i) = sin(n_f * delta_t / (10000^(2i/d_model)))
+            PE(n_f, 2i+1) = cos(n_f * delta_t / (10000^(2i/d_model)))
+            """
 
-        n_frames, sequence_length, model_dimension = shape
+            n_frames, sequence_length, model_dimension = shape
 
-        # Create frame indices tensor of shape (n_frames,)
-        frame_indices = torch.arange(n_frames, device=device, dtype=dtype)
-        dim_t = torch.arange(
-            self.num_position_features, dtype=torch.int64, device=device
-        ).to(dtype)
-        dim_t = self.temperature ** (
-            2 * torch.div(dim_t, 2, rounding_mode="floor") / self.num_position_features
-        )
-       
+            # Create frame indices tensor of shape (n_frames,)
+            frame_indices = torch.arange(n_frames, device=device, dtype=dtype)
+            dim_t = torch.arange(
+                self.num_position_features, dtype=torch.int64, device=device
+            ).to(dtype)
 
-        # Compute the temporal position embeddings
-        pos = torch.empty((n_frames, 2), device=device, dtype=dtype)
-        pos[:, 0] = (frame_indices * delta_t / dim_t).sin()
-        pos[:, 1] = (frame_indices * delta_t / dim_t).cos()
+            dim_t = self.temperature ** (
+                2 * dim_t / (self.num_position_features * 2) # torch.div(dim_t, 2, rounding_mode="floor")
+            )
 
-        pos = pos.unsqueeze(1)  # Add sequence length dimension
-        pos = pos.repeat(1, sequence_length, 1)  # Repeat for each position in the sequence
+            frame_indices = frame_indices[:, None]  # Shape (n_frames, 1)
+            dim_t = dim_t[None, :]  # Shape (1, num_position_features
+
+            angles= frame_indices * delta_t / dim_t  # Shape (n_frames, num_position_features)
+
+
+
+            pos = torch.stack((angles.sin(), angles.cos()), dim=-1) # Shape (n_frames, num_position_features, 2)
+            pos = pos.flatten(-2) # Shape (n_frames, num_position_features * 2)
+
+
+            pos = pos.unsqueeze(1)  # Add sequence length dimension
+            pos = pos.repeat(1, sequence_length, 1)  # Repeat for each position in the sequence
+            pos = pos.flatten(0, 1)  # Flatten to (n_frames * sequence_length, num_position_features * 2)
+
+            return pos 
