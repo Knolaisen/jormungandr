@@ -5,7 +5,11 @@ from jormungandr.encoder import MambaEncoder
 from jormungandr.detr_decoder import DETRDecoder
 from jormungandr.output_head import FCNNPredictionHead
 from jormungandr.backbone import Backbone
-from jormungandr.embedder import Embedder, DetrSinePositionEmbedding
+from jormungandr.embedder import (
+    Embedder,
+    DetrSinePositionEmbedding,
+    TemporalSinePositionEmbedding,
+)
 from jormungandr.config.configuration import (
     JormungandrConfig,
 )
@@ -29,7 +33,10 @@ class Jormungandr(nn.Module):
             model_name=config.detr_name,
             freeze_backbone=config.backbone.freeze_backbone,
         ).to(device)
-        self.embedder: Embedder = DetrSinePositionEmbedding(
+        self.spatial_embedder: Embedder = DetrSinePositionEmbedding(
+            num_position_features=config.model_dimension // 2,
+        ).to(device)
+        self.temporal_embedder: Embedder = TemporalSinePositionEmbedding(
             num_position_features=config.model_dimension // 2,
         ).to(device)
 
@@ -90,7 +97,7 @@ class Jormungandr(nn.Module):
 
         # Generate position embeddings for each frame
         feature_map_shape = feature_maps.shape
-        position_embedding = self.embedder.forward(
+        position_embedding = self.spatial_embedder.forward(
             shape=feature_map_shape,
             device=self.device,
             dtype=feature_maps.dtype,
@@ -111,7 +118,12 @@ class Jormungandr(nn.Module):
         )
 
         # add time positional embeddings to the temporal input
-        # TODO
+        temporal_position_embedding = self.temporal_embedder.forward(
+            shape=temporal_input.shape,
+            device=self.device,
+            dtype=temporal_input.dtype,
+        )
+        temporal_input = temporal_input + temporal_position_embedding
 
         # Extract Temporal features across frames using the Temporal encoders
         temporal_features = self.temporal_encoder.forward(
