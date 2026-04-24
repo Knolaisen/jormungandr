@@ -38,8 +38,8 @@ model:
     freeze_backbone: true
   decoder:
     use_pre_trained: false
-    freeze_decoder: true
+    freeze_decoder: false
     auxiliary_loss: true
   output_head:
     use_pre_trained: false
-    freeze_prediction_head: true
+    freeze_prediction_head: false
