@@ -20,7 +20,7 @@ trainer:
     bbox_loss_coefficient: 5.0
     giou_loss_coefficient: 2.0
 
-fafnir:
+model:
   input_size: 224
   num_classes: 92
   encoder:

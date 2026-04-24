@@ -37,9 +37,15 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.nn.utils import clip_grad_norm_
 from datetime import datetime
 
-from jormungandr.config.configuration import Config, load_config
+from jormungandr.config.configuration import (
+    Config,
+    FafnirConfig,
+    JormungandrConfig,
+    load_config,
+)
 from jormungandr.dataset import create_dataloaders
 from jormungandr.fafnir import Fafnir
+from jormungandr.jormungandr import Jormungandr
 from jormungandr.training.criterion import build_criterion
 from jormungandr.training.scheduler import build_scheduler
 from jormungandr.training.coco_eval import CocoEvaluator
@@ -55,16 +61,19 @@ def train(
     config: Config,
 ):
     device = "cuda"
-    model = Fafnir(config=config.fafnir).to(device)
+    if isinstance(config.model, JormungandrConfig):
+        model = Jormungandr(config=config.model).to(device)
+    elif isinstance(config.model, FafnirConfig):
+        model = Fafnir(config=config.model).to(device)
 
-    if config.fafnir.checkpoint_name is not None:
+    if config.model.checkpoint_name is not None:
         try:
             api = wandb.Api()
-            artifact = api.artifact(config.fafnir.checkpoint_name, type="model")
+            artifact = api.artifact(config.model.checkpoint_name, type="model")
             artifact_dir = artifact.download()
             checkpoint_path = os.path.join(artifact_dir, os.listdir(artifact_dir)[0])
             model.load_state_dict(torch.load(checkpoint_path))
-            print(f"Successfully loaded checkpoint from {config.fafnir.checkpoint_name}")
+            print(f"Successfully loaded checkpoint from {config.model.checkpoint_name}")
             shutil.rmtree(artifact_dir)  # Clean up the downloaded artifact directory
         except Exception as e:
             print(f"Error loading checkpoint: {e}")
@@ -78,30 +87,47 @@ def train(
     )
 
     criterion = build_criterion(config.trainer.loss.name)
-    optimizer = AdamW(
-        [
-            {
-                "name": "backbone",
-                "params": model.backbone.parameters(),
-                "lr": config.trainer.backbone_learning_rate,
-            },
+    params = [
+        {
+            "name": "backbone",
+            "params": model.backbone.parameters(),
+            "lr": config.trainer.backbone_learning_rate,
+        },
+        {
+            "name": "decoder",
+            "params": model.decoder.parameters(),
+            "lr": config.trainer.decoder_learning_rate,
+        },
+        {
+            "name": "output_head",
+            "params": model.output_head.parameters(),
+            "lr": config.trainer.output_head_learning_rate,
+        },
+    ]
+    if isinstance(config.model, FafnirConfig):
+        params.append(
             {
                 "name": "encoder",
                 "params": model.encoder.parameters(),
                 "lr": config.trainer.encoder_learning_rate,
-            },
-            {
-                "name": "decoder",
-                "params": model.decoder.parameters(),
-                "lr": config.trainer.decoder_learning_rate,
-            },
-            {
-                "name": "output_head",
-                "params": model.output_head.parameters(),
-                "lr": config.trainer.output_head_learning_rate,
-            },
-        ]
-    )
+            }
+        )
+    elif isinstance(config.model, JormungandrConfig):
+        params.extend(
+            [
+                {
+                    "name": "spatial_encoder",
+                    "params": model.spatial_encoder.parameters(),
+                    "lr": config.trainer.encoder_learning_rate,
+                },
+                {
+                    "name": "temporal_encoder",
+                    "params": model.temporal_encoder.parameters(),
+                    "lr": config.trainer.encoder_learning_rate,
+                },
+            ]
+        )
+    optimizer = AdamW(params)
     scheduler = build_scheduler(
         optimizer,
         config.trainer.scheduler,
@@ -110,7 +136,12 @@ def train(
     )
 
     best_val_ap = 0.0
-    artifact_name = f"{config.fafnir.encoder.encoder_type}_{config.trainer.loss.name}_{timestamp}"
+    mamba_variant = (
+        config.model.encoder.encoder_type
+        if isinstance(config.model, FafnirConfig)
+        else config.model.spatial_encoder.encoder_type
+    )
+    artifact_name = f"{mamba_variant}_{config.trainer.loss.name}_{timestamp}"
     for epoch in trange(config.trainer.epochs, desc="Epochs", unit="epoch"):
         _handle_unfreezing(model, epoch, config)
         average_training_loss = train_one_epoch(
@@ -170,23 +201,23 @@ def train(
     return model
 
 
-def _handle_unfreezing(model: Fafnir, epoch: int, config: Config) -> None:
-    if config.fafnir.backbone.freeze_backbone:
+def _handle_unfreezing(model: Fafnir | Jormungandr, epoch: int, config: Config) -> None:
+    if config.model.backbone.freeze_backbone:
         if epoch == config.trainer.epoch_to_unfreeze_backbone:
             for param in model.backbone.parameters():
                 param.requires_grad = True
-    if config.fafnir.decoder.freeze_decoder:
+    if config.model.decoder.freeze_decoder:
         if epoch == config.trainer.epoch_to_unfreeze_decoder:
             for param in model.decoder.parameters():
                 param.requires_grad = True
-    if config.fafnir.output_head.freeze_prediction_head:
+    if config.model.output_head.freeze_prediction_head:
         if epoch == config.trainer.epoch_to_unfreeze_output_head:
             for param in model.output_head.parameters():
                 param.requires_grad = True
 
 
 def train_one_epoch(
-    model: Fafnir,
+    model: Fafnir | Jormungandr,
     dataloader: DataLoader,
     optimizer: optim.Optimizer,
     criterion: nn.Module | Callable,
@@ -253,7 +284,7 @@ def train_one_epoch(
 # Disable gradient computation and reduce memory consumption.
 @torch.no_grad()
 def run_validation(
-    model: Fafnir,
+    model: Fafnir | Jormungandr,
     validation_loader: DataLoader,
     criterion: nn.Module | Callable,
     device: torch.device | str,
@@ -354,15 +385,18 @@ def run_validation(
 def validate(config: Config) -> None:
     device = "cuda"
 
-    model = Fafnir(config=config.fafnir).to(device)
+    if isinstance(config.model, JormungandrConfig):
+        model = Jormungandr(config=config.model).to(device)
+    elif isinstance(config.model, FafnirConfig):
+        model = Fafnir(config=config.model).to(device)
 
-    if config.fafnir.checkpoint_name is not None:
+    if config.model.checkpoint_name is not None:
         api = wandb.Api()
-        artifact = api.artifact(config.fafnir.checkpoint_name, type="model")
+        artifact = api.artifact(config.model.checkpoint_name, type="model")
         artifact_dir = artifact.download()
         checkpoint_path = os.path.join(artifact_dir, os.listdir(artifact_dir)[0])
         model.load_state_dict(torch.load(checkpoint_path))
-        print(f"Successfully loaded checkpoint from {config.fafnir.checkpoint_name}")
+        print(f"Successfully loaded checkpoint from {config.model.checkpoint_name}")
         shutil.rmtree(artifact_dir)  # Clean up the downloaded artifact directory
 
     training_loader, validation_loader = create_dataloaders(

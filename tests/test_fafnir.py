@@ -10,7 +10,7 @@ from jormungandr.config.configuration import (
 import torch
 import pytest
 
-config = load_config("test_config.yaml").fafnir
+config = load_config("test_config.yaml").model
 
 
 @pytest.mark.parametrize(

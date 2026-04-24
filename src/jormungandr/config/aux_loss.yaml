@@ -19,7 +19,7 @@ trainer:
     giou_loss_coefficient: 2.0
     decoder_layers: 6
 
-fafnir:
+model:
   input_size: 224
   num_classes: 92
   encoder:
