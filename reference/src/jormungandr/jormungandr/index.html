@@ -1572,6 +1572,11 @@
 
     <div class="doc doc-contents first">
 
+        <p>End-to-end video object detection model using a Spatial-Temporal Mamba architecture.</p>
+<p>The pipeline is: Backbone -&gt; spatial Mamba encoder (per-frame, weight-shared) -&gt;
+temporal Mamba encoder (across frames) -&gt; DETR transformer decoder -&gt; FCNN prediction head.
+Produces per-frame class probabilities and bounding box coordinates for all object queries.</p>
+
 
 
 
@@ -1654,19 +1659,7 @@
 
                   <details class="mkdocstrings-source">
                     <summary>Source code in <code>src/jormungandr/jormungandr.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">31</span>
 <span class="normal">32</span>
 <span class="normal">33</span>
 <span class="normal">34</span>
@@ -1692,7 +1685,22 @@
 <span class="normal">54</span>
 <span class="normal">55</span>
 <span class="normal">56</span>
-<span class="normal">57</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">device</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span><span class="p">,</span>
     <span class="n">config</span><span class="p">:</span> <span class="n">JormungandrConfig</span> <span class="o">=</span> <span class="n">JormungandrConfig</span><span class="p">(),</span>
@@ -1705,7 +1713,10 @@
         <span class="n">model_name</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">detr_name</span><span class="p">,</span>
         <span class="n">freeze_backbone</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">backbone</span><span class="o">.</span><span class="n">freeze_backbone</span><span class="p">,</span>
     <span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">embedder</span><span class="p">:</span> <span class="n">Embedder</span> <span class="o">=</span> <span class="n">DetrSinePositionEmbedding</span><span class="p">(</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">spatial_embedder</span><span class="p">:</span> <span class="n">Embedder</span> <span class="o">=</span> <span class="n">DetrSinePositionEmbedding</span><span class="p">(</span>
+        <span class="n">num_position_features</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">model_dimension</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">temporal_embedder</span><span class="p">:</span> <span class="n">Embedder</span> <span class="o">=</span> <span class="n">TemporalSinePositionEmbedding</span><span class="p">(</span>
         <span class="n">num_position_features</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">model_dimension</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span>
     <span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
 
@@ -1773,22 +1784,7 @@ Returns:
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/jormungandr/jormungandr.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 59</span>
-<span class="normal"> 60</span>
-<span class="normal"> 61</span>
-<span class="normal"> 62</span>
-<span class="normal"> 63</span>
-<span class="normal"> 64</span>
-<span class="normal"> 65</span>
-<span class="normal"> 66</span>
-<span class="normal"> 67</span>
-<span class="normal"> 68</span>
-<span class="normal"> 69</span>
-<span class="normal"> 70</span>
-<span class="normal"> 71</span>
-<span class="normal"> 72</span>
-<span class="normal"> 73</span>
-<span class="normal"> 74</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 74</span>
 <span class="normal"> 75</span>
 <span class="normal"> 76</span>
 <span class="normal"> 77</span>
@@ -1849,7 +1845,27 @@ Returns:
 <span class="normal">132</span>
 <span class="normal">133</span>
 <span class="normal">134</span>
-<span class="normal">135</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">frames_pixel_values</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
     <span class="n">pixel_mask</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1883,7 +1899,7 @@ Returns:
 
     <span class="c1"># Generate position embeddings for each frame</span>
     <span class="n">feature_map_shape</span> <span class="o">=</span> <span class="n">feature_maps</span><span class="o">.</span><span class="n">shape</span>
-    <span class="n">position_embedding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedder</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span>
+    <span class="n">position_embedding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spatial_embedder</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span>
         <span class="n">shape</span><span class="o">=</span><span class="n">feature_map_shape</span><span class="p">,</span>
         <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">,</span>
         <span class="n">dtype</span><span class="o">=</span><span class="n">feature_maps</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
@@ -1904,11 +1920,16 @@ Returns:
     <span class="p">)</span>
 
     <span class="c1"># add time positional embeddings to the temporal input</span>
-    <span class="c1"># TODO</span>
+    <span class="n">temporal_position_embedding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">temporal_embedder</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span>
+        <span class="n">shape</span><span class="o">=</span><span class="n">temporal_input</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
+        <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">,</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="n">temporal_input</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+    <span class="p">)</span>
 
     <span class="c1"># Extract Temporal features across frames using the Temporal encoders</span>
     <span class="n">temporal_features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">temporal_encoder</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span>
         <span class="n">temporal_input</span><span class="p">,</span>
+        <span class="n">position_embedding</span><span class="o">=</span><span class="n">temporal_position_embedding</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="c1"># Reshape temporal features back to (num_frames, sequence_length, model_dimension) for the decoder</span>

@@ -1491,6 +1491,11 @@
 
     <div class="doc doc-contents first">
 
+        <p>Debugging utilities for detecting non-finite values in tensors and model parameters.</p>
+<p>Checks are gated behind the JORMUNGANDR_DEBUG_NAN environment variable so they
+can be enabled selectively without modifying code. Integer and boolean tensors
+are skipped — only floating-point and complex tensors are inspected.</p>
+
 
 
 

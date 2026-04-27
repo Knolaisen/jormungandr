@@ -1471,6 +1471,11 @@
 
     <div class="doc doc-contents first">
 
+        <p>Still image object detection model with a configurable encoder.</p>
+<p>The pipeline is: Backbone -&gt; spatial encoder (Mamba, Mamba+FFN, or DETR) -&gt;
+DETR transformer decoder -&gt; FCNN prediction head.
+Unlike Jormungandr, Fafnir operates on individual frames with no temporal reasoning.</p>
+
 
 
 
