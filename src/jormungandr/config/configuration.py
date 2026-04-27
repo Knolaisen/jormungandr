@@ -257,7 +257,7 @@ class DETRConfig(BaseModel):
     )
     detr_name: str = Field(
         default="facebook/detr-resnet-50",
-        description="Name of the pre-trained DETR model to use for the encoder and decoder (e.g., 'facebook/detr-resnet-50')",
+        description="Name of the pre-trained DETR model to use for the encoder and decoder (e.g., 'facebook/detr-resnet-50', 'facebook/detr-resnet-101', 'facebook/detr-resnet-50-dc5' or 'facebook/detr-resnet-101-dc5')",
     )
     checkpoint_name: str | None = Field(
         default=None,
