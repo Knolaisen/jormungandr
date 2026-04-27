@@ -28,6 +28,7 @@ dependencies = [
     "pycocotools>=2.0.11",
     "pillow>=12.1.1",
     "pandas>=2.3.3",
+    "loguru>=0.7.3",
 ]
 
 [tool.uv]
