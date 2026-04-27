@@ -1,6 +1,6 @@
 
 trainer:
-  epochs: 300
+  epochs: 236
   batch_size: 64
   seed: 42
   backbone_learning_rate: 1e-6
@@ -43,3 +43,4 @@ model:
   output_head:
     use_pre_trained: false
     freeze_prediction_head: false
+  checkpoint_name: "sverrenystad-ntnu/Fafnir/mamba_ffn_giouloss_20260424_134908:v44"
