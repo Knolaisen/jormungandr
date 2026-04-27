@@ -68,7 +68,6 @@ def train(
             print(f"Error loading checkpoint: {e}")
             print("Continuing with randomly initialized weights.")
 
-    wandb.watch(model, log="all", log_freq=100)
     training_loader, validation_loader = create_dataloaders(
         dataset_name=config.trainer.dataset_name,
         batch_size=config.trainer.batch_size,
@@ -264,7 +263,6 @@ def train_one_epoch(
         wandb.log(
             {
                 "train/batch_loss": batch_loss,
-                **{f"train/loss/{k}": v for k, v in loss_dict.items()},
             }
         )
     average_loss = running_loss / (i + 1)
@@ -334,7 +332,7 @@ def run_validation(
         running_val_loss += batch_loss
 
         for k, v in loss_dict.items():
-            running_loss_dict[k] = running_loss_dict.get(k, 0.0) + v
+            running_loss_dict[k] = running_loss_dict.get(k, 0.0) + float(v)
 
         evaluator.update(class_labels, bbox_coordinates, labels)
 
