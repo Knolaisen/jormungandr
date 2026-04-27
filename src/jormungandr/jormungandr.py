@@ -123,11 +123,11 @@ class Jormungandr(nn.Module):
             device=self.device,
             dtype=temporal_input.dtype,
         )
-        temporal_input = temporal_input + temporal_position_embedding
 
         # Extract Temporal features across frames using the Temporal encoders
         temporal_features = self.temporal_encoder.forward(
             temporal_input,
+            position_embedding=temporal_position_embedding,
         )
 
         # Reshape temporal features back to (num_frames, sequence_length, model_dimension) for the decoder
