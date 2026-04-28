@@ -14,7 +14,7 @@ from functools import lru_cache
 from transformers import DetrForObjectDetection, DetrConfig
 
 
-@lru_cache(maxsize=None)
+@lru_cache()
 def fetch_detr_model(
     model_name: str = "facebook/detr-resnet-50",
     is_pre_trained: bool = True,

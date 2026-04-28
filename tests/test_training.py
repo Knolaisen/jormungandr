@@ -1,3 +1,4 @@
+from jormungandr.datasets import create_dataloaders
 from torch.utils.data import DataLoader
 from datasets.load import load_dataset
 import pytest
@@ -6,22 +7,11 @@ from torch.optim import AdamW
 
 
 from jormungandr.config.configuration import load_config
-from jormungandr.dataset import _collate_fn
+
+# from jormungandr.dataset import _collate_fn
 from jormungandr.fafnir import Fafnir
 from jormungandr.training.trainer import run_validation, train_one_epoch
 from jormungandr.training.criterion import build_criterion
-
-
-def create_datasets(
-    dataset_name: str = "detection-datasets/coco",
-    cache_dir: str = "../data/",
-) -> tuple[torch.utils.data.Dataset, torch.utils.data.Dataset]:
-    ds = load_dataset(dataset_name, cache_dir=cache_dir)
-
-    torch_train_ds = ds["train"].with_format("torch")
-    torch_val_ds = ds["val"].with_format("torch")
-
-    return torch_train_ds, torch_val_ds
 
 
 @pytest.fixture(scope="module")
@@ -31,13 +21,12 @@ def model():
 
 @pytest.mark.slow
 def test_run_validation(model):
-    _, val_dataset = create_datasets()
-    # Limit size of validation dataset for testing purposes
-    val_dataset = val_dataset.select(range(10))
+    subset_size = 10
     batch_size = 2
-    val_loader = DataLoader(
-        val_dataset, batch_size=batch_size, shuffle=False, collate_fn=_collate_fn
+    train_loader, val_loader = create_dataloaders(
+        subset_size=subset_size, batch_size=batch_size
     )
+    # Limit size of validation dataset for testing purposes
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     config = load_config("config.yaml")
@@ -70,12 +59,10 @@ def test_run_validation(model):
 
 @pytest.mark.slow
 def test_run_train_one_epoch(model):
-    train_dataset, _ = create_datasets()
-    # Limit size of validation dataset for testing purposes
-    train_dataset = train_dataset.select(range(10))
+    subset_size = 10
     batch_size = 2
-    train_loader = DataLoader(
-        train_dataset, batch_size=batch_size, shuffle=False, collate_fn=_collate_fn
+    train_loader, val_loader = create_dataloaders(
+        subset_size=subset_size, batch_size=batch_size
     )
 
     device = "cuda" if torch.cuda.is_available() else "cpu"

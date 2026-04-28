@@ -28,7 +28,6 @@ pip install uv --user
 uv sync
 
 # Run the Python script
-uv run python train.py --config experiment_2.yaml
-
+uv run python train.py --config experiment_2_ffn_265_hidden_size.yaml
 
 echo "Job finished"

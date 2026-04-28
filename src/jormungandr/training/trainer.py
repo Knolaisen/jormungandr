@@ -32,7 +32,7 @@ from jormungandr.config.configuration import (
     JormungandrConfig,
     load_config,
 )
-from jormungandr.dataset import create_dataloaders
+from jormungandr.datasets import create_dataloaders
 from jormungandr.fafnir import Fafnir
 from jormungandr.jormungandr import Jormungandr
 from jormungandr.training.criterion import build_criterion

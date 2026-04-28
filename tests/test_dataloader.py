@@ -1,5 +1,5 @@
 import torch
-from jormungandr.dataset import create_dataloaders
+from jormungandr.datasets import create_dataloaders
 import pytest
 
 
