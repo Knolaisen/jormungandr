@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="../encoder/">
+        <link rel="prev" href="../output_head/">
       
       
-        <link rel="next" href="../jormungandr/">
+        <link rel="next" href="loader/">
       
       
         
@@ -23,7 +23,7 @@
     
     
       
-        <title>fafnir - jormungandr</title>
+        <title>datasets - jormungandr</title>
       
     
     
@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#src.jormungandr.fafnir" class="md-skip">
+        <a href="#src.jormungandr.datasets" class="md-skip">
           Skip to content
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              fafnir
+              datasets
             
           </span>
         </div>
@@ -759,19 +759,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../fafnir/" class="md-nav__link">
         
   
   
@@ -787,7 +778,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -853,6 +843,8 @@
                 
   
   
+    
+  
   
   
     
@@ -877,15 +869,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_1_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_1_9" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../datasets/" class="md-nav__link ">
+            <a href="./" class="md-nav__link md-nav__link--active">
               
   
   
@@ -903,13 +895,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4_1_1_9" id="__nav_4_1_1_9_label" tabindex="0">
+              <label class="md-nav__link md-nav__link--active" for="__nav_4_1_1_9" id="__nav_4_1_1_9_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_1_9_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_1_9_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4_1_1_9">
             <span class="md-nav__icon md-icon"></span>
             
@@ -929,7 +921,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../datasets/loader/" class="md-nav__link">
+      <a href="loader/" class="md-nav__link">
         
   
   
@@ -957,7 +949,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../datasets/processor/" class="md-nav__link">
+      <a href="processor/" class="md-nav__link">
         
   
   
@@ -1008,7 +1000,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../datasets/image/" class="md-nav__link ">
+            <a href="image/" class="md-nav__link ">
               
   
   
@@ -1052,7 +1044,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../datasets/image/coco/" class="md-nav__link">
+      <a href="image/coco/" class="md-nav__link">
         
   
   
@@ -1111,7 +1103,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../datasets/video/" class="md-nav__link ">
+            <a href="video/" class="md-nav__link ">
               
   
   
@@ -1155,7 +1147,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../datasets/video/mot17/" class="md-nav__link">
+      <a href="video/mot17/" class="md-nav__link">
         
   
   
@@ -1651,6 +1643,25 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#src.jormungandr.datasets.create_dataloaders" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;create_dataloaders
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1764,6 +1775,24 @@
   
 
       
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="./" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    datasets
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
     </ol>
   </nav>
 
@@ -1778,18 +1807,36 @@
 
 
 
-<h1 id="src.jormungandr.fafnir" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-module"></code>            <span class="doc doc-object-name doc-module-name">src.jormungandr.fafnir</span>
+<h1 id="src.jormungandr.datasets" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-module"></code>            <span class="doc doc-object-name doc-module-name">src.jormungandr.datasets</span>
 
 
 </h1>
 
     <div class="doc doc-contents first">
 
-        <p>Still image object detection model with a configurable encoder.</p>
-<p>The pipeline is: Backbone -&gt; spatial encoder (Mamba, Mamba+FFN, or DETR) -&gt;
-DETR transformer decoder -&gt; FCNN prediction head.
-Unlike Jormungandr, Fafnir operates on individual frames with no temporal reasoning.</p>
+
+
+
+
+
+<p><span class="doc-section-title">Modules:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+          <b><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-module&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-module-name&quot;&gt;src.jormungandr.datasets.loader&lt;/span&gt;" href="loader/#src.jormungandr.datasets.loader">loader</a></code></b>
+          –
+          <div class="doc-md-description">
+            
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-module&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-module-name&quot;&gt;src.jormungandr.datasets.video&lt;/span&gt;" href="video/#src.jormungandr.datasets.video">video</a></code></b>
+          –
+          <div class="doc-md-description">
+            
+          </div>
+        </li>
+    </ul>
 
 
 
@@ -1798,8 +1845,16 @@ Unlike Jormungandr, Fafnir operates on individual frames with no temporal reason
 
 
 
-
-
+<p><span class="doc-section-title">Functions:</span></p>
+    <ul>
+          <li class="doc-section-item field-body">
+            <b><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_dataloaders&lt;/span&gt; (&lt;code&gt;src.jormungandr.datasets.create_dataloaders&lt;/code&gt;)" href="#src.jormungandr.datasets.create_dataloaders">create_dataloaders</a></code></b>
+            –
+            <div class="doc-md-description">
+              <p>Build train/val DataLoaders for either a HuggingFace image detection</p>
+            </div>
+          </li>
+    </ul>
 
 
 
@@ -1815,6 +1870,153 @@ Unlike Jormungandr, Fafnir operates on individual frames with no temporal reason
 
 
 
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="src.jormungandr.datasets.create_dataloaders" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">create_dataloaders</span>
+
+
+</h2>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">create_dataloaders</span><span class="p">(</span><span class="n">dataset_identifier</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;coco&#39;</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;./data/&#39;</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span> <span class="n">shuffle</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">collate_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">subset_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">val_split</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">DataLoader</span><span class="p">,</span> <span class="n">DataLoader</span><span class="p">]</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Build train/val DataLoaders for either a HuggingFace image detection
+dataset or a local MOT-style video object-detection dataset.</p>
+<p><code>dataset_identifier</code> picks the pipeline:
+  - "coco": <code>datasets.load_dataset(dataset_name)</code> + DETR image collator.
+  - "mot17": <code>VODDataset</code> over <code>data_dir/&lt;DATASET_NAME&gt;/train/*</code> + clip collator.</p>
+<p>Per-type defaults (dataset name, collate_fn, batch_size, prefetch_factor)
+live in <code>_DATASET_DEFAULTS</code> and can be overridden by the matching kwarg.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/jormungandr/datasets/loader.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 48</span>
+<span class="normal"> 49</span>
+<span class="normal"> 50</span>
+<span class="normal"> 51</span>
+<span class="normal"> 52</span>
+<span class="normal"> 53</span>
+<span class="normal"> 54</span>
+<span class="normal"> 55</span>
+<span class="normal"> 56</span>
+<span class="normal"> 57</span>
+<span class="normal"> 58</span>
+<span class="normal"> 59</span>
+<span class="normal"> 60</span>
+<span class="normal"> 61</span>
+<span class="normal"> 62</span>
+<span class="normal"> 63</span>
+<span class="normal"> 64</span>
+<span class="normal"> 65</span>
+<span class="normal"> 66</span>
+<span class="normal"> 67</span>
+<span class="normal"> 68</span>
+<span class="normal"> 69</span>
+<span class="normal"> 70</span>
+<span class="normal"> 71</span>
+<span class="normal"> 72</span>
+<span class="normal"> 73</span>
+<span class="normal"> 74</span>
+<span class="normal"> 75</span>
+<span class="normal"> 76</span>
+<span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_dataloaders</span><span class="p">(</span>
+    <span class="n">dataset_identifier</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;coco&quot;</span><span class="p">,</span>
+    <span class="n">data_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;./data/&quot;</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span>
+    <span class="n">shuffle</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">collate_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">subset_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># image-only</span>
+    <span class="n">val_split</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span>  <span class="c1"># video-only</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">DataLoader</span><span class="p">,</span> <span class="n">DataLoader</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build train/val DataLoaders for either a HuggingFace image detection</span>
+<span class="sd">    dataset or a local MOT-style video object-detection dataset.</span>
+
+<span class="sd">    `dataset_identifier` picks the pipeline:</span>
+<span class="sd">      - &quot;coco&quot;: `datasets.load_dataset(dataset_name)` + DETR image collator.</span>
+<span class="sd">      - &quot;mot17&quot;: `VODDataset` over `data_dir/&lt;DATASET_NAME&gt;/train/*` + clip collator.</span>
+
+<span class="sd">    Per-type defaults (dataset name, collate_fn, batch_size, prefetch_factor)</span>
+<span class="sd">    live in `_DATASET_DEFAULTS` and can be overridden by the matching kwarg.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">dataset_identifier</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_DATASET_DEFAULTS</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Unknown dataset_identifier </span><span class="si">{</span><span class="n">dataset_identifier</span><span class="si">!r}</span><span class="s2">; expected &#39;coco&#39; or &#39;mot17&#39;.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">defaults</span> <span class="o">=</span> <span class="n">_DATASET_DEFAULTS</span><span class="p">[</span><span class="n">dataset_identifier</span><span class="p">]</span>
+    <span class="n">dataset_name</span> <span class="o">=</span> <span class="n">defaults</span><span class="p">[</span><span class="s2">&quot;dataset_name&quot;</span><span class="p">]</span>
+    <span class="n">collate_fn</span> <span class="o">=</span> <span class="n">collate_fn</span> <span class="ow">or</span> <span class="n">defaults</span><span class="p">[</span><span class="s2">&quot;collate_fn&quot;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">dataset_identifier</span> <span class="o">==</span> <span class="s2">&quot;coco&quot;</span><span class="p">:</span>
+        <span class="n">train_ds</span><span class="p">,</span> <span class="n">val_ds</span> <span class="o">=</span> <span class="n">_build_image_datasets</span><span class="p">(</span>
+            <span class="n">dataset_name</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">,</span> <span class="n">seed</span><span class="p">,</span> <span class="n">subset_size</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">train_ds</span><span class="p">,</span> <span class="n">val_ds</span> <span class="o">=</span> <span class="n">_build_vod_datasets</span><span class="p">(</span>
+            <span class="n">data_dir</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">val_split</span>
+        <span class="p">)</span>
+        <span class="c1"># each batch is a clip of n_frames frames, so we don&#39;t want to batch multiple clips together</span>
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="n">train_gen</span> <span class="o">=</span> <span class="n">build_torch_generator</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">val_gen</span> <span class="o">=</span> <span class="n">build_torch_generator</span><span class="p">(</span><span class="n">seed</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">train_loader</span> <span class="o">=</span> <span class="n">_build_loader</span><span class="p">(</span>
+        <span class="n">train_ds</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+        <span class="n">shuffle</span><span class="o">=</span><span class="n">shuffle</span><span class="p">,</span>
+        <span class="n">collate_fn</span><span class="o">=</span><span class="n">collate_fn</span><span class="p">,</span>
+        <span class="n">generator</span><span class="o">=</span><span class="n">train_gen</span><span class="p">,</span>
+        <span class="n">prefetch_factor</span><span class="o">=</span><span class="n">defaults</span><span class="p">[</span><span class="s2">&quot;train_prefetch_factor&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">val_loader</span> <span class="o">=</span> <span class="n">_build_loader</span><span class="p">(</span>
+        <span class="n">val_ds</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+        <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">collate_fn</span><span class="o">=</span><span class="n">collate_fn</span><span class="p">,</span>
+        <span class="n">generator</span><span class="o">=</span><span class="n">val_gen</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">train_loader</span><span class="p">,</span> <span class="n">val_loader</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
 
 
 
@@ -1863,7 +2065,7 @@ Unlike Jormungandr, Fafnir operates on individual frames with no temporal reason
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../encoder/" class="md-footer__link md-footer__link--prev" aria-label="Previous: encoder">
+          <a href="../output_head/" class="md-footer__link md-footer__link--prev" aria-label="Previous: output_head">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1873,20 +2075,20 @@ Unlike Jormungandr, Fafnir operates on individual frames with no temporal reason
                 Previous
               </span>
               <div class="md-ellipsis">
-                encoder
+                output_head
               </div>
             </div>
           </a>
         
         
           
-          <a href="../jormungandr/" class="md-footer__link md-footer__link--next" aria-label="Next: jormungandr">
+          <a href="loader/" class="md-footer__link md-footer__link--next" aria-label="Next: loader">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                jormungandr
+                loader
               </div>
             </div>
             <div class="md-footer__button md-icon">

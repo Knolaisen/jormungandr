@@ -9,28 +9,28 @@
       
       
       
-        <link rel="prev" href="../encoder/">
+        <link rel="prev" href="../loader/">
       
       
-        <link rel="next" href="../jormungandr/">
+        <link rel="next" href="../image/">
       
       
         
       
       
-      <link rel="icon" href="../../../../assets/images/favicon.png">
+      <link rel="icon" href="../../../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
     
     
       
-        <title>fafnir - jormungandr</title>
+        <title>processor - jormungandr</title>
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -49,9 +49,9 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../../../../assets/_mkdocstrings.css">
     
-    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#src.jormungandr.fafnir" class="md-skip">
+        <a href="#src.jormungandr.datasets.processor" class="md-skip">
           Skip to content
         </a>
       
@@ -92,7 +92,7 @@
 
 <header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../.." title="jormungandr" class="md-header__button md-logo" aria-label="jormungandr" data-md-component="logo">
+    <a href="../../../../.." title="jormungandr" class="md-header__button md-logo" aria-label="jormungandr" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.19 14.19 6 18l3.81-8.19L18 6m-6-4A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2m0 8.9a1.1 1.1 0 0 0-1.1 1.1 1.1 1.1 0 0 0 1.1 1.1 1.1 1.1 0 0 0 1.1-1.1 1.1 1.1 0 0 0-1.1-1.1"/></svg>
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              fafnir
+              processor
             
           </span>
         </div>
@@ -222,7 +222,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../.." class="md-tabs__link">
+      <a href="../../../../.." class="md-tabs__link">
         
   
   
@@ -241,7 +241,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../../architectural_design/" class="md-tabs__link">
+      <a href="../../../../../architectural_design/" class="md-tabs__link">
         
   
   
@@ -260,7 +260,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../../developer_setup/" class="md-tabs__link">
+      <a href="../../../../../developer_setup/" class="md-tabs__link">
         
   
   
@@ -301,7 +301,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+        <a href="../../" class="md-tabs__link">
           
   
   
@@ -349,7 +349,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../.." title="jormungandr" class="md-nav__button md-logo" aria-label="jormungandr" data-md-component="logo">
+    <a href="../../../../.." title="jormungandr" class="md-nav__button md-logo" aria-label="jormungandr" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.19 14.19 6 18l3.81-8.19L18 6m-6-4A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2m0 8.9a1.1 1.1 0 0 0-1.1 1.1 1.1 1.1 0 0 0 1.1 1.1 1.1 1.1 0 0 0 1.1-1.1 1.1 1.1 0 0 0-1.1-1.1"/></svg>
@@ -367,7 +367,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../.." class="md-nav__link">
+      <a href="../../../../.." class="md-nav__link">
         
   
   
@@ -394,7 +394,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../architectural_design/" class="md-nav__link">
+      <a href="../../../../../architectural_design/" class="md-nav__link">
         
   
   
@@ -421,7 +421,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../developer_setup/" class="md-nav__link">
+      <a href="../../../../../developer_setup/" class="md-nav__link">
         
   
   
@@ -606,7 +606,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../" class="md-nav__link ">
               
   
   
@@ -650,7 +650,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../backbone/" class="md-nav__link">
+      <a href="../../backbone/" class="md-nav__link">
         
   
   
@@ -678,7 +678,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../detr_decoder/" class="md-nav__link">
+      <a href="../../detr_decoder/" class="md-nav__link">
         
   
   
@@ -706,7 +706,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../embedder/" class="md-nav__link">
+      <a href="../../embedder/" class="md-nav__link">
         
   
   
@@ -734,7 +734,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../encoder/" class="md-nav__link">
+      <a href="../../encoder/" class="md-nav__link">
         
   
   
@@ -742,6 +742,193 @@
     
   
     encoder
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../fafnir/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    fafnir
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../jormungandr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    jormungandr
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../output_head/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    output_head
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_1_9" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    datasets
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_1_1_9" id="__nav_4_1_1_9_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_1_9_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_1_1_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    datasets
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../loader/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    loader
   
 
     
@@ -778,192 +965,6 @@
   <span class="md-ellipsis">
     
   
-    fafnir
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../jormungandr/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    jormungandr
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../output_head/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    output_head
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_1_9" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../datasets/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    datasets
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_4_1_1_9" id="__nav_4_1_1_9_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_1_9_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_1_1_9">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    datasets
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../datasets/loader/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    loader
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../datasets/processor/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
     processor
   
 
@@ -973,6 +974,7 @@
   
 
       </a>
+      
     </li>
   
 
@@ -1008,7 +1010,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../datasets/image/" class="md-nav__link ">
+            <a href="../image/" class="md-nav__link ">
               
   
   
@@ -1052,7 +1054,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../datasets/image/coco/" class="md-nav__link">
+      <a href="../image/coco/" class="md-nav__link">
         
   
   
@@ -1111,7 +1113,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../datasets/video/" class="md-nav__link ">
+            <a href="../video/" class="md-nav__link ">
               
   
   
@@ -1155,7 +1157,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../datasets/video/mot17/" class="md-nav__link">
+      <a href="../video/mot17/" class="md-nav__link">
         
   
   
@@ -1230,7 +1232,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../training/" class="md-nav__link ">
+            <a href="../../training/" class="md-nav__link ">
               
   
   
@@ -1274,7 +1276,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../training/coco_eval/" class="md-nav__link">
+      <a href="../../training/coco_eval/" class="md-nav__link">
         
   
   
@@ -1302,7 +1304,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../training/criterion/" class="md-nav__link">
+      <a href="../../training/criterion/" class="md-nav__link">
         
   
   
@@ -1330,7 +1332,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../training/scheduler/" class="md-nav__link">
+      <a href="../../training/scheduler/" class="md-nav__link">
         
   
   
@@ -1358,7 +1360,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../training/trainer/" class="md-nav__link">
+      <a href="../../training/trainer/" class="md-nav__link">
         
   
   
@@ -1386,7 +1388,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../training/visualization/" class="md-nav__link">
+      <a href="../../training/visualization/" class="md-nav__link">
         
   
   
@@ -1451,7 +1453,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../utils/" class="md-nav__link ">
+            <a href="../../utils/" class="md-nav__link ">
               
   
   
@@ -1495,7 +1497,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../utils/debug_utils/" class="md-nav__link">
+      <a href="../../utils/debug_utils/" class="md-nav__link">
         
   
   
@@ -1523,7 +1525,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../utils/image_processors/" class="md-nav__link">
+      <a href="../../utils/image_processors/" class="md-nav__link">
         
   
   
@@ -1551,7 +1553,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../utils/model_fetcher/" class="md-nav__link">
+      <a href="../../utils/model_fetcher/" class="md-nav__link">
         
   
   
@@ -1579,7 +1581,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../utils/seed/" class="md-nav__link">
+      <a href="../../utils/seed/" class="md-nav__link">
         
   
   
@@ -1674,7 +1676,7 @@
   
   
     <li class="md-path__item">
-      <a href="../../../.." class="md-path__link">
+      <a href="../../../../.." class="md-path__link">
         
   <span class="md-ellipsis">
     Jormungandr: End-to-End Video Object Detection with Spatial-Temporal Mamba
@@ -1702,7 +1704,7 @@
     
     
       <li class="md-path__item">
-        <a href="../" class="md-path__link">
+        <a href="../../" class="md-path__link">
           
   <span class="md-ellipsis">
     Reference
@@ -1731,7 +1733,7 @@
     
     
       <li class="md-path__item">
-        <a href="../" class="md-path__link">
+        <a href="../../" class="md-path__link">
           
   <span class="md-ellipsis">
     Src
@@ -1752,10 +1754,28 @@
     
     
       <li class="md-path__item">
-        <a href="../" class="md-path__link">
+        <a href="../../" class="md-path__link">
           
   <span class="md-ellipsis">
     jormungandr
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    datasets
   </span>
 
         </a>
@@ -1778,18 +1798,13 @@
 
 
 
-<h1 id="src.jormungandr.fafnir" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-module"></code>            <span class="doc doc-object-name doc-module-name">src.jormungandr.fafnir</span>
+<h1 id="src.jormungandr.datasets.processor" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-module"></code>            <span class="doc doc-object-name doc-module-name">src.jormungandr.datasets.processor</span>
 
 
 </h1>
 
     <div class="doc doc-contents first">
-
-        <p>Still image object detection model with a configurable encoder.</p>
-<p>The pipeline is: Backbone -&gt; spatial encoder (Mamba, Mamba+FFN, or DETR) -&gt;
-DETR transformer decoder -&gt; FCNN prediction head.
-Unlike Jormungandr, Fafnir operates on individual frames with no temporal reasoning.</p>
 
 
 
@@ -1863,7 +1878,7 @@ Unlike Jormungandr, Fafnir operates on individual frames with no temporal reason
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../encoder/" class="md-footer__link md-footer__link--prev" aria-label="Previous: encoder">
+          <a href="../loader/" class="md-footer__link md-footer__link--prev" aria-label="Previous: loader">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1873,20 +1888,20 @@ Unlike Jormungandr, Fafnir operates on individual frames with no temporal reason
                 Previous
               </span>
               <div class="md-ellipsis">
-                encoder
+                loader
               </div>
             </div>
           </a>
         
         
           
-          <a href="../jormungandr/" class="md-footer__link md-footer__link--next" aria-label="Next: jormungandr">
+          <a href="../image/" class="md-footer__link md-footer__link--next" aria-label="Next: image">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                jormungandr
+                image
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -1925,10 +1940,10 @@ Unlike Jormungandr, Fafnir operates on individual frames with no temporal reason
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../../../..", "features": ["content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.progress", "navigation.path", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../../../..", "features": ["content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.progress", "navigation.path", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>
