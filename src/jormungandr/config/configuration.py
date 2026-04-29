@@ -285,6 +285,10 @@ class JormungandrConfig(DETRConfig):
         default_factory=EncoderConfig,
         description="Configuration for the temporal encoder used in Jormungandr (operates across frames)",
     )
+    still_image_checkpoint_name: str | None = Field(
+        default=None,
+        description="Name of a checkpoint artifact stored in Weight & Biases to load weights for the spatial encoder, decoder, and output head from (e.g., 'jormungandr/fafnir-still-image:v0'). If None, no checkpoint is loaded and the model is trained from scratch.",
+    )
 
 
 class Config(BaseModel):

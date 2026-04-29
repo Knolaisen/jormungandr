@@ -6,8 +6,11 @@ temporal Mamba encoder (across frames) -> DETR transformer decoder -> FCNN predi
 Produces per-frame class probabilities and bounding box coordinates for all object queries.
 """
 
+import shutil
 from torch import nn, Tensor
 import torch
+import wandb
+import os
 
 from jormungandr.encoder import MambaEncoder
 from jormungandr.detr_decoder import DETRDecoder
@@ -70,6 +73,35 @@ class Jormungandr(nn.Module):
             model_name=config.detr_name,
             config=config.output_head,
         ).to(device)
+
+        if config.checkpoint_name is not None:
+            self.load_state_dict(
+                torch.load(config.checkpoint_name, map_location=device)
+            )
+            print(f"Loaded model weights from checkpoint: {config.checkpoint_name}")
+        
+        if config.still_image_checkpoint_name is not None:
+            api = wandb.Api()
+            artifact = api.artifact(config.still_image_checkpoint_name, type="model")
+            artifact_dir = artifact.download()
+            checkpoint_path = os.path.join(artifact_dir, os.listdir(artifact_dir)[0])
+            state_dict = torch.load(checkpoint_path)
+
+            new_state_dict = {}
+
+            for k, v in state_dict.items():
+                if k.startswith("encoder."):
+                    new_key = k.replace("encoder.", "spatial_encoder.")
+                    new_state_dict[new_key] = v
+
+                elif k.startswith("decoder."):
+                    new_state_dict[k] = v
+
+                elif k.startswith("output_head."):
+                    new_state_dict[k] = v
+            self.load_state_dict(new_state_dict, strict=False)
+            print(f"Successfully loaded checkpoint from {config.still_image_checkpoint_name} into the spatial encoder, decoder, and output head.")
+            shutil.rmtree(artifact_dir)  # Clean up the downloaded artifact directory
 
     def forward(
         self,
