@@ -6,7 +6,8 @@
 ![GitHub top language](https://img.shields.io/github/languages/top/Knolaisen/jormungandr)
 ![GitHub language count](https://img.shields.io/github/languages/count/Knolaisen/jormungandr)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Project Version](https://img.shields.io/badge/version-0.0.1-blue)](https://img.shields.io/badge/version-0.0.1-blue)
+![PyPI - Version](https://img.shields.io/pypi/v/jormungandr-ssm)
+
 
 <img src="https://raw.githubusercontent.com/Knolaisen/jormungandr/refs/heads/main/docs/images/project-logo.png" width="50%" alt="jormungandr VOD Logo" style="display: block; margin-left: auto; margin-right: auto;">
 </div>
