@@ -66,6 +66,11 @@ We expose several levels of interface with the **Fafnir** still image detector a
 
 ### Still Image Detection (Fafnir)
 
+
+<img src="https://raw.githubusercontent.com/Knolaisen/jormungandr/refs/heads/main/docs/images/Fafnir.png" width="90%" alt="Fafnir architecture" style="display: block; margin-left: auto; margin-right: auto;">
+</div>
+
+
 Use `Fafnir` when performing object detection on single images.
 
 ```python
@@ -87,6 +92,9 @@ with torch.no_grad():
 ```
 
 ### Video Object Detection (Jormungandr)
+
+<img src="https://raw.githubusercontent.com/Knolaisen/jormungandr/refs/heads/main/docs/images/Jormungandr.png" width="90%" alt="Jormungandr architecture" style="display: block; margin-left: auto; margin-right: auto;">
+</div>
 
 Use `Jormungandr` for end-to-end video object detection using spatial-temporal modeling.
 
