@@ -8,8 +8,8 @@
 #SBATCH --gres=gpu:1
 #SBATCH --nodes=1
 #SBATCH --constraint="(a100)&(gpu80g)"
-#SBATCH --output=slurm_outputs/output_experiment_3_0.txt
-#SBATCH --error=slurm_outputs/output_experiment_3_0.err
+#SBATCH --output=slurm_outputs/output_experiment_3_3.txt
+#SBATCH --error=slurm_outputs/output_experiment_3_3.err
 
 
 WORKDIR=../${SLURM_SUBMIT_DIR}
