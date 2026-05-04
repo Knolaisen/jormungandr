@@ -1,7 +1,7 @@
 
 trainer:
   epochs: 300
-  batch_size: 16
+  batch_size: 64
   seed: 42
   encoder_learning_rate: 1e-4
   decoder_learning_rate: 1e-4
@@ -31,7 +31,7 @@ model:
   num_classes: 92
   encoder:
     encoder_type: "detr"
-    num_layers: 6
+    num_layers: 3
     use_pre_trained: false
   decoder:
     freeze_decoder: false
