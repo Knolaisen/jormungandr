@@ -47,4 +47,10 @@ def build_scheduler(
     if name == "CosineAnnealingLR" and "T_max" not in params:
         params["T_max"] = epochs
 
+    if (
+        name in {"CosineAnnealingWarmRestarts", "CosineAnnealingLR"}
+        and "eta_min" in params
+    ):
+        params["eta_min"] = float(params["eta_min"])
+
     return SCHEDULER_REGISTRY[name](optimizer, **params)
