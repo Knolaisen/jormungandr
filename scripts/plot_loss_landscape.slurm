@@ -29,7 +29,7 @@ uv sync
 
 # Plot the Fafnir loss landscape for run igeia7g6 (artifact mamba_giouloss_20260505_023926:v2).
 # Trained from experiment_3_0.yaml; eval done without autograd so a larger batch fits.
-uv run python scripts/plot_loss_landscape.py \
+uv run python plot_loss_landscape.py \
     --config-name experiment_3_0.yaml \
     --wandb-artifact sverrenystad-ntnu/Fafnir/mamba_giouloss_20260505_023926:v2 \
     --grid-size 41 \
