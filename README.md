@@ -24,6 +24,7 @@
     - [Still Image Detection (Fafnir)](#still-image-detection-fafnir)
     - [Video Object Detection (Jormungandr)](#video-object-detection-jormungandr)
     - [Pretrained Models](#pretrained-models)
+    - [Visualizing the Loss Landscape](#visualizing-the-loss-landscape)
   - [Documentation](#documentation)
   - [Authors](#authors)
     - [License](#license)
@@ -125,6 +126,52 @@ We provide pretrained models hosted on [Hugging Face](https://huggingface.co/Sve
 - The **Jormungandr** models (`jormungandr-t`, `jormungandr-s`, `jormungandr-b`) are pretrained on the [MOT17](https://motchallenge.net/data/MOT17/) dataset.
 
 These models will be automatically downloaded when initialized in your code.
+
+### Visualizing the Loss Landscape
+
+`scripts/plot_loss_landscape.py` plots the loss landscape of a trained **Fafnir** checkpoint on COCO using the filter-normalized random-direction method from [Li et al. 2018](https://arxiv.org/abs/1712.09913). It loads a W&B model artifact, samples two filter-normalized directions in parameter space, and evaluates the training loss on a 2-D grid around the checkpoint.
+
+**Requirements:** `WANDB_API_KEY`, `WANDB_PROJECT`, and `WANDB_ENTITY` set in `.env` (same as for `train.py`); a CUDA-enabled GPU; a checkpoint already uploaded as a W&B model artifact.
+
+**Smoke test** (under a minute; sanity-checks the wiring):
+
+```bash
+python scripts/plot_loss_landscape.py \
+    --config-name <yaml-that-matches-the-checkpoint>.yaml \
+    --wandb-artifact <entity>/<project>/<name>:<version> \
+    --grid-size 5 --subset-size 16 --num-eval-batches 1 \
+    --no-wandb-log
+```
+
+The printed `baseline loss at theta*` should match the validation loss the checkpoint was trained to, and the centre cell of the resulting grid should equal that baseline within numerical noise.
+
+**Full run** (defaults: 41x41 grid over `[-1, 1]²`, 256 COCO val images, batch size 4):
+
+```bash
+python scripts/plot_loss_landscape.py \
+    --config-name <yaml-that-matches-the-checkpoint>.yaml \
+    --wandb-artifact <entity>/<project>/<name>:<version>
+```
+
+Outputs land in `plots/`:
+
+- `fafnir_landscape_<timestamp>.png` — side-by-side contour and 3-D surface.
+- `fafnir_landscape_<timestamp>.npz` — `alphas`, `betas`, `loss_grid`, plus run metadata, so you can re-plot without re-running.
+
+Unless `--no-wandb-log` is passed, the figure is also logged to a W&B run with `job_type=loss_landscape`. Flags worth knowing:
+
+| Flag | Default | Notes |
+| --- | --- | --- |
+| `--grid-size N` | `41` | Sweeps `N x N` cells. 41 → 1681 forward-pass passes; expect 20–60 min on one GPU. |
+| `--extent E` | `1.0` | `alpha, beta` range is `[-E, E]`. |
+| `--subset-size K` | `256` | COCO val images used at each grid cell. |
+| `--batch-size B` | `4` | Eval batch size. |
+| `--num-eval-batches M` | all | Cap on batches per cell. Lower this for a faster (noisier) plot. |
+| `--seed S` | `0` | Seed for the two random directions. |
+| `--output-dir DIR` | `plots` | Where to write the `.png` and `.npz`. |
+| `--no-wandb-log` | off | Skip the final `wandb.init`/`wandb.log` call. |
+
+The script reproduces the trainer's end-of-epoch unfreeze state before sampling directions, so the landscape reflects exactly the parameter subspace the optimizer was moving in at the end of training. The video model (`Jormungandr`) is not yet supported — the same recipe extends to it but needs to handle the spatial/temporal encoder pair.
 
 ## Documentation
 
