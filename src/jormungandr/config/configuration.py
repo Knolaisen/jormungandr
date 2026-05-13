@@ -101,7 +101,7 @@ class TrainerConfig(BaseModel):
         default=16, description="Batch size for training and validation"
     )
     val_batch_size: int = Field(
-        default=1,
+        default=2,
         description="Batch size for validation (can be different from training batch size if desired)",
     )
     seed: int = Field(default=42, description="Random seed for reproducible runs")
@@ -212,6 +212,10 @@ class EncoderConfig(BaseModel):
     mamba_variant: str = Field(
         default="mamba2",
         description="Variant of Mamba to use if encoder_type is 'Mamba' or 'MambaFFN' (e.g., 'mamba1', 'mamba2')",
+    )
+    bidirectional_strategy: bool = Field(
+        default=False,
+        description="Strategy for incorporating bidirectionality in the Mamba encoder. Only applicable if encoder_type is 'Mamba' or 'MambaFFN'. Options include 'flip_sequence' (concatenate the original sequence with a reversed version of itself) or None (no bidirectionality)",
     )
 
 
