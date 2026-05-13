@@ -36,6 +36,7 @@ class MambaEncoder(nn.Module, Encoder):
         hidden_state_dim: int = 16,
         num_layers: int = 6,
         mamba_variant: Literal["mamba1", "mamba2"] = "mamba2",
+        bidirectional_strategy: bool = False,
     ):
         super(MambaEncoder, self).__init__()
         if num_layers < 0:
@@ -71,6 +72,7 @@ class MambaEncoder(nn.Module, Encoder):
             [nn.RMSNorm(model_dimension) for _ in range(self.num_layers)]
         )
         self.final_norm = nn.RMSNorm(model_dimension)
+        self.bidirectional_strategy = bidirectional_strategy
 
     def forward(
         self,
@@ -84,7 +86,9 @@ class MambaEncoder(nn.Module, Encoder):
         Returns:
             Tensor of shape (batch_size, model_dimension)
         """
+        flip = False
         for layer, norm in zip(self.layers, self.norms):
+
             residual = x
 
             # Pre-norm
@@ -99,8 +103,15 @@ class MambaEncoder(nn.Module, Encoder):
             else:
                 layer_input = normed
 
+            if self.bidirectional_strategy == "flip_sequence" and flip:
+                layer_input = torch.flip(layer_input, dims=[1])
             # Mamba selective scan
             layer_output = layer(layer_input)
+
+            # Apply the bidirectional strategy (if any) to the layer output
+            if self.bidirectional_strategy == "flip_sequence" and flip:
+                layer_output = torch.flip(layer_output, dims=[1])
+                flip = not flip
 
             # Zero padded positions on the layer output (before residual add)
             if pixel_mask is not None:

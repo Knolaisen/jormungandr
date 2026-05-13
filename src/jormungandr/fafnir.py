@@ -43,6 +43,7 @@ class Fafnir(nn.Module):
                     model_dimension=config.model_dimension,
                     hidden_state_dim=config.encoder.hidden_state_dim,
                     num_layers=config.encoder.num_layers,
+                    bidirectional_strategy=config.encoder.bidirectional_strategy,
                 ).to(device)
             case "mamba_ffn":
                 self.encoder = MambaEncoderFFN(
