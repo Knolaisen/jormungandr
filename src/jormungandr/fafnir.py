@@ -15,6 +15,7 @@ from jormungandr.output_head import FCNNPredictionHead
 from jormungandr.backbone import Backbone
 from jormungandr.embedder import Embedder, DetrSinePositionEmbedding
 from jormungandr.config.configuration import FafnirConfig
+from jormungandr.utils.compacting import _compact_to_left
 
 
 class Fafnir(nn.Module):
@@ -97,17 +98,25 @@ class Fafnir(nn.Module):
         flattened_feature_maps = projected_feature_maps.flatten(2).permute(0, 2, 1)
         flattened_mask = mask.flatten(1)
 
+        # Compact valid tokens to the left so all padding lives strictly at the
+        # tail. Required for correctness with the causal Mamba encoder; safe for
+        # the DETR encoder (attention) and DETR decoder (cross-attention is
+        # permutation-invariant over encoder tokens).
+        compacted_features, compacted_position_embedding, compacted_mask = (
+            _compact_to_left(flattened_feature_maps, position_embedding, flattened_mask)
+        )
+
         encoder_outputs = self.encoder.forward(
-            flattened_feature_maps,
-            position_embedding=position_embedding,
-            pixel_mask=flattened_mask,
+            compacted_features,
+            position_embedding=compacted_position_embedding,
+            pixel_mask=compacted_mask,
         )
 
         # Decoder
         decoder_output, intermediate = self.decoder.forward(
             encoder_output=encoder_outputs,
-            position_embedding=position_embedding,
-            encoder_mask_flattened=flattened_mask,
+            position_embedding=compacted_position_embedding,
+            encoder_mask_flattened=compacted_mask,
         )
 
         # Detection Head
