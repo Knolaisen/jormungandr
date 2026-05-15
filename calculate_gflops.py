@@ -1,6 +1,10 @@
 import argparse
 from codecarbon import track_emissions
-from fvcore.nn import FlopCountAnalysis, flop_count_table
+from fvcore.nn import (
+    FlopCountAnalysis,
+    flop_count_table,
+    parameter_count_table,
+)
 from torch import nn
 import torch
 import wandb
@@ -20,12 +24,33 @@ from jormungandr.utils.seed import seed_everything
 def calculate_gflops(model: nn.Module, input_size: tuple) -> None:
     model.eval()
     dummy = torch.randn(*input_size).cuda()
-    flops = FlopCountAnalysis(model, dummy)
+
+    with torch.no_grad():
+        flops = FlopCountAnalysis(model, dummy)
+
+        macs = flops.total()
+        unsupported = dict(flops.unsupported_ops())  # Counter -> dict
+        uncalled = list(flops.uncalled_modules())
+
+    # Print
     print(flop_count_table(flops, max_depth=3))
-    print(f"Total GFLOPs: {flops.total() / 1e9:.2f}")
-    print("Unsupported ops:", flops.unsupported_ops())
-    wandb.log({"GFLOPs": flops.total() / 1e9})
-    wandb.log({"Unsupported ops": flops.unsupported_ops()})
+    print(parameter_count_table(model))  # was missing print()
+    print(f"Total MACs:  {macs / 1e9:.2f} G  (fvcore convention)")
+    print(f"Total FLOPs: {2 * macs / 1e9:.2f} G  (2 x MACs)")
+    print(f"Unsupported ops: {unsupported}")
+    print(f"Uncalled modules: {uncalled}")
+
+    # Log
+    wandb.log(
+        {
+            "gflops/macs": macs / 1e9,
+            "gflops/flops_2x": 2 * macs / 1e9,
+            "gflops/unsupported_ops": unsupported,
+            "gflops/n_uncalled_modules": len(uncalled),
+            "gflops/by_module": dict(flops.by_module()),
+            "gflops/by_operator": dict(flops.by_operator()),
+        }
+    )
 
 
 @track_emissions(
