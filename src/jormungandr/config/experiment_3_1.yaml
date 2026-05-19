@@ -1,6 +1,6 @@
 
 trainer:
-  epochs: 300
+  epochs: 221
   batch_size: 64
   seed: 42
   encoder_learning_rate: 1e-4
@@ -23,8 +23,9 @@ trainer:
   scheduler:
     name: StepLR
     params:
-      step_size: 200
+      step_size: 121
       gamma: 0.1
+  run_id: "49r1yt6y"
 
 model:
   input_size: 224
