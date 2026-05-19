@@ -160,6 +160,10 @@ class TrainerConfig(BaseModel):
         default="coco",
         description="Name of the dataset to use (e.g., 'coco', 'mot17')",
     )
+    run_id: str | None = Field(
+        default=None,
+        description="W&B run ID to resume from (e.g., 'abc123def456'). If provided, the trainer will attempt to resume training from this run. This is separate from checkpoint loading and allows resuming the entire training run with all its history and logs, whereas checkpoint_name only loads model weights without resuming the W&B run.",
+    )
 
 
 class DecoderConfig(BaseModel):
