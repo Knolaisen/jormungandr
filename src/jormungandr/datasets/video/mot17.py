@@ -36,6 +36,10 @@ def _collate_fn_vod(batch):
 class VODDataset(Dataset):
     # sequence_dirs: list of directories, each containing frames of a video sequence
     # n_frames: number of consecutive frames to include in each clip
+    # frame_ranges: optional mapping seq_dir -> (start, end). When set, only
+    #     frames sorted_filenames[start:end] are eligible to start a clip.
+    #     Used to carve per-sequence train/val halves without listing files
+    #     twice; absent entries fall back to all frames.
     # get_item should return a dict with keys "pixel_values" (list of tensors) and "labels" (list of dicts)
     # "pixel_values" should be a list of tensors of shape (Frames, Channels, Height, Width)
     # "labels" should be a list of dicts, one per frame, each containing the COCO-style annotations for that frame
@@ -45,6 +49,7 @@ class VODDataset(Dataset):
         n_frames: int = 4,
         # sampling_strategy: str = "consecutive",  # or "random"
         transform: Callable | None = None,
+        frame_ranges: dict[str, tuple[int, int]] | None = None,
     ):
         self.n_frames = n_frames
         self.transform = transform
@@ -91,6 +96,9 @@ class VODDataset(Dataset):
                     if f.endswith((".jpg", ".png", ".jpeg"))
                 ]
             )
+            if frame_ranges is not None and seq_dir in frame_ranges:
+                start, end = frame_ranges[seq_dir]
+                frame_files = frame_files[start:end]
             for i in range(len(frame_files) - n_frames + 1):
                 clip_frames = frame_files[i : i + n_frames]
                 self.clips.append((seq_dir, clip_frames))
@@ -158,19 +166,48 @@ class VODDataset(Dataset):
 def _build_vod_datasets(
     data_dir: str,
     dataset_name: str,
+    *,
     n_frames: int,
-    val_split: float,
-):
+) -> tuple["VODDataset", "VODDataset"]:
+    """Build train/val VODDatasets using a per-sequence half-split with an
+    n_frames-wide temporal buffer around each sequence's midpoint.
+
+    For each sequence containing N frames:
+        mid           = N // 2
+        left_buffer   = n_frames // 2
+        right_buffer  = n_frames - left_buffer
+        train frames  = sorted_files[0 : mid - left_buffer]
+        val frames    = sorted_files[mid + right_buffer : N]
+
+    The `n_frames` frames straddling the midpoint appear in neither half so
+    no clip crosses the split and the first val frame is at least
+    `n_frames` apart from the last train frame in time. All sequences appear
+    in both halves (matches the ByteTrack/FairMOT/MOTR `MOT17-half`
+    convention).
+    """
     data_path = os.path.join(data_dir, dataset_name.upper(), "train")
     sequence_dirs = sorted(
         os.path.join(data_path, d)
         for d in os.listdir(data_path)
         if os.path.isdir(os.path.join(data_path, d))
     )
-    n_val = max(1, int(len(sequence_dirs) * val_split))
-    train_dirs = sequence_dirs[:-n_val]
-    val_dirs = sequence_dirs[-n_val:]
+
+    train_ranges: dict[str, tuple[int, int]] = {}
+    val_ranges: dict[str, tuple[int, int]] = {}
+    left_buffer = n_frames // 2
+    right_buffer = n_frames - left_buffer
+    for seq_dir in sequence_dirs:
+        img_dir = os.path.join(seq_dir, "img1")
+        n = sum(
+            1
+            for f in os.listdir(img_dir)
+            if f.endswith((".jpg", ".png", ".jpeg"))
+        )
+        mid = n // 2
+        train_ranges[seq_dir] = (0, max(0, mid - left_buffer))
+        val_ranges[seq_dir] = (min(n, mid + right_buffer), n)
+
     return (
-        VODDataset(train_dirs, n_frames=n_frames),
-        VODDataset(val_dirs, n_frames=n_frames),
+        VODDataset(sequence_dirs, n_frames=n_frames, frame_ranges=train_ranges),
+        VODDataset(sequence_dirs, n_frames=n_frames, frame_ranges=val_ranges),
     )
