@@ -217,6 +217,10 @@ class EncoderConfig(BaseModel):
         default=False,
         description="Strategy for incorporating bidirectionality in the Mamba encoder. Only applicable if encoder_type is 'Mamba' or 'MambaFFN'. Options include 'flip_sequence' (concatenate the original sequence with a reversed version of itself) or None (no bidirectionality)",
     )
+    use_positional_embeddings: bool = Field(
+        default=True,
+        description="Whether to add sinusoidal positional embeddings to the input of the encoder",
+    )
 
 
 class OutputHeadConfig(BaseModel):

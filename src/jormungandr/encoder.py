@@ -37,6 +37,7 @@ class MambaEncoder(nn.Module, Encoder):
         num_layers: int = 6,
         mamba_variant: Literal["mamba1", "mamba2"] = "mamba2",
         bidirectional_strategy: bool = False,
+        use_positional_embeddings: bool = True,
     ):
         super(MambaEncoder, self).__init__()
         if num_layers < 0:
@@ -73,6 +74,7 @@ class MambaEncoder(nn.Module, Encoder):
         )
         self.final_norm = nn.RMSNorm(model_dimension)
         self.bidirectional_strategy = bidirectional_strategy
+        self.use_positional_embeddings = use_positional_embeddings
 
     def forward(
         self,
@@ -98,7 +100,7 @@ class MambaEncoder(nn.Module, Encoder):
             # This is the Mamba analog of DETR adding pos to Q and K:
             # position influences the layer's processing (selective scan gating)
             # but the residual stream (analogous to V) stays position-free.
-            if position_embedding is not None:
+            if position_embedding is not None and self.use_positional_embeddings:
                 layer_input = normed + position_embedding
             else:
                 layer_input = normed
