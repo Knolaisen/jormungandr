@@ -34,6 +34,7 @@ model:
     encoder_type: "mamba"
     num_layers: 6
     hidden_state_dim: 16 # Mamba-2 minimum; paper recommends 64-256 (vs Mamba-1 default of 16)
+    use_positional_embeddings: false
   backbone:
     freeze_backbone: true
   decoder:

@@ -37,7 +37,7 @@ model:
   backbone:
     freeze_backbone: true
   decoder:
-    freeze_decoder: true
+    freeze_decoder: false
     auxiliary_loss: false
   output_head:
-    freeze_prediction_head: true
+    freeze_prediction_head: false

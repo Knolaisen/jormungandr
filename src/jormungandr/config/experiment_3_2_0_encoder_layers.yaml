@@ -30,10 +30,9 @@ model:
   input_size: 224
   num_classes: 92
   encoder:
-    encoder_type: "mamba"
-    num_layers: 12
-    hidden_state_dim: 16
-    bidirectional_strategy: true
+    encoder_type: "detr"
+    num_layers: 0
+    use_pre_trained: false
   decoder:
     freeze_decoder: false
     epoch_to_unfreeze_decoder: 0
