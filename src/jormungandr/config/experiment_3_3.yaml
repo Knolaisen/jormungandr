@@ -1,6 +1,6 @@
 
 trainer:
-  epochs: 300
+  epochs: 226
   batch_size: 64
   seed: 42
   encoder_learning_rate: 1e-4
@@ -23,8 +23,10 @@ trainer:
   scheduler:
     name: StepLR
     params:
-      step_size: 200
+      step_size: 126
       gamma: 0.1
+  run_id: "jmu8b62a"
+
 
 model:
   input_size: 224
@@ -41,3 +43,4 @@ model:
   output_head:
     freeze_prediction_head: false
     use_pre_trained: false
+  checkpoint_name: "sverrenystad-ntnu/Fafnir/detr_ciouloss_20260515_223505:v29"

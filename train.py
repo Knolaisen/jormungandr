@@ -27,6 +27,8 @@ def main(config_file: str):
         # mode="disabled",
         config=config.model_dump(),
         settings=wandb.Settings(code_dir="./src"),
+        id=config.trainer.run_id if config.trainer.run_id else None,
+        resume="must" if config.trainer.run_id else None,
     )
 
     train(config)
