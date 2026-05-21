@@ -49,5 +49,6 @@ model:
   output_head:
     freeze_prediction_head: false
     use_pre_trained: true
-  still_image_checkpoint_name: "sverrenystad-ntnu/Fafnir/mamba_giouloss_20260423_172048:v40"
+  still_image_checkpoint_name: "sverrenystad-ntnu/Fafnir/mamba_giouloss_20260515_223421:v45"
+
 
