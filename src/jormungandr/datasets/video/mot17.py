@@ -9,6 +9,22 @@ from jormungandr.datasets.processor import get_image_processor
 image_processor = get_image_processor()
 
 
+# MOT17 GT class id -> COCO-91 category id.
+# Pedestrian / Person on vehicle / Static person collapse to COCO `person` (1).
+# Bicycle, Car, Motorbike map to their COCO equivalents. Everything else
+# (Non-mot vehicle, Distractor, Occluder*, Reflection, Crowd) is dropped so it
+# never reaches the criterion or COCO eval.
+MOT17_TO_COCO: dict[int, int] = {
+    1: 1,   # Pedestrian        -> person
+    2: 1,   # Person on vehicle -> person
+    3: 3,   # Car               -> car
+    4: 2,   # Bicycle           -> bicycle
+    5: 4,   # Motorbike         -> motorcycle
+    7: 1,   # Static person     -> person
+}
+ALLOWED_COCO_IDS: frozenset[int] = frozenset(MOT17_TO_COCO.values())
+
+
 def _collate_fn_vod(batch):
     all_images = []
     all_annotations = []
@@ -108,6 +124,8 @@ class VODDataset(Dataset):
     def prepare_dataframe(self, seq_dir: str, gt_path: str):
         gt = pd.read_csv(gt_path, sep=",", header=None, names=self.columns)
         filtered_gt = gt.query("confidence_score != 0").copy()
+        filtered_gt = filtered_gt[filtered_gt["class"].isin(MOT17_TO_COCO)]
+        filtered_gt.loc[:, "class"] = filtered_gt["class"].map(MOT17_TO_COCO).astype(int)
         filtered_gt.loc[:, "bbox"] = filtered_gt[
             ["bbox_left", "bbox_top", "bbox_width", "bbox_height"]
         ].values.tolist()
