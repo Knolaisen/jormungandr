@@ -33,6 +33,7 @@ from jormungandr.config.configuration import (
     load_config,
 )
 from jormungandr.datasets import create_dataloaders
+from jormungandr.datasets.video.mot17 import ALLOWED_COCO_IDS as MOT17_ALLOWED_COCO_IDS
 from jormungandr.fafnir import Fafnir
 from jormungandr.jormungandr import Jormungandr
 from jormungandr.training.criterion import build_criterion
@@ -310,7 +311,10 @@ def run_validation(
     timings = []
     starter = torch.cuda.Event(enable_timing=True)
     ender = torch.cuda.Event(enable_timing=True)
-    evaluator = CocoEvaluator()
+    allowed_class_ids = (
+        MOT17_ALLOWED_COCO_IDS if config.trainer.dataset_name == "mot17" else None
+    )
+    evaluator = CocoEvaluator(allowed_class_ids=allowed_class_ids)
     running_loss_dict: dict[str, float] = {}
     viz_batch: dict | None = None
 

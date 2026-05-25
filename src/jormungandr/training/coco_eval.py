@@ -18,11 +18,18 @@ from transformers.image_transforms import center_to_corners_format
 class CocoEvaluator:
     """Accumulates model predictions and GT annotations across batches, then runs COCOeval."""
 
-    def __init__(self):
+    def __init__(self, allowed_class_ids: frozenset[int] | set[int] | None = None):
         self.gt_images: list[dict] = []
         self.gt_annotations: list[dict] = []
         self.predictions: list[dict] = []
         self._ann_id = 0
+        # If set, predictions whose argmax foreground class is not in this set are
+        # treated as no-object and dropped before COCO eval. Used on the MOT17
+        # path to suppress COCO classes (boat, train, ...) that the MOT17
+        # label space does not contain.
+        self.allowed_class_ids: frozenset[int] | None = (
+            None if allowed_class_ids is None else frozenset(allowed_class_ids)
+        )
 
     def update(
         self,
@@ -36,6 +43,15 @@ class CocoEvaluator:
 
         # Exclude the no-object class (last index); get best foreground class per query
         foreground_scores, pred_classes = probs[..., :-1].max(-1)  # [B, Q]
+        if self.allowed_class_ids is not None:
+            num_fg_classes = probs.shape[-1] - 1
+            allowed_mask = torch.zeros(num_fg_classes, dtype=torch.bool)
+            for cid in self.allowed_class_ids:
+                if 0 <= cid < num_fg_classes:
+                    allowed_mask[cid] = True
+            keep_pred = allowed_mask[pred_classes]  # [B, Q]
+        else:
+            keep_pred = None
 
         for b, label in enumerate(labels):
             image_id = int(label["image_id"].item())
@@ -72,6 +88,8 @@ class CocoEvaluator:
 
             pb_xywh = _cxcywh_norm_to_xywh_abs(pred_boxes[b], orig_w, orig_h)  # [Q, 4]
             for q in range(pb_xywh.shape[0]):
+                if keep_pred is not None and not bool(keep_pred[b, q]):
+                    continue
                 self.predictions.append(
                     {
                         "image_id": image_id,
