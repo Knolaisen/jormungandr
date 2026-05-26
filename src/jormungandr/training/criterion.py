@@ -65,15 +65,15 @@ def CIoULoss(
     auxiliary_outputs = None
     outputs_loss["logits"] = logits
     outputs_loss["pred_boxes"] = pred_boxes
-    if detr_config.auxiliary_loss:
+    if config.auxiliary_loss:
         auxiliary_outputs = _set_aux_loss(outputs_class, outputs_coord)
         outputs_loss["auxiliary_outputs"] = auxiliary_outputs
 
     loss_dict = criterion(outputs_loss, labels)
     # Fourth: compute total loss, as a weighted sum of the various losses
     weight_dict = {"loss_ce": 1, "loss_bbox": detr_config.bbox_loss_coefficient}
-    weight_dict["loss_ciou"] = detr_config.giou_loss_coefficient
-    if detr_config.auxiliary_loss:
+    weight_dict["loss_giou"] = detr_config.giou_loss_coefficient
+    if config.auxiliary_loss:
         aux_weight_dict = {}
         for i in range(detr_config.decoder_layers - 1):
             aux_weight_dict.update({k + f"_{i}": v for k, v in weight_dict.items()})

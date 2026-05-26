@@ -35,7 +35,7 @@ model:
   encoder:
     encoder_type: "mamba"
     num_layers: 12
-    hidden_state_dim: 64
+    hidden_state_dim: 16
   backbone:
     freeze_backbone: true
   decoder:
@@ -43,3 +43,4 @@ model:
     auxiliary_loss: false
   output_head:
     freeze_prediction_head: true
+  checkpoint_name: "sverrenystad-ntnu/Fafnir/mamba_giouloss_20260515_223421:v45"

@@ -53,7 +53,6 @@ def create_dataloaders(
     shuffle: bool = True,
     collate_fn: Callable | None = None,
     subset_size: int | None = None,  # image-only
-    val_split: float = 0.2,  # video-only
 ) -> tuple[DataLoader, DataLoader]:
     """Build train/val DataLoaders for either a HuggingFace image detection
     dataset or a local MOT-style video object-detection dataset.
@@ -61,6 +60,11 @@ def create_dataloaders(
     `dataset_identifier` picks the pipeline:
       - "coco": `datasets.load_dataset(dataset_name)` + DETR image collator.
       - "mot17": `VODDataset` over `data_dir/<DATASET_NAME>/train/*` + clip collator.
+
+    For the video path, `batch_size` doubles as the clip length (`n_frames`).
+    Each yielded batch is a single flattened clip; the train/val split is a
+    per-sequence half-split with an `n_frames`-wide temporal buffer (see
+    `_build_vod_datasets`).
 
     Per-type defaults (dataset name, collate_fn, batch_size, prefetch_factor)
     live in `_DATASET_DEFAULTS` and can be overridden by the matching kwarg.
@@ -80,7 +84,7 @@ def create_dataloaders(
         )
     else:
         train_ds, val_ds = _build_vod_datasets(
-            data_dir, dataset_name, batch_size, val_split
+            data_dir, dataset_name, n_frames=batch_size
         )
         # each batch is a clip of n_frames frames, so we don't want to batch multiple clips together
         batch_size = 1

@@ -1,6 +1,6 @@
 
 trainer:
-  epochs: 221
+  epochs: 300
   batch_size: 64
   seed: 42
   encoder_learning_rate: 1e-4
@@ -11,7 +11,7 @@ trainer:
   num_log_images: 8
   viz_score_threshold: 0.5
   loss:
-    name: "ciouloss" # Options: "giouloss", "ciouloss"
+    name: "giouloss" # Options: "giouloss", "ciouloss"
     class_cost: 1.0
     bbox_cost: 5.0
     giou_cost: 2.0  
@@ -23,17 +23,16 @@ trainer:
   scheduler:
     name: StepLR
     params:
-      step_size: 121
+      step_size: 200
       gamma: 0.1
-  run_id: "49r1yt6y"
 
 model:
   input_size: 224
   num_classes: 92
   encoder:
-    encoder_type: "mamba"
-    num_layers: 12
-    hidden_state_dim: 16
+    encoder_type: "detr"
+    num_layers: 0
+    use_pre_trained: false
   decoder:
     freeze_decoder: false
     epoch_to_unfreeze_decoder: 0
@@ -42,4 +41,3 @@ model:
   output_head:
     freeze_prediction_head: false
     use_pre_trained: false
-  checkpoint_name: "sverrenystad-ntnu/Fafnir/mamba_ciouloss_20260515_223431:v25"

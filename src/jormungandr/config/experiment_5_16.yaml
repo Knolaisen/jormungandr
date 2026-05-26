@@ -1,7 +1,7 @@
 
 trainer:
   epochs: 100
-  batch_size: 2
+  batch_size: 16
   seed: 42
   backbone_learning_rate: 1e-6
   encoder_learning_rate: 1e-4
@@ -21,7 +21,7 @@ trainer:
     giou_cost: 2.0  
     num_labels: 91
     eos_coefficient: 0.1
-    auxiliary_loss: true
+    auxiliary_loss: false
     bbox_loss_coefficient: 5.0
     giou_loss_coefficient: 2.0
     decoder_layers: 6
@@ -38,14 +38,14 @@ model:
     hidden_state_dim: 16
   temporal_encoder:
     encoder_type: "mamba"
-    num_layers: 0
+    num_layers: 12
     hidden_state_dim: 16
   backbone:
     freeze_backbone: true
   decoder:
     freeze_decoder: false
     use_pre_trained: true
-    auxiliary_loss: true
+    auxiliary_loss: false
   output_head:
     freeze_prediction_head: false
     use_pre_trained: true

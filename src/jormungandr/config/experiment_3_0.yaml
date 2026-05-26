@@ -33,6 +33,7 @@ model:
     encoder_type: "mamba"
     num_layers: 12
     hidden_state_dim: 16
+    bidirectional_strategy: true
   decoder:
     freeze_decoder: false
     epoch_to_unfreeze_decoder: 0

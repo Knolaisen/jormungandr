@@ -1,7 +1,7 @@
 
 trainer:
   epochs: 100
-  batch_size: 2
+  batch_size: 64
   seed: 42
   backbone_learning_rate: 1e-6
   encoder_learning_rate: 1e-4
@@ -21,33 +21,24 @@ trainer:
     giou_cost: 2.0  
     num_labels: 91
     eos_coefficient: 0.1
-    auxiliary_loss: true
+    auxiliary_loss: false
     bbox_loss_coefficient: 5.0
     giou_loss_coefficient: 2.0
     decoder_layers: 6
-  dataset_name: "mot17" # Options: "coco", "mot17",
 
 model:
   input_size: 224
   num_classes: 92
   detr_name: "facebook/detr-resnet-50" # Options: "facebook/detr-resnet-50" "facebook/detr-resnet-50-dc5"
-  num_frames: 4
-  spatial_encoder:
+  encoder:
     encoder_type: "mamba"
-    num_layers: 12
-    hidden_state_dim: 16
-  temporal_encoder:
-    encoder_type: "mamba"
-    num_layers: 0
-    hidden_state_dim: 16
+    num_layers: 6
+    hidden_state_dim: 16 # Mamba-2 minimum; paper recommends 64-256 (vs Mamba-1 default of 16)
+    use_positional_embeddings: false
   backbone:
     freeze_backbone: true
   decoder:
     freeze_decoder: false
-    use_pre_trained: true
-    auxiliary_loss: true
+    auxiliary_loss: false
   output_head:
     freeze_prediction_head: false
-    use_pre_trained: true
-  still_image_checkpoint_name: "sverrenystad-ntnu/Fafnir/mamba_giouloss_20260515_223421:v45"
-
