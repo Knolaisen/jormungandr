@@ -64,7 +64,7 @@ COCO91_NAMES = {
 
 DATA_DIR = os.environ.get("MOT17_DATA_DIR", "./data")
 MOT17_TRAIN = os.path.join(DATA_DIR, "MOT17", "train")
-MIN_VIS = 0.25
+MIN_VIS = 0.0
 
 
 pytestmark = pytest.mark.skipif(
@@ -96,9 +96,7 @@ def _current_filter(gt: pd.DataFrame) -> pd.DataFrame:
 
 
 def _proposed_filter(gt: pd.DataFrame, min_vis: float = MIN_VIS) -> pd.DataFrame:
-    return gt.query(
-        f"confidence_score == 1 and `class` == 1 and visibility >= {min_vis}"
-    )
+    return gt.query(f"confidence_score == 1 and visibility >= {min_vis}")
 
 
 def test_raw_distribution():
