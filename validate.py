@@ -46,11 +46,5 @@ if __name__ == "__main__":
         default=None,
         help=f"Config file to load (e.g. {experiment})",
     )
-    parser.add_argument(
-        "--model-path",
-        dest="model_path",
-        default=None,
-        help="Path to the trained model checkpoint to validate",
-    )
     args = parser.parse_args()
     main(args.config_flag or args.config or experiment)
