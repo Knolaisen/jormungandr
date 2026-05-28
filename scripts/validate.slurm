@@ -28,6 +28,6 @@ pip install uv --user
 uv sync
 
 # Run the Python script
-uv run python validate.py --config experiment_2.yaml --model-path models/model_20260411_100636_9.546_24
+uv run python validate.py --config experiment_3_0.yaml
 
 echo "Job finished"
