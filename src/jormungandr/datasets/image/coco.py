@@ -2,6 +2,9 @@ from datasets import load_dataset
 import torch
 
 from jormungandr.datasets.processor import get_image_processor
+from jormungandr.utils.transforms import make_coco_transforms
+import torchvision.transforms.functional as TF
+from typing import Callable
 
 image_processor = get_image_processor()
 
@@ -89,64 +92,80 @@ coco80_to_coco91 = {
     79: 90,  # toothbrush
 }
 
+def _make_collate_fn(image_set: str) -> Callable:
+    transform = make_coco_transforms(image_set)
 
-def _collate_fn(batch):
-    # images from dataset (CHW uint8)
-    images = [_ensure_3ch(item["image"]) for item in batch]
+    def collate_fn(batch):
+        images = []
+        targets = []
 
-    # build COCO-style annotations per image
-    targets = []
-    for item in batch:
-        # dataset bbox format: [x_min, y_min, x_max, y_max] (absolute pixels)
-        boxes = item["objects"]["bbox"]
-        boxes[:, 2] -= boxes[:, 0]  # width = x_max - x_min
-        boxes[:, 3] -= boxes[:, 1]  # height = y_max - y_min
+        for item in batch:
+            # Convert CHW uint8 tensor -> PIL image for transforms
+            pil_img = TF.to_pil_image(_ensure_3ch(item["image"]))
 
-        class_ids = item["objects"]["category"]  # (N,)
-        areas = item["objects"].get("area", None)
-        iscrowd = item["objects"].get("iscrowd", None)
+            # Dataset gives xyxy boxes; transforms expect xyxy
+            boxes = item["objects"]["bbox"].float()  # (N, 4) xyxy
+            class_ids = item["objects"]["category"]  # (N,) 0-indexed 80-class
+            areas = item["objects"].get("area", None)
+            iscrowd = item["objects"].get("iscrowd", None)
 
-        annotations = []
-        for i in range(boxes.shape[0]):
-            ann = {
-                "bbox": boxes[i].tolist(),  # COCO expects python lists
-                "category_id": coco80_to_coco91[int(class_ids[i].item())],
+            target = {
+                "boxes": boxes,
+                "labels": torch.tensor(
+                    [coco80_to_coco91[int(c)] for c in class_ids], dtype=torch.long
+                ),
             }
             if areas is not None:
-                ann["area"] = float(areas[i].item())
+                target["area"] = areas.float()
             if iscrowd is not None:
-                ann["iscrowd"] = int(iscrowd[i].item())
-            else:
-                ann["iscrowd"] = 0
-            annotations.append(ann)
+                target["iscrowd"] = iscrowd
 
-        targets.append(
-            {"image_id": int(item["image_id"].item()), "annotations": annotations}
-        )
+            # Apply spatial augmentations (flip, resize, crop)
+            pil_img, target = transform(pil_img, target)
 
-    encoded = image_processor(
-        images=images,
-        annotations=targets,
-        return_tensors="pt",
-        # size={"shortest_edge": 1600, "longest_edge": 2666},
-    )
+            # Convert augmented xyxy boxes -> COCO xywh for image_processor
+            aug_boxes = target["boxes"]  # (M, 4) xyxy; M <= N after crop filtering
+            aug_class_ids = target["labels"]
+            aug_areas = target.get("area", None)
+            aug_iscrowd = target.get("iscrowd", None)
 
-    # DetrImageProcessor scales label["area"] by the resize ratio
-    # (resize_annotation multiplies by ratio_w * ratio_h). COCO eval size
-    # thresholds (small < 32², medium < 96²) are defined in original image
-    # pixel space, so we restore each image's areas to original coordinates
-    # using label["orig_size"] (original) and label["size"] (after resize).
-    for label in encoded["labels"]:
-        if "area" in label:
-            orig_h, orig_w = label["orig_size"].tolist()
-            size_h, size_w = label["size"].tolist()
-            label["area"] = label["area"] * (orig_h / size_h) * (orig_w / size_w)
+            annotations = []
+            for i in range(aug_boxes.shape[0]):
+                x1, y1, x2, y2 = aug_boxes[i].tolist()
+                ann = {
+                    "bbox": [x1, y1, x2 - x1, y2 - y1],  # COCO xywh
+                    "category_id": int(aug_class_ids[i].item()),
+                }
+                if aug_areas is not None:
+                    ann["area"] = float(aug_areas[i].item())
+                ann["iscrowd"] = int(aug_iscrowd[i].item()) if aug_iscrowd is not None else 0
+                annotations.append(ann)
 
-    return {
-        "pixel_values": encoded["pixel_values"],  # (B, 3, Hmax, Wmax)
-        "pixel_mask": encoded["pixel_mask"],  # (B, Hmax, Wmax)
-        "labels": encoded["labels"],  # list[dict] length B
-    }
+            images.append(pil_img)
+            targets.append(
+                {"image_id": int(item["image_id"].item()), "annotations": annotations}
+            )
+
+        encoded = image_processor(images=images, annotations=targets, return_tensors="pt")
+
+        for label in encoded["labels"]:
+            if "area" in label:
+                orig_h, orig_w = label["orig_size"].tolist()
+                size_h, size_w = label["size"].tolist()
+                label["area"] = label["area"] * (orig_h / size_h) * (orig_w / size_w)
+
+        return {
+            "pixel_values": encoded["pixel_values"],  # (B, 3, Hmax, Wmax)
+            "pixel_mask": encoded["pixel_mask"],  # (B, Hmax, Wmax)
+            "labels": encoded["labels"],  # list[dict] length B
+        }
+
+    return collate_fn
+
+
+
+
+
 
 
 def _ensure_3ch(img: torch.Tensor) -> torch.Tensor:
