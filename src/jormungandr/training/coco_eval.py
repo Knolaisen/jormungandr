@@ -23,6 +23,16 @@ class CocoEvaluator:
         self.gt_annotations: list[dict] = []
         self.predictions: list[dict] = []
         self._ann_id = 0
+        # On the video path, stride-1 sliding-window clips overlap, so the same
+        # physical frame (same image_id) arrives in up to n_frames separate
+        # batches. Without dedup, both its GT and its predictions would be
+        # accumulated once per clip, inflating GT counts and (under COCOeval's
+        # maxDets=100 cap) collapsing AP as n_frames grows. We keep only the
+        # first occurrence of each image_id. The val loader is shuffle=False and
+        # emits clips in ascending start order, so the first time a frame is seen
+        # it is the *last* frame of its earliest clip -> maximal temporal context
+        # for the causal temporal encoder.
+        self._seen_image_ids: set[int] = set()
         # If set, predictions whose argmax foreground class is not in this set are
         # treated as no-object and dropped before COCO eval. Used on the MOT17
         # path to suppress COCO classes (boat, train, ...) that the MOT17
@@ -55,6 +65,10 @@ class CocoEvaluator:
 
         for b, label in enumerate(labels):
             image_id = int(label["image_id"].item())
+            # Skip frames already evaluated via an earlier (overlapping) clip.
+            if image_id in self._seen_image_ids:
+                continue
+            self._seen_image_ids.add(image_id)
             orig_h, orig_w = label["orig_size"].tolist()
 
             self.gt_images.append(
