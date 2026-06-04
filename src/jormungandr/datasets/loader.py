@@ -33,7 +33,7 @@ def _build_loader(
 _DATASET_DEFAULTS = {
     "coco": {
         "dataset_name": "detection-datasets/coco",
-        "collate_fn": _collate_fn,
+        "collate_fn": _make_collate_fn("train"),
         "train_prefetch_factor": 2,
     },
     "mot17": {
