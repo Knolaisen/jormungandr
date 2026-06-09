@@ -2,7 +2,7 @@ import os
 from torch.utils.data import DataLoader
 from typing import Callable
 
-from jormungandr.datasets.image.coco import _build_image_datasets, _collate_fn
+from jormungandr.datasets.image.coco import _build_image_datasets, _make_collate_fn
 from jormungandr.datasets.video.mot17 import _build_vod_datasets, _collate_fn_vod
 from jormungandr.utils.seed import build_torch_generator, seed_worker
 
@@ -33,7 +33,7 @@ def _build_loader(
 _DATASET_DEFAULTS = {
     "coco": {
         "dataset_name": "detection-datasets/coco",
-        "collate_fn": _collate_fn,
+        "collate_fn": _make_collate_fn("train"),
         "train_prefetch_factor": 2,
     },
     "mot17": {
@@ -96,7 +96,7 @@ def create_dataloaders(
         train_ds,
         batch_size=batch_size,
         shuffle=shuffle,
-        collate_fn=collate_fn,
+        collate_fn=_make_collate_fn("train"),
         generator=train_gen,
         prefetch_factor=defaults["train_prefetch_factor"],
     )
@@ -104,7 +104,7 @@ def create_dataloaders(
         val_ds,
         batch_size=batch_size,
         shuffle=False,
-        collate_fn=collate_fn,
+        collate_fn=_make_collate_fn("val"),
         generator=val_gen,
     )
     return train_loader, val_loader

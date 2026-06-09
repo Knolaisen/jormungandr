@@ -7,7 +7,7 @@
 #SBATCH --cpus-per-task=6
 #SBATCH --gres=gpu:1
 #SBATCH --nodes=1
-#SBATCH --constraint="(a100)&(gpu40g)"
+#SBATCH --constraint="(a100)&(gpu80g)"
 #SBATCH --output=slurm_outputs/output_master.txt
 #SBATCH --error=slurm_outputs/output_master.err
 
